@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>3D Environment with Floating Particles</title>
+    <style>
+      @font-face {
+        font-family: "SourceCodePro";
+        src: url("assets/SourceCodePro-VariableFont_wght.ttf")
+          format("truetype");
+        font-weight: normal;
+        font-style: normal;
+      }
+      body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        font-family: Arial, sans-serif;
+      }
+      canvas {
+        display: block;
+      }
+      #title {
+        position: absolute;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        color: black;
+        font-size: 36px;
+        font-weight: bold;
+        font-family: "SourceCodePro", monospace;
+        z-index: 100;
+        text-align: center;
+        letter-spacing: 2px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+      }
+      #info {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        color: #333;
+        font-size: 14px;
+        z-index: 100;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="title">Memory_Almost_Full</div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script>
+      // Scene setup
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(
+        75,
+        window.innerWidth / window.innerHeight,
+        0.1,
+        1000
+      );
+      const renderer = new THREE.WebGLRenderer({ antialias: true });
+
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setClearColor(0xc0d0d0); // Light blue-green background color
+      document.body.appendChild(renderer.domElement);
+
+      // Lighting
+      const ambientLight = new THREE.AmbientLight(0x404040, 0.6);
+      scene.add(ambientLight);
+
+      const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+      directionalLight.position.set(10, 10, 5);
+      scene.add(directionalLight);
+
+      // Particle system
+      const particleCount = 200;
+      const particles = new THREE.BufferGeometry();
+      const positions = new Float32Array(particleCount * 3);
+      const colors = new Float32Array(particleCount * 3);
+      const velocities = [];
+
+      // Initialize particles
+      for (let i = 0; i < particleCount; i++) {
+        const i3 = i * 3;
+
+        // Random positions in a sphere
+        positions[i3] = (Math.random() - 0.5) * 20;
+        positions[i3 + 1] = (Math.random() - 0.5) * 20;
+        positions[i3 + 2] = (Math.random() - 0.5) * 20;
+
+        // Dark gray color with some variation
+        const grayIntensity = 0.3 + Math.random() * 0.2;
+        colors[i3] = grayIntensity; // R
+        colors[i3 + 1] = grayIntensity; // G
+        colors[i3 + 2] = grayIntensity; // B
+
+        // Random velocities for floating motion
+        velocities.push({
+          x: (Math.random() - 0.5) * 0.02,
+          y: (Math.random() - 0.5) * 0.02,
+          z: (Math.random() - 0.5) * 0.02,
+        });
+      }
+
+      particles.setAttribute(
+        "position",
+        new THREE.BufferAttribute(positions, 3)
+      );
+      particles.setAttribute("color", new THREE.BufferAttribute(colors, 3));
+
+      // Particle material
+      const particleMaterial = new THREE.PointsMaterial({
+        size: 0.1,
+        vertexColors: true,
+        transparent: true,
+        opacity: 0.8,
+      });
+
+      const particleSystem = new THREE.Points(particles, particleMaterial);
+      scene.add(particleSystem);
+
+      // Camera position
+      camera.position.z = 15;
+
+      // Add orbit controls for mouse interaction
+      const controls = new THREE.OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true; // Enable smooth camera movement
+      controls.dampingFactor = 0.05;
+      controls.enableZoom = true;
+      controls.enablePan = true;
+      controls.rotateSpeed = 1.0;
+      controls.zoomSpeed = 1.2;
+      controls.panSpeed = 0.8;
+
+      // Set rotation limits to allow x-axis rotation
+      controls.minPolarAngle = 0; // Allow rotation from top
+      controls.maxPolarAngle = Math.PI; // Allow rotation to bottom
+      controls.minAzimuthAngle = -Infinity; // No horizontal limits
+      controls.maxAzimuthAngle = Infinity;
+
+      // Animation loop
+      function animate() {
+        requestAnimationFrame(animate);
+
+        const positions = particleSystem.geometry.attributes.position.array;
+
+        // Update particle positions
+        for (let i = 0; i < particleCount; i++) {
+          const i3 = i * 3;
+          const velocity = velocities[i];
+
+          // Update positions
+          positions[i3] += velocity.x;
+          positions[i3 + 1] += velocity.y;
+          positions[i3 + 2] += velocity.z;
+
+          // Boundary checking - wrap around
+          if (positions[i3] > 10) positions[i3] = -10;
+          if (positions[i3] < -10) positions[i3] = 10;
+          if (positions[i3 + 1] > 10) positions[i3 + 1] = -10;
+          if (positions[i3 + 1] < -10) positions[i3 + 1] = 10;
+          if (positions[i3 + 2] > 10) positions[i3 + 2] = -10;
+          if (positions[i3 + 2] < -10) positions[i3 + 2] = 10;
+        }
+
+        particleSystem.geometry.attributes.position.needsUpdate = true;
+
+        // Rotate the entire particle system slowly
+        particleSystem.rotation.y += 0.001;
+
+        // Update controls
+        controls.update();
+
+        renderer.render(scene, camera);
+      }
+
+      // Handle window resize
+      window.addEventListener("resize", () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      });
+
+      // Start animation
+      animate();
+    </script>
+  </body>
+</html>
