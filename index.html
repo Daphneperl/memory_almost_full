@@ -15,9 +15,16 @@
         padding: 0;
         overflow: hidden;
         font-family: Arial, sans-serif;
+        background-color: #c0d0d0;
       }
       canvas {
         display: block;
+        opacity: 0;
+        transition: opacity 2s ease-in;
+      }
+
+      canvas.fade-in {
+        opacity: 1;
       }
       #title {
         position: absolute;
@@ -48,9 +55,12 @@
         0.1,
         1000
       );
-      const renderer = new THREE.WebGLRenderer();
-      renderer.shadowMap.enabled = true;
-      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+      const renderer = new THREE.WebGLRenderer({
+        antialias: false, // Disable antialiasing for better performance
+        powerPreference: "high-performance", // Use dedicated GPU if available
+      });
+      renderer.shadowMap.enabled = false; // Disable shadows for better performance
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Limit pixel ratio for performance
 
       renderer.setSize(window.innerWidth, window.innerHeight);
       renderer.setClearColor(0xc0d0d0);
@@ -163,45 +173,42 @@
         "4",
       ];
 
-      // ASCII text sprites system
-      const textCount = 80;
+      // ASCII text sprites system (reduced count for better performance)
+      const textCount = 50; // Reduced from 80 to 50 for better performance
       const textSprites = [];
       const velocities = [];
 
-      // Create text sprites
+      // Create shared texture for all ASCII characters (performance optimization)
+      const sharedCanvas = document.createElement("canvas");
+      const sharedContext = sharedCanvas.getContext("2d");
+      sharedCanvas.width = 64;
+      sharedCanvas.height = 64;
+
+      // Set font and style
+      sharedContext.font = "32px SourceCodePro, monospace";
+      sharedContext.fillStyle = "rgba(60, 60, 60, 0.8)";
+      sharedContext.textAlign = "center";
+      sharedContext.textBaseline = "middle";
+
+      // Draw a generic character for shared texture
+      sharedContext.fillText("A", 32, 32);
+
+      // Create shared texture
+      const sharedTexture = new THREE.CanvasTexture(sharedCanvas);
+      sharedTexture.needsUpdate = true;
+
+      // Create shared sprite material
+      const sharedSpriteMaterial = new THREE.SpriteMaterial({
+        map: sharedTexture,
+        transparent: true,
+        opacity: 0.8,
+        alphaTest: 0.1,
+      });
+
+      // Create text sprites with shared material
       for (let i = 0; i < textCount; i++) {
-        const randomChar =
-          asciiChars[Math.floor(Math.random() * asciiChars.length)];
-
-        // Create canvas for text texture
-        const canvas = document.createElement("canvas");
-        const context = canvas.getContext("2d");
-        canvas.width = 64;
-        canvas.height = 64;
-
-        // Set font and style
-        context.font = "32px SourceCodePro, monospace";
-        context.fillStyle = "rgba(60, 60, 60, 0.8)";
-        context.textAlign = "center";
-        context.textBaseline = "middle";
-
-        // Draw character
-        context.fillText(randomChar, 32, 32);
-
-        // Create texture from canvas
-        const texture = new THREE.CanvasTexture(canvas);
-        texture.needsUpdate = true;
-
-        // Create sprite material
-        const spriteMaterial = new THREE.SpriteMaterial({
-          map: texture,
-          transparent: true,
-          opacity: 0.8,
-          alphaTest: 0.1,
-        });
-
-        // Create sprite
-        const sprite = new THREE.Sprite(spriteMaterial);
+        // Create sprite with shared material
+        const sprite = new THREE.Sprite(sharedSpriteMaterial.clone());
         sprite.scale.set(1, 1, 1);
 
         // Random position in 3D space - further from camera
@@ -294,61 +301,108 @@
       const textureLoader = new THREE.TextureLoader();
       const connectionLines = [];
 
-      // Create billboard planes for each artist
-      artistImages.forEach((artist, index) => {
-        const texture = textureLoader.load(artist.path, (loadedTexture) => {
-          // Calculate aspect ratio from loaded texture
-          const aspectRatio =
-            loadedTexture.image.width / loadedTexture.image.height;
-          const baseHeight = 2.5;
-          const width = baseHeight * aspectRatio;
+      // Preload all images in parallel for faster loading
+      function preloadImages() {
+        const loadPromises = artistImages.map((artist) => {
+          return new Promise((resolve, reject) => {
+            const texture = textureLoader.load(
+              artist.path,
+              (loadedTexture) => {
+                // Optimize texture settings for better performance
+                loadedTexture.generateMipmaps = false;
+                loadedTexture.minFilter = THREE.LinearFilter;
+                loadedTexture.magFilter = THREE.LinearFilter;
+                loadedTexture.format = THREE.RGBAFormat;
+                loadedTexture.flipY = true;
 
-          // Create geometry with proper aspect ratio
-          const geometry = new THREE.PlaneGeometry(width, baseHeight);
+                resolve({ artist, texture: loadedTexture });
+              },
+              undefined,
+              (error) => {
+                console.warn(`Failed to load image: ${artist.path}`, error);
+                reject(error);
+              }
+            );
+          });
+        });
 
-          const material = new THREE.MeshBasicMaterial({
-            map: loadedTexture,
-            transparent: true,
-            opacity: 0.95,
-            side: THREE.DoubleSide,
+        return Promise.all(loadPromises);
+      }
+
+      // Create all image planes after preloading
+      preloadImages()
+        .then((loadedTextures) => {
+          loadedTextures.forEach(({ artist, texture }) => {
+            // Calculate aspect ratio from loaded texture
+            const aspectRatio = texture.image.width / texture.image.height;
+            const baseHeight = 2.5;
+            const width = baseHeight * aspectRatio;
+
+            // Create geometry with proper aspect ratio
+            const geometry = new THREE.PlaneGeometry(width, baseHeight);
+
+            const material = new THREE.MeshBasicMaterial({
+              map: texture,
+              transparent: true,
+              opacity: 0.95,
+              side: THREE.DoubleSide,
+              alphaTest: 0.1, // Optimize transparency rendering
+            });
+
+            const plane = new THREE.Mesh(geometry, material);
+
+            // Random position in 3D space
+            plane.position.set(
+              (Math.random() - 0.5) * 30,
+              (Math.random() - 0.5) * 20,
+              (Math.random() - 0.5) * 30
+            );
+
+            // Ensure images render in front of lines
+            plane.renderOrder = 1;
+
+            // Store reference for billboard behavior
+            plane.userData = { isBillboard: true };
+            imagePlanes.push(plane);
+            scene.add(plane);
           });
 
-          const plane = new THREE.Mesh(geometry, material);
-
-          // Random position in 3D space
-          plane.position.set(
-            (Math.random() - 0.5) * 30,
-            (Math.random() - 0.5) * 20,
-            (Math.random() - 0.5) * 30
-          );
-
-          // Ensure images render in front of lines
-          plane.renderOrder = 1;
-
-          // Store reference for billboard behavior
-          plane.userData = { isBillboard: true };
-          imagePlanes.push(plane);
-          scene.add(plane);
-
           // Create connections after all images are loaded
-          if (imagePlanes.length === artistImages.length) {
-            createConnections();
-          }
-        });
-      });
+          createConnections();
 
-      // Function to create connections between images
+          // Trigger fade-in effect once everything is loaded
+          setTimeout(() => {
+            renderer.domElement.classList.add("fade-in");
+          }, 100); // Small delay to ensure everything is rendered
+        })
+        .catch((error) => {
+          console.error("Error loading images:", error);
+          // Still trigger fade-in even if some images fail to load
+          setTimeout(() => {
+            renderer.domElement.classList.add("fade-in");
+          }, 100);
+        });
+
+      // Function to create connections between images (optimized)
       function createConnections() {
-        // Create connections - each image connects to at least one other
-        for (let i = 0; i < imagePlanes.length; i++) {
-          // Each image connects to 1-3 other images
-          const numConnections = Math.floor(Math.random() * 3) + 1;
+        // Reduce number of connections for better performance
+        const maxConnections = Math.min(imagePlanes.length * 0.5, 20); // Limit total connections
+        let connectionCount = 0;
+
+        for (
+          let i = 0;
+          i < imagePlanes.length && connectionCount < maxConnections;
+          i++
+        ) {
+          // Each image connects to 1-2 other images (reduced from 1-3)
+          const numConnections = Math.floor(Math.random() * 2) + 1;
           const connectedIndices = new Set();
 
           // Ensure we don't connect to the same image
           while (
             connectedIndices.size < numConnections &&
-            connectedIndices.size < imagePlanes.length - 1
+            connectedIndices.size < imagePlanes.length - 1 &&
+            connectionCount < maxConnections
           ) {
             const randomIndex = Math.floor(Math.random() * imagePlanes.length);
             if (randomIndex !== i) {
@@ -358,6 +412,8 @@
 
           // Create lines to connected images
           connectedIndices.forEach((targetIndex) => {
+            if (connectionCount >= maxConnections) return;
+
             const startPos = imagePlanes[i].position;
             const endPos = imagePlanes[targetIndex].position;
 
@@ -369,7 +425,7 @@
 
             const geometry = new THREE.BufferGeometry().setFromPoints(points);
 
-            // Create line material
+            // Create line material with optimized settings
             const material = new THREE.LineBasicMaterial({
               color: 0x666666,
               transparent: true,
@@ -377,12 +433,15 @@
               linewidth: 1,
               depthTest: true,
               depthWrite: false,
+              vertexColors: false, // Disable vertex colors for performance
             });
 
             const line = new THREE.Line(geometry, material);
             line.renderOrder = -1; // Render before other objects
+            line.frustumCulled = true; // Enable frustum culling
             connectionLines.push(line);
             scene.add(line);
+            connectionCount++;
           });
         }
       }
@@ -397,38 +456,60 @@
       controls.enableZoom = true;
       controls.enablePan = true;
 
+      // Performance optimization variables
+      let frameCount = 0;
+      const updateFrequency = 2; // Update sprites every 2 frames instead of every frame
+      const frustum = new THREE.Frustum();
+      const cameraMatrix = new THREE.Matrix4();
+
       // Optimized animation loop
       function animate() {
         requestAnimationFrame(animate);
+        frameCount++;
 
-        // Update ASCII sprite positions
-        for (let i = 0; i < textCount; i++) {
-          const sprite = textSprites[i];
-          const velocity = velocities[i];
+        // Update camera matrix for frustum culling
+        cameraMatrix.multiplyMatrices(
+          camera.projectionMatrix,
+          camera.matrixWorldInverse
+        );
+        frustum.setFromProjectionMatrix(cameraMatrix);
 
-          // Update positions
-          sprite.position.x += velocity.x;
-          sprite.position.y += velocity.y;
-          sprite.position.z += velocity.z;
+        // Update ASCII sprite positions (reduced frequency for performance)
+        if (frameCount % updateFrequency === 0) {
+          for (let i = 0; i < textCount; i++) {
+            const sprite = textSprites[i];
+            const velocity = velocities[i];
 
-          // Improved boundary checking - wrap around instead of bounce
-          if (Math.abs(sprite.position.x) > 30) {
-            sprite.position.x = sprite.position.x > 0 ? -30 : 30;
+            // Update positions
+            sprite.position.x += velocity.x * updateFrequency;
+            sprite.position.y += velocity.y * updateFrequency;
+            sprite.position.z += velocity.z * updateFrequency;
+
+            // Improved boundary checking - wrap around instead of bounce
+            if (Math.abs(sprite.position.x) > 30) {
+              sprite.position.x = sprite.position.x > 0 ? -30 : 30;
+            }
+            if (Math.abs(sprite.position.y) > 20) {
+              sprite.position.y = sprite.position.y > 0 ? -20 : 20;
+            }
+            if (Math.abs(sprite.position.z) > 30) {
+              sprite.position.z = sprite.position.z > 0 ? -30 : 30;
+            }
+
+            // Add subtle rotation to sprites
+            sprite.rotation.z += 0.001 * updateFrequency;
           }
-          if (Math.abs(sprite.position.y) > 20) {
-            sprite.position.y = sprite.position.y > 0 ? -20 : 20;
-          }
-          if (Math.abs(sprite.position.z) > 30) {
-            sprite.position.z = sprite.position.z > 0 ? -30 : 30;
-          }
-
-          // Add subtle rotation to sprites
-          sprite.rotation.z += 0.001;
         }
 
-        // Make image planes always face the camera (billboard behavior)
+        // Optimized billboard behavior with frustum culling
         imagePlanes.forEach((plane) => {
-          plane.lookAt(camera.position);
+          // Only update billboard behavior if plane is in view
+          if (frustum.intersectsObject(plane)) {
+            plane.lookAt(camera.position);
+            plane.visible = true;
+          } else {
+            plane.visible = false; // Hide objects outside frustum
+          }
         });
 
         controls.update();
