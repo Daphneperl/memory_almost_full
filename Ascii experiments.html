@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASCII Particles Experiment</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #c0d0d0;
+            overflow: hidden;
+            font-family: 'Courier New', monospace;
+        }
+        canvas {
+            display: block;
+            background: #c0d0d0;
+        }
+        #info {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: #333;
+            font-size: 14px;
+            z-index: 100;
+            font-family: 'Courier New', monospace;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div id="info">ASCII Particles Experiment</div>
+    <canvas id="ascii-canvas"></canvas>
+
+    <script>
+        class ASCIIParticles {
+            constructor(canvas) {
+                this.canvas = canvas;
+                this.ctx = canvas.getContext('2d');
+                this.structures = [];
+                this.animationId = null;
+                
+                // Configuration
+                this.config = {
+                    maxStructures: 12,
+                    fontSize: 14,
+                    fade: 0.08,
+                    color: 'rgba(51, 51, 51, 0.9)',
+                    fontFamily: 'Courier New, monospace',
+                    writeSpeed: 0.05,
+                    eraseSpeed: 0.04,
+                    structureLifetime: 2000, // ms
+                    spawnRate: 0.03, // increased from 0.01
+                    typewriterSound: true
+                };
+                
+                // ASCII art patterns
+                this.asciiPatterns = [
+                    // Simple shapes
+                    ['  +---+', '  |   |', '  +---+'],
+                    ['   /\\', '  /  \\', ' /____\\'],
+                    ['  ___', ' /   \\', '|     |', ' \\___/'],
+                    ['  *', ' ***', '*****', ' ***', '  *'],
+                    ['  []', ' [][]', '[][][]', ' [][]', '  []'],
+                    
+                    // Tech patterns
+                    ['[OK]', 'LOAD', 'RUN'],
+                    ['>--->', '>--->', '>--->'],
+                    ['[X]', '[X]', '[X]'],
+                    ['/\\/\\', '\\/\\/', '/\\/\\'],
+                    ['++++', '++++', '++++'],
+                    
+                    // Abstract patterns
+                    ['  .', ' ...', '.....', ' ...', '  .'],
+                    ['  =', ' ===', '=====', ' ===', '  ='],
+                    ['  #', ' ###', '#####', ' ###', '  #'],
+                    ['  o', ' ooo', 'ooooo', ' ooo', '  o'],
+                    ['  *', ' ***', '*****', ' ***', '  *'],
+                    
+                    // Complex decorative patterns
+                    ['      _.-\\\'\\\'\\\'-._', '     .\\\'   .-\\\'``|\\\'.', '    /    /    -*- \\\\', '   ;   <{      |   ;', '   |    _\\\\ |       |', '   ;   _\\\\ -*- |    ;', '    \\\\   \\\\  | -*-  /', '     \\\'.\\\'_ \\\'.\\\'__ |_.\\\'', '        \\\'-----\\\''],
+                    
+                    // Star and celestial patterns
+                    ['o                     __...__     *', '              *   .--\\\'    __.=-.', '     |          ./     .-\\\'', '    -O-        /      /', '     |        /    \\\'"/               *', '             |     (@)', '            |        \\\\', '            |         \\\\', ' *          |       ___\\\\', '             |  .   /  `', '              \\\\  `~~\\\\', '         o     \\\\     \\\\            *', '                `\\\\    `-.__', '    .             `--._    `--\\\'', '                       `---~~`                *', '            *                   o'],
+                    
+                    // Mechanical/tech patterns
+                    ['         ,', '       _=|_', '     _[_## ]_', '_  +[_[_+_]P/    _    |_       ____      _=--|-~', ' ~---\\\\_I_I_[=\\\\--~ ~~--[o]--==-|##==]-=-~~  o]H', '-~ /[_[_|_]_]\\\\  -_  [[=]]    |====]  __  !j]H', '  /    "|"    \\\\      ^U-U^  - |    - ~ .~  U/~', ' ~~--__~~~--__~~-__   H_H_    |_     --   _H_', '-. _  ~~~#######~~~     ~~~-    ~~--  ._ - ~~-=', '           ~~~=~~  -~~--  _     . -      _ _ -'],
+                    
+                    // Decorative frame
+                    ['     _____              .---...-.', '   ,\\\'  -. `.          ,\\\' _____...\\\'', '  /   - _ - \\\\        : .\\\' _   _ \\\\', ' :    \\\' _)\\\'  :       | :-(_).(_)::', '(_           ;)      | |    -\\\'  ||', '  \\\\     _   /        ; |    _   ||', '   `..___..\\\'         `-\\\'..____.\\\'`\\\'', '      ;._:               _; :_', '     /    \\\\ SSt        ,\\\'  `\\\' `. SSt'],
+                    
+                    // Abstract geometric
+                    ['      `_-@@@-_', '|, _ -  -  -   ~-_;', ' |~ =  . _ .    =   |', ' |  |   (       )  -', '  -__\\\\   _    /,_--', '       -_  _-~', '       .-\\\'--`-_', '      ~/    .  |', '       |     |~|', '       |____(,,)', '      /________\\\\', '        |_|__|', '      _~__~___\\\\']
+                ];
+                
+                // Initialize audio context for typewriter sound
+                this.audioContext = null;
+                this.initAudio();
+                this.init();
+            }
+            
+            initAudio() {
+                try {
+                    this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                } catch (e) {
+                    console.log('Web Audio API not supported');
+                    this.config.typewriterSound = false;
+                }
+            }
+            
+            playTypewriterSound() {
+                if (!this.config.typewriterSound || !this.audioContext) return;
+                
+                const oscillator = this.audioContext.createOscillator();
+                const gainNode = this.audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(this.audioContext.destination);
+                
+                // Typewriter-like sound: short, sharp click
+                oscillator.frequency.setValueAtTime(800, this.audioContext.currentTime);
+                oscillator.frequency.exponentialRampToValueAtTime(400, this.audioContext.currentTime + 0.05);
+                
+                gainNode.gain.setValueAtTime(0.1, this.audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.05);
+                
+                oscillator.start(this.audioContext.currentTime);
+                oscillator.stop(this.audioContext.currentTime + 0.05);
+            }
+            
+            init() {
+                this.resize();
+                this.start();
+                
+                // Handle window resize
+                window.addEventListener('resize', () => this.resize());
+                
+                // Handle visibility change
+                document.addEventListener('visibilitychange', () => {
+                    if (document.hidden) {
+                        this.stop();
+                    } else {
+                        this.start();
+                    }
+                });
+            }
+            
+            resize() {
+                const dpr = Math.min(window.devicePixelRatio || 1, 2);
+                this.canvas.width = window.innerWidth * dpr;
+                this.canvas.height = window.innerHeight * dpr;
+                this.canvas.style.width = window.innerWidth + 'px';
+                this.canvas.style.height = window.innerHeight + 'px';
+                this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            }
+            
+            createStructure() {
+                const pattern = this.asciiPatterns[Math.floor(Math.random() * this.asciiPatterns.length)];
+                const maxWidth = Math.max(...pattern.map(line => line.length));
+                const maxHeight = pattern.length;
+                
+                // Calculate total characters for typewriter effect
+                const totalChars = pattern.reduce((sum, line) => sum + line.length, 0);
+                
+                return {
+                    pattern: pattern,
+                    x: Math.random() * (this.canvas.width - maxWidth * this.config.fontSize),
+                    y: Math.random() * (this.canvas.height - maxHeight * this.config.fontSize),
+                    maxWidth: maxWidth,
+                    maxHeight: maxHeight,
+                    writeProgress: 0,
+                    eraseProgress: 0,
+                    state: 'writing', // 'writing', 'visible', 'erasing'
+                    startTime: Date.now(),
+                    totalChars: totalChars,
+                    currentChar: 0,
+                    lastCharTime: 0,
+                    charDelay: 50 // ms between characters
+                };
+            }
+            
+            updateStructure(structure) {
+                const now = Date.now();
+                const elapsed = now - structure.startTime;
+                
+                if (structure.state === 'writing') {
+                    // Typewriter effect: add one character at a time
+                    if (now - structure.lastCharTime >= structure.charDelay && structure.currentChar < structure.totalChars) {
+                        structure.currentChar++;
+                        structure.lastCharTime = now;
+                        this.playTypewriterSound();
+                    }
+                    
+                    structure.writeProgress = structure.currentChar / structure.totalChars;
+                    
+                    if (structure.writeProgress >= 1) {
+                        structure.writeProgress = 1;
+                        structure.state = 'visible';
+                        structure.visibleTime = now;
+                    }
+                } else if (structure.state === 'visible') {
+                    if (elapsed > this.config.structureLifetime) {
+                        structure.state = 'erasing';
+                    }
+                } else if (structure.state === 'erasing') {
+                    // Erase one character at a time
+                    if (now - structure.lastCharTime >= structure.charDelay && structure.currentChar > 0) {
+                        structure.currentChar--;
+                        structure.lastCharTime = now;
+                        this.playTypewriterSound();
+                    }
+                    
+                    structure.eraseProgress = 1 - (structure.currentChar / structure.totalChars);
+                    
+                    if (structure.eraseProgress >= 1) {
+                        return false; // Remove this structure
+                    }
+                }
+                
+                return true; // Keep this structure
+            }
+            
+            drawStructure(structure) {
+                this.ctx.font = `${this.config.fontSize}px ${this.config.fontFamily}`;
+                this.ctx.fillStyle = this.config.color;
+                this.ctx.textAlign = 'left';
+                this.ctx.textBaseline = 'top';
+                
+                let charCount = 0;
+                
+                for (let row = 0; row < structure.pattern.length; row++) {
+                    const line = structure.pattern[row];
+                    const y = structure.y + row * this.config.fontSize;
+                    
+                    for (let col = 0; col < line.length; col++) {
+                        const char = line[col];
+                        const x = structure.x + col * this.config.fontSize;
+                        
+                        if (structure.state === 'writing') {
+                            // Show characters up to currentChar
+                            if (charCount < structure.currentChar) {
+                                this.ctx.fillText(char, x, y);
+                            }
+                        } else if (structure.state === 'visible') {
+                            // Show all characters
+                            this.ctx.fillText(char, x, y);
+                        } else if (structure.state === 'erasing') {
+                            // Show characters from currentChar onwards
+                            if (charCount >= structure.currentChar) {
+                                this.ctx.fillText(char, x, y);
+                            }
+                        }
+                        
+                        charCount++;
+                    }
+                }
+            }
+            
+            animate() {
+                // Clear with fade effect for trails
+                this.ctx.fillStyle = `rgba(192, 208, 208, ${this.config.fade})`;
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                // Add new structures occasionally
+                if (this.structures.length < this.config.maxStructures && Math.random() < this.config.spawnRate) {
+                    this.structures.push(this.createStructure());
+                }
+                
+                // Update and draw structures
+                this.structures = this.structures.filter(structure => {
+                    const keep = this.updateStructure(structure);
+                    if (keep) {
+                        this.drawStructure(structure);
+                    }
+                    return keep;
+                });
+                
+                this.animationId = requestAnimationFrame(() => this.animate());
+            }
+            
+            start() {
+                if (!this.animationId) {
+                    this.animate();
+                }
+            }
+            
+            stop() {
+                if (this.animationId) {
+                    cancelAnimationFrame(this.animationId);
+                    this.animationId = null;
+                }
+            }
+        }
+        
+        // Initialize when page loads
+        window.addEventListener('load', () => {
+            const canvas = document.getElementById('ascii-canvas');
+            const asciiParticles = new ASCIIParticles(canvas);
+        });
+    </script>
+</body>
+</html>
