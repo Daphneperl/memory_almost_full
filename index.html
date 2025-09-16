@@ -9,8 +9,6 @@
         font-family: "SourceCodePro";
         src: url("assets/SourceCodePro-VariableFont_wght.ttf")
           format("truetype");
-        font-weight: normal;
-        font-style: normal;
       }
       body {
         margin: 0;
@@ -33,15 +31,7 @@
         z-index: 100;
         text-align: center;
         letter-spacing: 2px;
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-      }
-      #info {
-        position: absolute;
-        top: 10px;
-        left: 10px;
-        color: #333;
-        font-size: 14px;
-        z-index: 100;
+        text-shadow: 2px 2px 4px rgba(76, 30, 30, 0.454);
       }
     </style>
   </head>
@@ -58,22 +48,27 @@
         0.1,
         1000
       );
-      const renderer = new THREE.WebGLRenderer({ antialias: true });
+      const renderer = new THREE.WebGLRenderer();
+      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
       renderer.setSize(window.innerWidth, window.innerHeight);
-      renderer.setClearColor(0xc0d0d0); // Light blue-green background color
+      renderer.setClearColor(0xc0d0d0);
       document.body.appendChild(renderer.domElement);
 
-      // Lighting
+      // Lighting with shadows
       const ambientLight = new THREE.AmbientLight(0x404040, 0.6);
       scene.add(ambientLight);
 
-      const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-      directionalLight.position.set(10, 10, 5);
+      const directionalLight = new THREE.DirectionalLight(0xffffff, 0.4);
+      directionalLight.position.set(5, 5, 5);
+      directionalLight.castShadow = true;
+      directionalLight.shadow.mapSize.width = 1024;
+      directionalLight.shadow.mapSize.height = 1024;
       scene.add(directionalLight);
 
-      // Particle system
-      const particleCount = 200;
+      // Optimized particle system
+      const particleCount = 100;
       const particles = new THREE.BufferGeometry();
       const positions = new Float32Array(particleCount * 3);
       const colors = new Float32Array(particleCount * 3);
@@ -82,17 +77,18 @@
       // Initialize particles
       for (let i = 0; i < particleCount; i++) {
         const i3 = i * 3;
+        const r = Math.random() - 0.5;
 
         // Random positions in a sphere
-        positions[i3] = (Math.random() - 0.5) * 20;
-        positions[i3 + 1] = (Math.random() - 0.5) * 20;
-        positions[i3 + 2] = (Math.random() - 0.5) * 20;
+        positions[i3] = r * 20;
+        positions[i3 + 1] = r * 20;
+        positions[i3 + 2] = r * 20;
 
-        // Dark gray color with some variation
-        const grayIntensity = 0.3 + Math.random() * 0.2;
-        colors[i3] = grayIntensity; // R
-        colors[i3 + 1] = grayIntensity; // G
-        colors[i3 + 2] = grayIntensity; // B
+        // Simplified gray color
+        const grayIntensity = 0.4;
+        colors[i3] = grayIntensity;
+        colors[i3 + 1] = grayIntensity;
+        colors[i3 + 2] = grayIntensity;
 
         // Random velocities for floating motion
         velocities.push({
@@ -108,37 +104,41 @@
       );
       particles.setAttribute("color", new THREE.BufferAttribute(colors, 3));
 
-      // Particle material
+      // Particle material with shadow effect
       const particleMaterial = new THREE.PointsMaterial({
-        size: 0.1,
+        size: 0.12,
         vertexColors: true,
         transparent: true,
-        opacity: 0.8,
+        opacity: 0.9,
+        sizeAttenuation: true,
       });
 
       const particleSystem = new THREE.Points(particles, particleMaterial);
       scene.add(particleSystem);
 
+      // Simple shadow layer
+      const shadowGeometry = particles.clone();
+      const shadowMaterial = new THREE.PointsMaterial({
+        size: 0.1,
+        color: 0x4c1e1e,
+        transparent: true,
+        opacity: 0.3,
+      });
+      const shadowSystem = new THREE.Points(shadowGeometry, shadowMaterial);
+      shadowSystem.position.set(-0.01, -0.01, -0.01);
+      scene.add(shadowSystem);
+
       // Camera position
       camera.position.z = 15;
 
-      // Add orbit controls for mouse interaction
+      // Simplified orbit controls
       const controls = new THREE.OrbitControls(camera, renderer.domElement);
-      controls.enableDamping = true; // Enable smooth camera movement
+      controls.enableDamping = true;
       controls.dampingFactor = 0.05;
       controls.enableZoom = true;
       controls.enablePan = true;
-      controls.rotateSpeed = 1.0;
-      controls.zoomSpeed = 1.2;
-      controls.panSpeed = 0.8;
 
-      // Set rotation limits to allow x-axis rotation
-      controls.minPolarAngle = 0; // Allow rotation from top
-      controls.maxPolarAngle = Math.PI; // Allow rotation to bottom
-      controls.minAzimuthAngle = -Infinity; // No horizontal limits
-      controls.maxAzimuthAngle = Infinity;
-
-      // Animation loop
+      // Optimized animation loop
       function animate() {
         requestAnimationFrame(animate);
 
@@ -154,27 +154,23 @@
           positions[i3 + 1] += velocity.y;
           positions[i3 + 2] += velocity.z;
 
-          // Boundary checking - wrap around
-          if (positions[i3] > 10) positions[i3] = -10;
-          if (positions[i3] < -10) positions[i3] = 10;
-          if (positions[i3 + 1] > 10) positions[i3 + 1] = -10;
-          if (positions[i3 + 1] < -10) positions[i3 + 1] = 10;
-          if (positions[i3 + 2] > 10) positions[i3 + 2] = -10;
-          if (positions[i3 + 2] < -10) positions[i3 + 2] = 10;
+          // Simplified boundary checking
+          if (Math.abs(positions[i3]) > 10) positions[i3] = -positions[i3];
+          if (Math.abs(positions[i3 + 1]) > 10)
+            positions[i3 + 1] = -positions[i3 + 1];
+          if (Math.abs(positions[i3 + 2]) > 10)
+            positions[i3 + 2] = -positions[i3 + 2];
         }
 
         particleSystem.geometry.attributes.position.needsUpdate = true;
-
-        // Rotate the entire particle system slowly
+        shadowSystem.geometry.attributes.position.needsUpdate = true;
         particleSystem.rotation.y += 0.001;
-
-        // Update controls
+        shadowSystem.rotation.y += 0.001;
         controls.update();
-
         renderer.render(scene, camera);
       }
 
-      // Handle window resize
+      // Optimized window resize handler
       window.addEventListener("resize", () => {
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
