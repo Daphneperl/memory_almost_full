@@ -373,6 +373,9 @@
           // Trigger fade-in effect once everything is loaded
           setTimeout(() => {
             renderer.domElement.classList.add("fade-in");
+            // Start rotation animation after fade-in begins
+            rotationStartTime = Date.now();
+            isRotating = true;
           }, 100); // Small delay to ensure everything is rendered
         })
         .catch((error) => {
@@ -380,6 +383,9 @@
           // Still trigger fade-in even if some images fail to load
           setTimeout(() => {
             renderer.domElement.classList.add("fade-in");
+            // Start rotation animation after fade-in begins
+            rotationStartTime = Date.now();
+            isRotating = true;
           }, 100);
         });
 
@@ -462,6 +468,16 @@
       const frustum = new THREE.Frustum();
       const cameraMatrix = new THREE.Matrix4();
 
+      // Rotation animation variables
+      let rotationStartTime = null;
+      const rotationDuration = 3000; // 3 seconds in milliseconds
+      let isRotating = false;
+
+      // Easing function for smooth rotation (ease-in-out)
+      function easeInOutCubic(t) {
+        return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+      }
+
       // Optimized animation loop
       function animate() {
         requestAnimationFrame(animate);
@@ -498,6 +514,26 @@
 
             // Add subtle rotation to sprites
             sprite.rotation.z += 0.001 * updateFrequency;
+          }
+        }
+
+        // Handle rotation animation
+        if (isRotating && rotationStartTime !== null) {
+          const currentTime = Date.now();
+          const elapsed = currentTime - rotationStartTime;
+          const progress = Math.min(elapsed / rotationDuration, 1);
+
+          if (progress < 1) {
+            // Apply easing and rotate around Y-axis
+            const easedProgress = easeInOutCubic(progress);
+            const rotationAngle = (easedProgress * Math.PI) / 4; // Rotate 45 degrees (π/4 radians) to the left
+
+            // Rotate the entire scene around Y-axis
+            scene.rotation.y = rotationAngle;
+          } else {
+            // Animation complete
+            isRotating = false;
+            scene.rotation.y = Math.PI / 4; // Final rotation position
           }
         }
 
