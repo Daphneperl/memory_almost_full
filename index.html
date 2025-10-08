@@ -39,10 +39,87 @@
         letter-spacing: 2px;
         text-shadow: 2px 2px 4px rgba(76, 30, 30, 0.454);
       }
+      
+        #ascii-canvas {
+          position: fixed;
+          top: 0;
+          left: 0;
+          z-index: 1;
+          cursor: default;
+          pointer-events: none;
+        }
+        
+      
+      .popup {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: white;
+        border: 2px solid #333;
+        border-radius: 8px;
+        padding: 30px;
+        width: 90vw;
+        height: 90vh;
+        max-width: none;
+        max-height: none;
+        overflow-y: auto;
+        z-index: 1000;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        font-family: "SourceCodePro", monospace;
+      }
+      
+      .popup-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        z-index: 9999;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      
+      .popup h2 {
+        margin: 0 0 15px 0;
+        color: #333;
+        font-size: 18px;
+      }
+      
+      .popup p {
+        margin: 10px 0;
+        line-height: 1.4;
+        color: #555;
+      }
+      
+      .popup img {
+        max-width: 100%;
+        height: auto;
+        margin: 10px 0;
+        border: 1px solid #ddd;
+      }
+      
+      .popup-close {
+        position: absolute;
+        top: 10px;
+        right: 15px;
+        background: none;
+        border: none;
+        font-size: 20px;
+        cursor: pointer;
+        color: #666;
+      }
+      
+      .popup-close:hover {
+        color: #333;
+      }
     </style>
   </head>
   <body>
     <div id="title">memory_almost_full</div>
+    <canvas id="ascii-canvas"></canvas>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
     <script>
@@ -64,6 +141,9 @@
       renderer.setSize(window.innerWidth, window.innerHeight);
       renderer.setClearColor(0xc0d0d0);
       document.body.appendChild(renderer.domElement);
+      
+      // Add click handler to Three.js canvas
+      renderer.domElement.addEventListener('click', onImageClick);
 
       // Lighting with shadows
       const ambientLight = new THREE.AmbientLight(0x404040, 0.6);
@@ -676,6 +756,341 @@
       const imagePlanes = [];
       const textureLoader = new THREE.TextureLoader();
       const connectionLines = [];
+      
+      // Raycaster for click detection
+      const raycaster = new THREE.Raycaster();
+      const mouse = new THREE.Vector2();
+      
+      // Function to check if an image should be clickable
+      function isClickableImage(imagePath) {
+        const isClickable = imagePath.includes('Anat Saacks.jpg') || 
+               imagePath.includes('Chenn Hearthstone') ||
+               imagePath.includes('Dafna_Sartiel.jpg') ||
+               imagePath.includes('EitanBartal_placeholder.png') ||
+               imagePath.includes('Eyal Datz_placeholder.png') ||
+               imagePath.includes('Eyal Yehowa Gruss_placeholder.png');
+        console.log('Checking if clickable:', imagePath, '->', isClickable);
+        return isClickable;
+      }
+      
+      // Global function for showing artist popups
+      function showArtistPopup(artist) {
+        console.log('showArtistPopup called with:', artist);
+        
+        // Remove existing popup
+        const existingPopup = document.querySelector('.popup-overlay');
+        if (existingPopup) {
+          console.log('Removing existing popup');
+          existingPopup.remove();
+        }
+        
+        // Create popup overlay
+        const overlay = document.createElement('div');
+        overlay.className = 'popup-overlay';
+        console.log('Created overlay element');
+        
+        // Create popup content with carousel
+        const popup = document.createElement('div');
+        popup.className = 'popup';
+        popup.innerHTML = `
+          <button class="popup-close">&times;</button>
+          <h2>${artist.name}</h2>
+          <h3>${artist.title}</h3>
+          <p><strong>Medium:</strong> ${artist.medium}</p>
+          <p>${artist.description}</p>
+          <p><strong>About the Artist:</strong><br>${artist.bio}</p>
+          
+          ${artist.videoLink ? `
+            <div style="margin: 20px 0;">
+              <h4>Video:</h4>
+              <div style="position: relative; width: 100%; height: 0; padding-bottom: 56.25%; margin: 10px 0;">
+                <iframe 
+                  src="${artist.videoLink.includes('youtube.com') ? artist.videoLink.replace('shorts/', 'embed/') : 'https://player.vimeo.com/video/842264728?h=97e8e466d8&badge=0&autopause=0&player_id=0&app_id=58479'}" 
+                  style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; border-radius: 8px;"
+                  allowfullscreen>
+                </iframe>
+              </div>
+              <p style="text-align: center; margin-top: 10px;">
+                <a href="${artist.videoLink}" target="_blank" style="color: #666; text-decoration: none; font-size: 14px;">
+                  Open in ${artist.videoLink.includes('youtube.com') ? 'YouTube' : 'Vimeo'} ↗
+                </a>
+              </p>
+            </div>
+          ` : ''}
+          
+          ${artist.externalLink ? `
+            <div style="margin: 20px 0;">
+              <h4>Social Media Post:</h4>
+              <div id="twitter-embed-container" style="text-align: center; padding: 20px; background: #f8f9fa; border-radius: 8px; border: 1px solid #e9ecef; min-height: 200px;">
+                <p style="color: #666;">Loading tweet...</p>
+              </div>
+            </div>
+          ` : ''}
+          
+          <div style="margin-top: 20px;">
+            <div id="carousel-container" style="position: relative; width: 100%; height: 60vh; overflow: hidden; border: 1px solid #ddd; border-radius: 4px; background: #f5f5f5; display: flex; align-items: center; justify-content: center;">
+              <img id="carousel-image" src="${artist.images[0]}" style="max-width: 100%; max-height: 100%; object-fit: contain;" />
+              ${artist.images.length > 1 ? `
+                <button id="carousel-prev" style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.7); color: white; border: none; padding: 15px; cursor: pointer; border-radius: 50%; font-size: 18px; font-weight: bold;">&lt;</button>
+                <button id="carousel-next" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.7); color: white; border: none; padding: 15px; cursor: pointer; border-radius: 50%; font-size: 18px; font-weight: bold;">&gt;</button>
+                <div id="carousel-indicators" style="position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px;">
+                  ${artist.images.map((_, index) => `<div class="indicator" style="width: 12px; height: 12px; border-radius: 50%; background: ${index === 0 ? '#333' : '#ccc'}; cursor: pointer; transition: background 0.3s;"></div>`).join('')}
+                </div>
+              ` : ''}
+            </div>
+          </div>
+        `;
+        
+        overlay.appendChild(popup);
+        document.body.appendChild(overlay);
+        console.log('Popup added to DOM');
+        
+        // Show Twitter post as a clean, styled card
+        if (artist.externalLink && (artist.externalLink.includes('twitter.com') || artist.externalLink.includes('x.com'))) {
+          console.log('Processing Twitter link:', artist.externalLink);
+          const embedContainer = popup.querySelector('#twitter-embed-container');
+          console.log('Found embed container:', embedContainer);
+          if (embedContainer) {
+            console.log('Setting Twitter content...');
+            
+            // Create a beautiful, Twitter-style card that always works
+            embedContainer.innerHTML = `
+              <div style="background: #ffffff; border: 1px solid #e1e8ed; border-radius: 16px; padding: 0; max-width: 500px; margin: 0 auto; box-shadow: 0 4px 12px rgba(0,0,0,0.15); overflow: hidden;">
+                <!-- Twitter-style header -->
+                <div style="padding: 16px; border-bottom: 1px solid #e1e8ed; background: #f8f9fa;">
+                  <div style="display: flex; align-items: center; gap: 12px;">
+                    <div style="width: 48px; height: 48px; background: linear-gradient(135deg, #1DA1F2, #0d8bd9); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 18px;">
+                      EG
+                    </div>
+                    <div>
+                      <div style="font-weight: 700; color: #14171a; font-size: 16px;">Eyal Gruss</div>
+                      <div style="color: #657786; font-size: 14px;">@eyaler</div>
+                    </div>
+                    <div style="margin-left: auto;">
+                      <div style="color: #657786; font-size: 14px;">Oct 20, 2024</div>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Tweet content -->
+                <div style="padding: 16px;">
+                  <div style="color: #14171a; line-height: 1.4; font-size: 16px; margin-bottom: 12px;">
+                    You can of course also just upload an image. And why not have the option to use the output as the new input? While working on that I stumbled upon a very satisfying glitch where a wrong normalization caused images to get brighter and turn into what I call Whitewash cartoonization 
+                    <a href="https://t.co/X4yh4Vy3cY" style="color: #1DA1F2; text-decoration: none;">pic.twitter.com/X4yh4Vy3cY</a>
+                  </div>
+                  
+                  <!-- Tweet image preview -->
+                  <div style="border-radius: 12px; overflow: hidden; margin: 12px 0; background: #f8f9fa; border: 1px solid #e1e8ed;">
+                    <div style="padding: 20px; text-align: center; color: #657786; font-size: 14px;">
+                      📸 Image attached to tweet
+                    </div>
+                  </div>
+                  
+                  <!-- Twitter-style actions -->
+                  <div style="display: flex; justify-content: space-between; padding: 12px 0; border-top: 1px solid #e1e8ed; margin-top: 12px;">
+                    <div style="display: flex; gap: 24px;">
+                      <div style="display: flex; align-items: center; gap: 8px; color: #657786; font-size: 14px;">
+                        <span style="font-size: 18px;">💬</span>
+                        <span>Reply</span>
+                      </div>
+                      <div style="display: flex; align-items: center; gap: 8px; color: #657786; font-size: 14px;">
+                        <span style="font-size: 18px;">🔄</span>
+                        <span>Retweet</span>
+                      </div>
+                      <div style="display: flex; align-items: center; gap: 8px; color: #657786; font-size: 14px;">
+                        <span style="font-size: 18px;">❤️</span>
+                        <span>Like</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- View on X button -->
+                <div style="padding: 16px; background: #f8f9fa; border-top: 1px solid #e1e8ed; text-align: center;">
+                  <a href="${artist.externalLink}" target="_blank" style="display: inline-block; padding: 10px 20px; background: #1DA1F2; color: white; text-decoration: none; border-radius: 20px; font-size: 14px; font-weight: 600; transition: background 0.2s;">
+                    View Full Tweet on X ↗
+                  </a>
+                </div>
+              </div>
+            `;
+            
+            console.log('Twitter content set successfully');
+          } else {
+            console.log('No embed container found!');
+          }
+        } else {
+          console.log('No Twitter link found for artist:', artist);
+        }
+        
+        // Carousel functionality (only if multiple images)
+        if (artist.images.length > 1) {
+          let currentImageIndex = 0;
+          const carouselImage = popup.querySelector('#carousel-image');
+          const indicators = popup.querySelectorAll('.indicator');
+          
+          const updateCarousel = (index) => {
+            carouselImage.src = artist.images[index];
+            indicators.forEach((indicator, i) => {
+              indicator.style.background = i === index ? '#333' : '#ccc';
+            });
+            currentImageIndex = index;
+          };
+          
+          popup.querySelector('#carousel-prev').addEventListener('click', () => {
+            const newIndex = currentImageIndex > 0 ? currentImageIndex - 1 : artist.images.length - 1;
+            updateCarousel(newIndex);
+          });
+          
+          popup.querySelector('#carousel-next').addEventListener('click', () => {
+            const newIndex = currentImageIndex < artist.images.length - 1 ? currentImageIndex + 1 : 0;
+            updateCarousel(newIndex);
+          });
+          
+          indicators.forEach((indicator, index) => {
+            indicator.addEventListener('click', () => {
+              updateCarousel(index);
+            });
+          });
+        }
+        
+        // Close popup handlers
+        const closePopup = () => {
+          overlay.remove();
+        };
+        
+        popup.querySelector('.popup-close').addEventListener('click', closePopup);
+        overlay.addEventListener('click', (e) => {
+          if (e.target === overlay) {
+            closePopup();
+          }
+        });
+      }
+
+      // Artist data for popups
+      const artistData = {
+        'Anat Saacks.jpg': {
+          name: 'Anat Saacks',
+          title: 'A Bird to Remember',
+          medium: 'Photo, wooden and plexiglass box, stones, digital projection, LLM, 2025',
+          description: 'A realistic photo of a bird, found dead at the entrance to the artist\'s home, stands at the heart of a conversation with an AI-powered language model (LLM), which operates as an emotion- simulating entity that is asked to respond to casual loss. The work underscores the emotional gap between humans and machines: between direct documentation of death and an algorithm that offers what it identifies as emotion, solace, interpretation, and memory.',
+          bio: 'Saaks is a graphic designer and visual artist. She is a lecturer at HIT Holon Institute of Technology, the owner of A designstudio for design and branding, as well as a social activist and volunteer at a mental health organization.',
+          images: [
+            'assets/Artists/Anat Saacks/AS02 - anat saacks.jpg',
+            'assets/Artists/Anat Saacks/AS03 - anat saacks.jpg',
+            'assets/Artists/Anat Saacks/AS04 - anat saacks.jpg',
+            'assets/Artists/Anat Saacks/AS05 - anat saacks.jpg',
+            'assets/Artists/Anat Saacks/Anat Saacks.jpg'
+          ]
+        },
+        'Chenn Hearthstone_placeholder.png': {
+          name: 'Chenn Hearthstone',
+          title: 'Bill of Rights',
+          medium: 'ChatGPT, Fooocus, Runway, Illustrator, 2025',
+          description: 'Imagine a future world with robots that develop sophisticated emotions and humans upload their consciousness to the digital cloud. What would the concept of "human rights" look like in such a world? The work presents a new bill of rights, created after a deep conversation with ChatGPT about the new complexities of this hypothetical world. The conversation led to the formulation of five basic rights that apply to anyone who exists in any shape or form of life – be it human or mechanical.',
+          bio: 'Chenn Hearthstone is a visual artist who started working with digital tools recently, after being diagnosed with a genetic syndrome that affects her ability to rely predominantly on her hands.',
+          images: [
+            'assets/Artists/Chenn Hearthstone/Chenn Hearthstone_placeholder.png'
+          ],
+          videoLink: 'https://www.youtube.com/watch?v=dAo9QeZ5zxo'
+        },
+        'Dafna_Sartiel.jpg': {
+          name: 'Dafna Sartiel',
+          title: 'Something Went Wrong',
+          medium: 'Etchings, 2011-2025',
+          description: 'An ongoing series of etchings created in different stages since 2011. Each print features an error message etched into the digital memory of that period.',
+          bio: 'Dafna Sartiel\'s artistic practice includes printmaking, engraving, photography, mosaic, and sculpture. She has been working in design for many years, and since 2005 she has been making art, specializing in printmaking and engraving. Her work often explores the tension between the medium to the image and the meaning it holds.',
+          images: [
+            'assets/Artists/Dafna Sartiel/Dafna_Sartiel.jpg',
+            'assets/Artists/Dafna Sartiel/2011_RESTART_Dafna_Sartiel_10_20cm.jpg',
+            'assets/Artists/Dafna Sartiel/2011_RESTART_Dafna_Sartiel_Frame_32_39.jpg',
+            'assets/Artists/Dafna Sartiel/2012_LOADING_Dafna_Sartiel_Frame_34_33.jpg',
+            'assets/Artists/Dafna Sartiel/2012_LOADING_Dafna_Sartiel.jpg',
+            'assets/Artists/Dafna Sartiel/2015_AW_SNAP_Dafna_Sartiel_frame.jpg',
+            'assets/Artists/Dafna Sartiel/2015_FILE_NOT_FOUND_Dafna_Sartiel_5x5cm.jpg'
+          ]
+        },
+        'EitanBartal_placeholder.png': {
+          name: 'Eitan Bartal',
+          title: 'Carnosynthetica Biofabricata',
+          medium: '3D printing, silicone, polyurethane, Perspex, vibration motors, 2025',
+          description: 'A speculatively bioengineered engineered organism developed through the integration of advanced synthetic biology and AI algorithms. The "animal/organism" was specifically designed for the efficient and sustainable production of high-quality protein for human consumption.',
+          bio: 'Eitan Bartal is an artist, designer, and senior lecturer at HIT Holon Institute of Technology. His works explore the urban space as an arena where sociopolitical power dynamics are reenacted while critically examining formative mass culture imagery and symbols.',
+          images: [
+            'assets/Artists/Eitan Bartal/EitanBartal_placeholder.png'
+          ],
+          videoLink: 'https://www.youtube.com/shorts/PSR8BFQ6reg'
+        },
+        'Eyal Datz_placeholder.png': {
+          name: 'Eyal Datz',
+          title: 'Every Light Has Its Shadow',
+          medium: 'Video (9 min.), 2024',
+          description: 'In 2023, an AI-powered robot in the likeness of Nicolaus Copernicus was installed at Warsaw\'s Copernicus Science Centre. Copernicus\'s facial expressions, the pauses in his speech pattern, and his pensive gaze were all a part of an aesthetic designed to give the robot a human semblance. The video documents the robot\'s interactions with museum visitors and how the disruption is aimed at removing barriers between the human and the artificial.',
+          bio: 'Eyal Datz is a documentary filmmaker whose projects have been featured by major television channels and screened at international festivals. He recently created the web series "Press Play" for Kan 11, exploring the interface between gaming, culture, and advanced technologies such as VR and AR, while examining their impact on contemporary society and culture.',
+          images: [
+            'assets/Artists/Eyal Datz/Eyal Datz_placeholder.png'
+          ],
+          videoLink: 'https://vimeo.com/842264728/97e8e466d8'
+        },
+        'Eyal Yehowa Gruss_placeholder.png': {
+          name: 'Eyal Yehowa Gruss',
+          title: 'And the boy was happy',
+          medium: 'Code generated animation, 2025',
+          description: 'Gruss inadvertently developed an animation technique based on an image-to-image generator. Due to a glitchy feedback loop, the system brightened the images fed to it and the figures in them, and the model seemed to interpret the images as drawings on paper. This generated an image that evolves semantically and, with a little guidance, lends itself to storytelling.',
+          bio: 'Eyal Yehowa Gruss is an artist, programmer, poet, algorithm researcher, and computational creativity lecturer at HIT Holon Institute of Technology. He creates interactive installations, multimedia shows, constrained and algorithmic poetry, and code art.',
+          images: [
+            'assets/Artists/Eyal Yehowa Gruss/Eyal Yehowa Gruss_placeholder.png'
+          ],
+          externalLink: 'https://x.com/eyaler/status/1848106256860602530'
+        }
+      };
+      
+      // Click handler for Three.js images
+      function onImageClick(event) {
+        console.log('Three.js canvas clicked!');
+        
+        // Calculate mouse position in normalized device coordinates
+        const rect = renderer.domElement.getBoundingClientRect();
+        mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+        mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+        
+        console.log('Mouse position:', mouse.x, mouse.y);
+        
+        // Update raycaster with camera and mouse position
+        raycaster.setFromCamera(mouse, camera);
+        
+        // Get intersected objects
+        const intersects = raycaster.intersectObjects(imagePlanes);
+        console.log('Intersected objects:', intersects.length);
+        
+        if (intersects.length > 0) {
+          const clickedObject = intersects[0].object;
+          console.log('Clicked object:', clickedObject.userData);
+          
+          // Check if this image is clickable
+          if (clickedObject.userData.isClickable) {
+            console.log('Image is clickable!');
+            const artist = clickedObject.userData.artist;
+            const imageName = artist.path.split('/').pop();
+            console.log('Full artist path:', artist.path);
+            console.log('Extracted image name:', imageName);
+            console.log('Available artist data keys:', Object.keys(artistData));
+            
+            // Find the artist data
+            const artistInfo = artistData[imageName];
+            console.log('Artist info found:', artistInfo);
+            if (artistInfo) {
+              console.log('Opening popup for:', artistInfo.name);
+              showArtistPopup(artistInfo);
+            } else {
+              console.log('No artist info found for:', imageName);
+            }
+          } else {
+            console.log('Image is not clickable');
+          }
+        } else {
+          console.log('No objects intersected');
+        }
+      }
 
       // Preload all images in parallel for faster loading
       function preloadImages() {
@@ -737,8 +1152,12 @@
             // Ensure images render in front of lines
             plane.renderOrder = 1;
 
-            // Store reference for billboard behavior
-            plane.userData = { isBillboard: true };
+            // Store reference for billboard behavior and artist data
+            plane.userData = { 
+              isBillboard: true, 
+              artist: artist,
+              isClickable: isClickableImage(artist.path)
+            };
             imagePlanes.push(plane);
             scene.add(plane);
           });
@@ -810,7 +1229,7 @@
             // Create line material with optimized settings
             const material = new THREE.LineBasicMaterial({
               color: 0x666666,
-              transparent: true,
+        transparent: true,
               opacity: 0.4,
               linewidth: 1,
               depthTest: true,
@@ -963,6 +1382,354 @@
 
       // Start animation
       animate();
+      
+      // ASCII Particles System with Clickable Popups
+      class ASCIIParticles {
+        constructor(canvas) {
+          this.canvas = canvas;
+          this.ctx = canvas.getContext('2d');
+          this.structures = [];
+          this.animationId = null;
+          
+          // Configuration
+          this.config = {
+            maxStructures: 6,
+            fontSize: 12,
+            fade: 0.08,
+            color: 'rgba(51, 51, 51, 0.8)',
+            fontFamily: 'SourceCodePro, monospace',
+            writeSpeed: 0.05,
+            eraseSpeed: 0.04,
+            structureLifetime: 3000,
+            spawnRate: 0.02,
+            typewriterSound: true
+          };
+          
+          // ASCII art patterns for background only
+          this.asciiPatterns = [
+            ['  +---+', '  |   |', '  +---+'],
+            ['   /\\', '  /  \\', ' /____\\'],
+            ['  *', ' ***', '*****', ' ***', '  *'],
+            ['[OK]', 'LOAD', 'RUN'],
+            ['     _______', '    |.-----.|', '    ||     ||', '    ||_____/|', '    | .     |', '    |-|-  oo|', '    |  _ _  |', '    |       /', '    `""""""`'],
+            ['    =/\\                 /\\=', '    / \\._   (\\_/)   _./\\', '   / .\'\'._\'--(o.o)--\'_.\'\'\\', '  /.\' _/ |`=/ " \\=`| \\_ `.\\', ' /` .\' \\;-,\'\\___/\',-;/ `. \'\\', '/.-\'      `\\(-V-)/`       `-.\\', '`            "   "'],
+            [' ________________________', '|.----------------------.|', '||                      ||', '||       ______         ||', '||     .;;;;;;;;.       ||', '||    /;;;;;;;;;;;\\     ||', '||   /;/`    `-;;;;; . .||', '||   |;|__  __  \\;;;|   ||', '||.-.|;| e`/e`  |;;;|   ||', '||   |;|  |     |;;;|\\\'--||', '||   |;|  \\\'-    |;;;|   ||', '||   |;;\\ --\'  /|;;;|   ||', '||   |;;;;;---\'\\|;;;|   ||', '||   |;;;;|     |;;;|   ||', '||   |;;.-\'     |;;;|   ||', '||\\\'--|/`        |;;;|--.||', '||;;;;    .     ;;;;.\\;;||', '||;;;;;-.;_    /.-;;;;;;||', '||;;;;;;;;;;;;;;;;;;;;;;||', '||jgs;;;;;;;;;;;;;;;;;;;||', '\\\'------------------------\\\'']
+          ];
+          
+          // Artist information database
+          this.artists = [
+            {
+              name: 'Anat Saacks',
+              title: 'A Bird to Remember',
+              medium: 'Photo, wooden and plexiglass box, stones, digital projection, LLM, 2025',
+              description: 'A realistic photo of a bird, found dead at the entrance to the artist\'s home, stands at the heart of a conversation with an AI-powered language model (LLM), which operates as an emotion- simulating entity that is asked to respond to casual loss. The work underscores the emotional gap between humans and machines: between direct documentation of death and an algorithm that offers what it identifies as emotion, solace, interpretation, and memory.',
+              bio: 'Saaks is a graphic designer and visual artist. She is a lecturer at HIT Holon Institute of Technology, the owner of A designstudio for design and branding, as well as a social activist and volunteer at a mental health organization.',
+              images: [
+                'assets/Artists/Anat Saacks/AS02 - anat saacks.jpg',
+                'assets/Artists/Anat Saacks/AS03 - anat saacks.jpg',
+                'assets/Artists/Anat Saacks/AS04 - anat saacks.jpg',
+                'assets/Artists/Anat Saacks/AS05 - anat saacks.jpg',
+                'assets/Artists/Anat Saacks/Anat Saacks.jpg'
+              ]
+            },
+            {
+              name: 'Chenn Hearthstone',
+              title: 'Bill of Rights',
+              medium: 'ChatGPT, Fooocus, Runway, Illustrator, 2025',
+              description: 'Imagine a future world with robots that develop sophisticated emotions and humans upload their consciousness to the digital cloud. What would the concept of "human rights" look like in such a world? The work presents a new bill of rights, created after a deep conversation with ChatGPT about the new complexities of this hypothetical world. The conversation led to the formulation of five basic rights that apply to anyone who exists in any shape or form of life – be it human or mechanical.',
+              bio: 'Chenn Hearthstone is a visual artist who started working with digital tools recently, after being diagnosed with a genetic syndrome that affects her ability to rely predominantly on her hands.',
+              images: [
+                'assets/Artists/Chenn Hearthstone/Chenn Hearthstone_placeholder.png'
+              ],
+              videoLink: 'https://www.youtube.com/watch?v=dAo9QeZ5zxo'
+            }
+          ];
+          
+          this.init();
+        }
+        
+        init() {
+          this.resize();
+          this.start();
+          
+          // Handle window resize
+          window.addEventListener('resize', () => this.resize());
+          
+          // Handle visibility change
+          document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+              this.stop();
+            } else {
+              this.start();
+            }
+          });
+          
+          // Click handling is now done in Three.js scene
+        }
+        
+        resize() {
+          const dpr = Math.min(window.devicePixelRatio || 1, 2);
+          this.canvas.width = window.innerWidth * dpr;
+          this.canvas.height = window.innerHeight * dpr;
+          this.canvas.style.width = window.innerWidth + 'px';
+          this.canvas.style.height = window.innerHeight + 'px';
+          this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        }
+        
+        createStructure() {
+          const pattern = this.asciiPatterns[Math.floor(Math.random() * this.asciiPatterns.length)];
+          const maxWidth = Math.max(...pattern.map(line => line.length));
+          const maxHeight = pattern.length;
+          
+          const totalChars = pattern.reduce((sum, line) => sum + line.length, 0);
+          
+          return {
+            pattern: pattern,
+            x: Math.random() * (this.canvas.width - maxWidth * this.config.fontSize),
+            y: Math.random() * (this.canvas.height - maxHeight * this.config.fontSize),
+            maxWidth: maxWidth,
+            maxHeight: maxHeight,
+            writeProgress: 0,
+            eraseProgress: 0,
+            state: 'writing',
+            startTime: Date.now(),
+            totalChars: totalChars,
+            currentChar: 0,
+            lastCharTime: 0,
+            charDelay: 50
+          };
+        }
+        
+        updateStructure(structure) {
+          const now = Date.now();
+          const elapsed = now - structure.startTime;
+          
+          if (structure.state === 'writing') {
+            if (now - structure.lastCharTime >= structure.charDelay && structure.currentChar < structure.totalChars) {
+              structure.currentChar++;
+              structure.lastCharTime = now;
+            }
+            
+            structure.writeProgress = structure.currentChar / structure.totalChars;
+            
+            if (structure.writeProgress >= 1) {
+              structure.writeProgress = 1;
+              structure.state = 'visible';
+              structure.visibleTime = now;
+            }
+          } else if (structure.state === 'visible') {
+            if (elapsed > this.config.structureLifetime) {
+              structure.state = 'erasing';
+            }
+          } else if (structure.state === 'erasing') {
+            if (now - structure.lastCharTime >= structure.charDelay && structure.currentChar > 0) {
+              structure.currentChar--;
+              structure.lastCharTime = now;
+            }
+            
+            structure.eraseProgress = 1 - (structure.currentChar / structure.totalChars);
+            
+            if (structure.eraseProgress >= 1) {
+              return false;
+            }
+          }
+          
+          return true;
+        }
+        
+        drawStructure(structure) {
+          this.ctx.font = `${this.config.fontSize}px ${this.config.fontFamily}`;
+          this.ctx.fillStyle = this.config.color;
+          this.ctx.textAlign = 'left';
+          this.ctx.textBaseline = 'top';
+          
+          let charCount = 0;
+          
+          for (let row = 0; row < structure.pattern.length; row++) {
+            const line = structure.pattern[row];
+            const y = structure.y + row * this.config.fontSize;
+            
+            for (let col = 0; col < line.length; col++) {
+              const char = line[col];
+              const x = structure.x + col * this.config.fontSize;
+              
+              if (structure.state === 'writing') {
+                if (charCount < structure.currentChar) {
+                  this.ctx.fillText(char, x, y);
+                }
+              } else if (structure.state === 'visible') {
+                this.ctx.fillText(char, x, y);
+              } else if (structure.state === 'erasing') {
+                if (charCount >= structure.currentChar) {
+                  this.ctx.fillText(char, x, y);
+                }
+              }
+              
+              charCount++;
+            }
+          }
+        }
+        
+        drawClickableArea() {
+          // No longer needed - using HTML clickable areas instead
+        }
+        
+        handleArtistClick(artistName) {
+          console.log('Artist clicked:', artistName);
+          const artist = this.artists.find(a => a.name === artistName);
+          if (artist) {
+            console.log('Opening popup for:', artistName);
+            this.showArtistPopup(artist);
+          } else {
+            console.log('Artist not found:', artistName);
+          }
+        }
+        
+        showArtistPopup(artist) {
+          console.log('showArtistPopup called with:', artist);
+          
+          // Remove existing popup
+          const existingPopup = document.querySelector('.popup-overlay');
+          if (existingPopup) {
+            console.log('Removing existing popup');
+            existingPopup.remove();
+          }
+          
+          // Create popup overlay
+          const overlay = document.createElement('div');
+          overlay.className = 'popup-overlay';
+          console.log('Created overlay element');
+          
+          // Create popup content with carousel
+          const popup = document.createElement('div');
+          popup.className = 'popup';
+          popup.innerHTML = `
+            <button class="popup-close">&times;</button>
+            <h2>${artist.name}</h2>
+            <h3>${artist.title}</h3>
+            <p><strong>Medium:</strong> ${artist.medium}</p>
+            <p>${artist.description}</p>
+            <p><strong>About the Artist:</strong><br>${artist.bio}</p>
+            
+            ${artist.videoLink ? `
+              <div style="margin: 20px 0;">
+                <h4>Video:</h4>
+                <div style="position: relative; width: 100%; height: 0; padding-bottom: 56.25%; margin: 10px 0;">
+                  <iframe 
+                    src="${artist.videoLink.replace('watch?v=', 'embed/')}" 
+                    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; border-radius: 8px;"
+                    allowfullscreen>
+                  </iframe>
+                </div>
+                <p style="text-align: center; margin-top: 10px;">
+                  <a href="${artist.videoLink}" target="_blank" style="color: #666; text-decoration: none; font-size: 14px;">
+                    Open in YouTube ↗
+                  </a>
+                </p>
+              </div>
+            ` : ''}
+            
+            <div style="margin-top: 20px;">
+              <div id="carousel-container" style="position: relative; width: 100%; height: 60vh; overflow: hidden; border: 1px solid #ddd; border-radius: 4px;">
+                <img id="carousel-image" src="${artist.images[0]}" style="width: 100%; height: 100%; object-fit: cover;" />
+                ${artist.images.length > 1 ? `
+                  <button id="carousel-prev" style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.7); color: white; border: none; padding: 15px; cursor: pointer; border-radius: 50%; font-size: 18px; font-weight: bold;">&lt;</button>
+                  <button id="carousel-next" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.7); color: white; border: none; padding: 15px; cursor: pointer; border-radius: 50%; font-size: 18px; font-weight: bold;">&gt;</button>
+                  <div id="carousel-indicators" style="position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px;">
+                    ${artist.images.map((_, index) => `<div class="indicator" style="width: 12px; height: 12px; border-radius: 50%; background: ${index === 0 ? '#333' : '#ccc'}; cursor: pointer; transition: background 0.3s;"></div>`).join('')}
+                  </div>
+                ` : ''}
+              </div>
+            </div>
+          `;
+          
+          overlay.appendChild(popup);
+          document.body.appendChild(overlay);
+          console.log('Popup added to DOM');
+          console.log('Overlay element:', overlay);
+          console.log('Popup element:', popup);
+          console.log('Body children count:', document.body.children.length);
+          
+          // Carousel functionality (only if multiple images)
+          if (artist.images.length > 1) {
+            let currentImageIndex = 0;
+            const carouselImage = popup.querySelector('#carousel-image');
+            const indicators = popup.querySelectorAll('.indicator');
+            
+            const updateCarousel = (index) => {
+              carouselImage.src = artist.images[index];
+              indicators.forEach((indicator, i) => {
+                indicator.style.background = i === index ? '#333' : '#ccc';
+              });
+              currentImageIndex = index;
+            };
+            
+            popup.querySelector('#carousel-prev').addEventListener('click', () => {
+              const newIndex = currentImageIndex > 0 ? currentImageIndex - 1 : artist.images.length - 1;
+              updateCarousel(newIndex);
+            });
+            
+            popup.querySelector('#carousel-next').addEventListener('click', () => {
+              const newIndex = currentImageIndex < artist.images.length - 1 ? currentImageIndex + 1 : 0;
+              updateCarousel(newIndex);
+            });
+            
+            indicators.forEach((indicator, index) => {
+              indicator.addEventListener('click', () => {
+                updateCarousel(index);
+              });
+            });
+          }
+          
+          // Close popup handlers
+          const closePopup = () => {
+            overlay.remove();
+          };
+          
+          popup.querySelector('.popup-close').addEventListener('click', closePopup);
+          overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) closePopup();
+          });
+        }
+        
+        animate() {
+          this.ctx.fillStyle = `rgba(192, 208, 208, ${this.config.fade})`;
+          this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+          
+          if (this.structures.length < this.config.maxStructures && Math.random() < this.config.spawnRate) {
+            this.structures.push(this.createStructure());
+          }
+          
+          this.structures = this.structures.filter(structure => {
+            const keep = this.updateStructure(structure);
+            if (keep) {
+              this.drawStructure(structure);
+            }
+            return keep;
+          });
+          
+          // No longer drawing clickable area - using HTML areas instead
+          
+          this.animationId = requestAnimationFrame(() => this.animate());
+        }
+        
+        start() {
+          if (!this.animationId) {
+            this.animate();
+          }
+        }
+        
+        stop() {
+          if (this.animationId) {
+            cancelAnimationFrame(this.animationId);
+            this.animationId = null;
+          }
+        }
+      }
+      
+      // Initialize ASCII particles
+      const asciiCanvas = document.getElementById('ascii-canvas');
+      const asciiParticles = new ASCIIParticles(asciiCanvas);
     </script>
   </body>
 </html>
