@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>memory_almost_full</title>
+    <style>
+      @font-face {
+        font-family: "SourceCodePro";
+        src: url("assets/SourceCodePro-VariableFont_wght.ttf")
+          format("truetype");
+      }
+      @font-face {
+        font-family: "IBMPlexMono";
+        src: url("assets/IBMPlexMono-Light.ttf") format("truetype");
+      }
+      body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        font-family: Arial, sans-serif;
+        background-color: #e3dbcf;
+        position: relative;
+      }
+      canvas {
+        display: block;
+        opacity: 0;
+        transition: opacity 2s ease-in;
+      }
+
+      canvas.fade-in {
+        opacity: 1;
+      }
+      header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 50px;
+        z-index: 100;
+        display: flex;
+        align-items: center;
+        padding: 0 10px;
+      }
+
+      header::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #e3dbcf;
+        opacity: 0.8;
+        z-index: -1;
+      }
+
+      header::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background-image: linear-gradient(
+          to right,
+          black 0%,
+          black 60%,
+          transparent 60%,
+          transparent 100%
+        );
+        background-size: 20px 2px;
+        background-repeat: repeat-x;
+      }
+
+      #title {
+        color: black;
+        font-size: 24px;
+        font-weight: regular;
+        font-family: "IBMPlexMono", monospace;
+        text-align: left;
+        letter-spacing: 2px;
+        transform: scaleY(1.5) translateY(-3px);
+        transform-origin: center left;
+        margin: 0;
+        position: relative;
+        z-index: 101;
+      }
+
+      .logos {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        display: flex;
+        gap: 15px;
+        z-index: 101;
+        align-items: center;
+      }
+
+      .logo {
+        height: 80px;
+        width: auto;
+        opacity: 0.9;
+        transition: opacity 0.3s ease;
+      }
+
+      .logo:hover {
+        opacity: 1;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div id="title">memory_almost_full</div>
+    </header>
+    <div class="logos">
+      <img src="assets/LOGO2.001.png" alt="Logo" class="logo" />
+      <img src="assets/Artists/hit_logo_bil.png" alt="HIT Logo" class="logo" />
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script>
+      // Scene setup
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(
+        75,
+        window.innerWidth / window.innerHeight,
+        0.1,
+        1000
+      );
+      const renderer = new THREE.WebGLRenderer({
+        antialias: false, // Disable antialiasing for better performance
+        powerPreference: "high-performance", // Use dedicated GPU if available
+        alpha: true, // Enable transparency
+      });
+      renderer.shadowMap.enabled = false; // Disable shadows for better performance
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Limit pixel ratio for performance
+
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setClearColor(0x000000, 0); // Transparent background
+      document.body.appendChild(renderer.domElement);
+
+      // Lighting with shadows
+      const ambientLight = new THREE.AmbientLight(0x404040, 0.6);
+      scene.add(ambientLight);
+
+      const directionalLight = new THREE.DirectionalLight(0xffffff, 0.4);
+      directionalLight.position.set(5, 5, 5);
+      directionalLight.castShadow = true;
+      directionalLight.shadow.mapSize.width = 1024;
+      directionalLight.shadow.mapSize.height = 1024;
+      scene.add(directionalLight);
+
+      // Artist images as billboard planes
+      const artistImages = [
+        {
+          name: "Anat Saacks",
+          path: "assets/Artists/Anat Saacks/Anat Saacks.jpg",
+        },
+        {
+          name: "Chenn Hearthstone",
+          path: "assets/Artists/Chenn Hearthstone/Chenn Hearthstone_placeholder.png",
+        },
+        {
+          name: "Dafna Sartiel",
+          path: "assets/Artists/Dafna Sartiel/Dafna_Sartiel.jpg",
+        },
+        {
+          name: "Eitan Bartal",
+          path: "assets/Artists/Eitan Bartal/EitanBartal_placeholder.png",
+        },
+        {
+          name: "Eyal Datz",
+          path: "assets/Artists/Eyal Datz/Eyal Datz_placeholder.png",
+        },
+        {
+          name: "Eyal Yehowa Gruss",
+          path: "assets/Artists/Eyal Yehowa Gruss/Eyal Yehowa Gruss_placeholder.png",
+        },
+        {
+          name: "Gilad Friedman",
+          path: "assets/Artists/Gilad Friedman/Gilad Fridman.jpg",
+        },
+        {
+          name: "Haya Sheffer",
+          path: "assets/Artists/Haya Sheffer/Haya Sheffer.jpg",
+        },
+        {
+          name: "Naama Steinbock",
+          path: "assets/Artists/Naama Steinbock/Naama Steinbock.jpg",
+        },
+        {
+          name: "Oded Ezer",
+          path: "assets/Artists/Oded Ezer/Oded Ezer_placeholder.png",
+        },
+        {
+          name: "Ofir Liberman",
+          path: "assets/Artists/Ofir Liberman/ofir_liberman.jpg",
+        },
+        {
+          name: "Rony Ginosar",
+          path: "assets/Artists/Rony Ginosar/Rony Ginosar.jpg",
+        },
+        {
+          name: "Shaul Tzemach",
+          path: "assets/Artists/Shaul Tzemach/fbm_b134006708485641932.png",
+        },
+        {
+          name: "Yoav Ruda",
+          path: "assets/Artists/Yoav Ruda/Yoav Ruda_placeholder.png",
+        },
+        {
+          name: "Yonatan Ben-Simhon and Mattan Tenne",
+          path: "assets/Artists/Yonatan Ben-Simhon and Mattan Tenne/yonatan ben-simhon.jpeg",
+        },
+        {
+          name: "Yuval Keshet",
+          path: "assets/Artists/Yuval Keshet/Yuval Keshet.JPG",
+        },
+      ];
+
+      const imagePlanes = [];
+      const textureLoader = new THREE.TextureLoader();
+      const connectionLines = [];
+
+      // Preload all images in parallel for faster loading
+      function preloadImages() {
+        const loadPromises = artistImages.map((artist) => {
+          return new Promise((resolve, reject) => {
+            const texture = textureLoader.load(
+              artist.path,
+              (loadedTexture) => {
+                // Optimize texture settings for better performance
+                loadedTexture.generateMipmaps = false;
+                loadedTexture.minFilter = THREE.LinearFilter;
+                loadedTexture.magFilter = THREE.LinearFilter;
+                loadedTexture.format = THREE.RGBAFormat;
+                loadedTexture.flipY = true;
+
+                resolve({ artist, texture: loadedTexture });
+              },
+              undefined,
+              (error) => {
+                console.warn(`Failed to load image: ${artist.path}`, error);
+                reject(error);
+              }
+            );
+          });
+        });
+
+        return Promise.all(loadPromises);
+      }
+
+      // Function to create window frame texture with image
+      function createWindowFrameTexture(imageTexture, artistName) {
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+
+        // Set canvas size (larger to accommodate frame)
+        const padding = 25; // Space for frame (reduced from 60)
+        const titleBarHeight = 30;
+        const standardImageWidth = 400; // Fixed width for all images
+        const imageWidth = imageTexture.image.width;
+        const imageHeight = imageTexture.image.height;
+
+        // Calculate proportional height based on standard width
+        const proportionalImageHeight =
+          (imageHeight / imageWidth) * standardImageWidth;
+
+        canvas.width = standardImageWidth + padding * 2;
+        canvas.height = proportionalImageHeight + padding * 2 + titleBarHeight;
+
+        // Draw title bar background (gradient like old Windows)
+        const gradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
+        gradient.addColorStop(0, "#0a246a");
+        gradient.addColorStop(1, "#1084d0");
+        ctx.fillStyle = gradient;
+        ctx.fillRect(10, 10, canvas.width - 20, titleBarHeight);
+
+        // Draw title bar text
+        ctx.fillStyle = "white";
+        ctx.font = "bold 14px IBMPlexMono, monospace";
+        ctx.textAlign = "left";
+        ctx.textBaseline = "middle";
+        ctx.fillText(artistName, 15, 10 + titleBarHeight / 2);
+
+        // Draw window control buttons (X, minimize, maximize)
+        const buttonSize = 20;
+        const buttonY = 10 + (titleBarHeight - buttonSize) / 2;
+        const buttonSpacing = 3;
+
+        // Close button (red)
+        ctx.fillStyle = "#d13438";
+        ctx.fillRect(
+          canvas.width - 15 - buttonSize,
+          buttonY,
+          buttonSize,
+          buttonSize
+        );
+        ctx.strokeStyle = "white";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(canvas.width - 15 - buttonSize + 8, buttonY + 8);
+        ctx.lineTo(canvas.width - 15 - 8, buttonY + buttonSize - 8);
+        ctx.moveTo(canvas.width - 15 - 8, buttonY + 8);
+        ctx.lineTo(
+          canvas.width - 15 - buttonSize + 8,
+          buttonY + buttonSize - 8
+        );
+        ctx.stroke();
+
+        // Maximize button (gray)
+        ctx.fillStyle = "#5a5a5a";
+        ctx.fillRect(
+          canvas.width - 15 - buttonSize * 2 - buttonSpacing,
+          buttonY,
+          buttonSize,
+          buttonSize
+        );
+        ctx.strokeStyle = "white";
+        ctx.strokeRect(
+          canvas.width - 15 - buttonSize * 2 - buttonSpacing + 8,
+          buttonY + 8,
+          buttonSize - 16,
+          buttonSize - 16
+        );
+
+        // Minimize button (gray)
+        ctx.fillStyle = "#5a5a5a";
+        ctx.fillRect(
+          canvas.width - 15 - buttonSize * 3 - buttonSpacing * 2,
+          buttonY,
+          buttonSize,
+          buttonSize
+        );
+        ctx.fillStyle = "white";
+        ctx.fillRect(
+          canvas.width - 15 - buttonSize * 3 - buttonSpacing * 2 + 8,
+          buttonY + buttonSize / 2 - 2,
+          buttonSize - 16,
+          4
+        );
+
+        // Draw inner window background (light gray)
+        ctx.fillStyle = "#c0c0c0";
+        ctx.fillRect(
+          10,
+          10 + titleBarHeight,
+          canvas.width - 20,
+          canvas.height - 20 - titleBarHeight
+        );
+
+        // Draw 3D inset border effect for image area
+        const imageX = padding;
+        const imageY = padding + titleBarHeight;
+
+        // Dark shadow (top and left)
+        ctx.strokeStyle = "#808080";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(imageX - 2, imageY + proportionalImageHeight + 2);
+        ctx.lineTo(imageX - 2, imageY - 2);
+        ctx.lineTo(imageX + standardImageWidth + 2, imageY - 2);
+        ctx.stroke();
+
+        // Light highlight (bottom and right)
+        ctx.strokeStyle = "#ffffff";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(imageX - 2, imageY + proportionalImageHeight + 2);
+        ctx.lineTo(
+          imageX + standardImageWidth + 2,
+          imageY + proportionalImageHeight + 2
+        );
+        ctx.lineTo(imageX + standardImageWidth + 2, imageY - 2);
+        ctx.stroke();
+
+        // Draw the actual image (scaled to standard width)
+        ctx.drawImage(
+          imageTexture.image,
+          imageX,
+          imageY,
+          standardImageWidth,
+          proportionalImageHeight
+        );
+
+        return canvas;
+      }
+
+      // Create all image planes after preloading
+      preloadImages()
+        .then((loadedTextures) => {
+          loadedTextures.forEach(({ artist, texture }) => {
+            // Create window frame with image
+            const framedCanvas = createWindowFrameTexture(texture, artist.name);
+
+            // Create texture from the framed canvas
+            const framedTexture = new THREE.CanvasTexture(framedCanvas);
+            framedTexture.generateMipmaps = false;
+            framedTexture.minFilter = THREE.LinearFilter;
+            framedTexture.magFilter = THREE.LinearFilter;
+
+            // Calculate aspect ratio from framed canvas
+            const aspectRatio = framedCanvas.width / framedCanvas.height;
+            const baseHeight = 3.5; // Slightly larger to accommodate frame
+            const width = baseHeight * aspectRatio;
+
+            // Create geometry with proper aspect ratio
+            const geometry = new THREE.PlaneGeometry(width, baseHeight);
+
+            const material = new THREE.MeshBasicMaterial({
+              map: framedTexture,
+              transparent: true,
+              opacity: 0.95,
+              side: THREE.DoubleSide,
+              alphaTest: 0.1, // Optimize transparency rendering
+            });
+
+            const plane = new THREE.Mesh(geometry, material);
+
+            // Random position in 3D space
+            plane.position.set(
+              (Math.random() - 0.5) * 30,
+              (Math.random() - 0.5) * 20,
+              (Math.random() - 0.5) * 30
+            );
+
+            // Ensure images render in front of lines
+            plane.renderOrder = 1;
+
+            // Store reference for billboard behavior
+            plane.userData = { isBillboard: true };
+            imagePlanes.push(plane);
+            scene.add(plane);
+          });
+
+          // Create connections after all images are loaded
+          createConnections();
+
+          // Trigger fade-in effect once everything is loaded
+          setTimeout(() => {
+            renderer.domElement.classList.add("fade-in");
+            // Start rotation animation after fade-in begins
+            rotationStartTime = Date.now();
+            isRotating = true;
+          }, 100); // Small delay to ensure everything is rendered
+        })
+        .catch((error) => {
+          console.error("Error loading images:", error);
+          // Still trigger fade-in even if some images fail to load
+          setTimeout(() => {
+            renderer.domElement.classList.add("fade-in");
+            // Start rotation animation after fade-in begins
+            rotationStartTime = Date.now();
+            isRotating = true;
+          }, 100);
+        });
+
+      // Function to create connections between images (optimized)
+      function createConnections() {
+        // Reduce number of connections for better performance
+        const maxConnections = Math.min(imagePlanes.length * 0.5, 20); // Limit total connections
+        let connectionCount = 0;
+
+        for (
+          let i = 0;
+          i < imagePlanes.length && connectionCount < maxConnections;
+          i++
+        ) {
+          // Each image connects to 1-2 other images (reduced from 1-3)
+          const numConnections = Math.floor(Math.random() * 2) + 1;
+          const connectedIndices = new Set();
+
+          // Ensure we don't connect to the same image
+          while (
+            connectedIndices.size < numConnections &&
+            connectedIndices.size < imagePlanes.length - 1 &&
+            connectionCount < maxConnections
+          ) {
+            const randomIndex = Math.floor(Math.random() * imagePlanes.length);
+            if (randomIndex !== i) {
+              connectedIndices.add(randomIndex);
+            }
+          }
+
+          // Create lines to connected images
+          connectedIndices.forEach((targetIndex) => {
+            if (connectionCount >= maxConnections) return;
+
+            const startPos = imagePlanes[i].position;
+            const endPos = imagePlanes[targetIndex].position;
+
+            // Create thick dashed line by using multiple parallel lines
+            const direction = new THREE.Vector3().subVectors(endPos, startPos);
+            const length = direction.length();
+            direction.normalize();
+
+            // Create perpendicular vector for thickness
+            const perpendicular = new THREE.Vector3(0, 1, 0);
+            const cross = new THREE.Vector3()
+              .crossVectors(direction, perpendicular)
+              .normalize();
+
+            // Create 3 parallel lines for thickness
+            for (let i = -1; i <= 1; i++) {
+              const offset = cross.clone().multiplyScalar(i * 0.03);
+              const offsetStart = startPos.clone().add(offset);
+              const offsetEnd = endPos.clone().add(offset);
+
+              const points = [offsetStart, offsetEnd];
+
+              const geometry = new THREE.BufferGeometry().setFromPoints(points);
+
+              // Create line material with thick black dashed appearance
+              const material = new THREE.LineDashedMaterial({
+                color: 0x000000,
+                dashSize: 0.15,
+                gapSize: 0.08,
+                depthTest: true,
+                depthWrite: false,
+              });
+
+              const line = new THREE.Line(geometry, material);
+              line.renderOrder = -10; // Render far behind other objects
+              line.frustumCulled = true;
+
+              // Compute line distances for dashed material
+              line.computeLineDistances();
+
+              connectionLines.push(line);
+              scene.add(line);
+            }
+            connectionCount++;
+          });
+        }
+      }
+
+      // Camera position
+      camera.position.z = 15;
+
+      // Simplified orbit controls
+      const controls = new THREE.OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.05;
+      controls.enableZoom = true;
+      controls.enablePan = true;
+
+      // Performance optimization variables
+      const frustum = new THREE.Frustum();
+      const cameraMatrix = new THREE.Matrix4();
+
+      // Rotation animation variables
+      let rotationStartTime = null;
+      const rotationDuration = 3000; // 3 seconds in milliseconds
+      let isRotating = false;
+
+      // Easing function for smooth rotation (ease-in-out)
+      function easeInOutCubic(t) {
+        return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+      }
+
+      // Optimized animation loop
+      function animate() {
+        requestAnimationFrame(animate);
+
+        // Update camera matrix for frustum culling
+        cameraMatrix.multiplyMatrices(
+          camera.projectionMatrix,
+          camera.matrixWorldInverse
+        );
+        frustum.setFromProjectionMatrix(cameraMatrix);
+
+        // Handle rotation animation
+        if (isRotating && rotationStartTime !== null) {
+          const currentTime = Date.now();
+          const elapsed = currentTime - rotationStartTime;
+          const progress = Math.min(elapsed / rotationDuration, 1);
+
+          if (progress < 1) {
+            // Apply easing and rotate around Y-axis
+            const easedProgress = easeInOutCubic(progress);
+            const rotationAngle = (easedProgress * Math.PI) / 4; // Rotate 45 degrees (π/4 radians) to the left
+
+            // Rotate the entire scene around Y-axis
+            scene.rotation.y = rotationAngle;
+          } else {
+            // Animation complete
+            isRotating = false;
+            scene.rotation.y = Math.PI / 4; // Final rotation position
+          }
+        }
+
+        // Optimized billboard behavior with frustum culling
+        imagePlanes.forEach((plane) => {
+          // Only update billboard behavior if plane is in view
+          if (frustum.intersectsObject(plane)) {
+            plane.lookAt(camera.position);
+            plane.visible = true;
+          } else {
+            plane.visible = false; // Hide objects outside frustum
+          }
+        });
+
+        controls.update();
+        renderer.render(scene, camera);
+      }
+
+      // Optimized window resize handler
+      window.addEventListener("resize", () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      });
+
+      // Start animation
+      animate();
+    </script>
+  </body>
+</html>
