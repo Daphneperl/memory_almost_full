@@ -19,13 +19,32 @@
         padding: 0;
         overflow: hidden;
         font-family: Arial, sans-serif;
-        background-color: #e3dbcf;
+        background: radial-gradient(
+            circle at 30% 25%,
+            rgba(69, 62, 29, 0.2) 0%,
+            rgba(66, 51, 29, 0) 40%
+          ),
+          radial-gradient(
+            ellipse at 50% 50%,
+            #f8f0e4 0%,
+            #ede4d8 20%,
+            #e3dbcf 35%,
+            #d0c7bb 50%,
+            #bdb4a8 70%,
+            #a59c90 90%,
+            #8d8478 100%
+          ),
+          url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="1.5" numOctaves="6" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter><rect width="600" height="600" filter="url(%23noise)" opacity="0.75"/></svg>');
+        background-blend-mode: normal, multiply, multiply;
+        background-size: cover, cover, 200px 200px;
         position: relative;
       }
       canvas {
         display: block;
         opacity: 0;
         transition: opacity 2s ease-in;
+        position: relative;
+        z-index: 2; /* Above ASCII elements */
       }
 
       canvas.fade-in {
@@ -107,15 +126,213 @@
       .logo:hover {
         opacity: 1;
       }
+
+      /* ASCII Framing Elements */
+      .ascii-frame {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 1; /* Behind the 3D canvas but above background */
+        font-family: "SourceCodePro", monospace;
+        font-size: 16px;
+        color: rgba(
+          139,
+          132,
+          120,
+          0.6
+        ); /* Increased opacity for better visibility */
+        line-height: 1;
+        overflow: hidden;
+      }
+
+      /* Top border frame */
+      .ascii-top-frame {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        right: 20px;
+        white-space: nowrap;
+        font-size: 14px;
+        letter-spacing: 1px;
+        font-weight: 300;
+      }
+
+      /* Bottom border frame */
+      .ascii-bottom-frame {
+        position: absolute;
+        bottom: 20px;
+        left: 20px;
+        right: 20px;
+        white-space: nowrap;
+        font-size: 14px;
+        letter-spacing: 1px;
+        font-weight: 300;
+        text-align: right;
+      }
+
+      /* Left border frame */
+      .ascii-left-frame {
+        position: absolute;
+        top: 60px;
+        bottom: 60px;
+        left: 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: flex-start;
+        font-size: 16px;
+        line-height: 1.2;
+        writing-mode: vertical-lr;
+        text-orientation: mixed;
+      }
+
+      /* Right border frame */
+      .ascii-right-frame {
+        position: absolute;
+        top: 60px;
+        bottom: 60px;
+        right: 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: flex-end;
+        font-size: 16px;
+        line-height: 1.2;
+        writing-mode: vertical-rl;
+        text-orientation: mixed;
+      }
+
+      /* Corner decorations */
+      .ascii-corner {
+        position: absolute;
+        font-size: 18px;
+        font-weight: 300;
+      }
+
+      .ascii-corner-tl {
+        top: 15px;
+        left: 15px;
+      }
+
+      .ascii-corner-tr {
+        top: 15px;
+        right: 15px;
+      }
+
+      .ascii-corner-bl {
+        bottom: 15px;
+        left: 15px;
+      }
+
+      .ascii-corner-br {
+        bottom: 15px;
+        right: 15px;
+      }
+
+      /* Responsive adjustments */
+      @media (max-width: 768px) {
+        .ascii-frame {
+          font-size: 12px;
+        }
+        .ascii-top-frame,
+        .ascii-bottom-frame {
+          font-size: 12px;
+          left: 15px;
+          right: 15px;
+        }
+        .ascii-left-frame,
+        .ascii-right-frame {
+          font-size: 14px;
+          left: 15px;
+          right: 15px;
+        }
+        .ascii-corner {
+          font-size: 16px;
+        }
+      }
     </style>
   </head>
   <body>
+    <!-- ASCII Framing Elements -->
+    <div class="ascii-frame">
+      <!-- Corner decorations -->
+      <div class="ascii-corner ascii-corner-tl">+</div>
+      <div class="ascii-corner ascii-corner-tr">+</div>
+      <div class="ascii-corner ascii-corner-bl">+</div>
+      <div class="ascii-corner ascii-corner-br">+</div>
+
+      <!-- Top border frame -->
+      <div class="ascii-top-frame">
+        ////////----////////----////////----////////----////////----////////
+      </div>
+
+      <!-- Bottom border frame -->
+      <div class="ascii-bottom-frame">
+        ////////----////////----////////----////////----////////----////////
+      </div>
+
+      <!-- Left border frame -->
+      <div class="ascii-left-frame">
+        <span>|</span>
+        <span>.</span>
+        <span>.</span>
+        <span>.</span>
+        <span>.</span>
+        <span>.</span>
+        <span>.</span>
+        <span>.</span>
+        <span>.</span>
+        <span>.</span>
+        <span>.</span>
+        <span>.</span>
+        <span>.</span>
+        <span>.</span>
+        <span>.</span>
+        <span>.</span>
+        <span>.</span>
+        <span>.</span>
+        <span>.</span>
+        <span>|</span>
+      </div>
+
+      <!-- Right border frame -->
+      <div class="ascii-right-frame">
+        <span>|</span>
+        <span>.</span>
+        <span>.</span>
+        <span>.</span>
+        <span>.</span>
+        <span>.</span>
+        <span>.</span>
+        <span>.</span>
+        <span>.</span>
+        <span>.</span>
+        <span>.</span>
+        <span>.</span>
+        <span>.</span>
+        <span>.</span>
+        <span>.</span>
+        <span>.</span>
+        <span>.</span>
+        <span>.</span>
+        <span>.</span>
+        <span>|</span>
+      </div>
+    </div>
+
     <header>
       <div id="title">memory_almost_full</div>
     </header>
     <div class="logos">
       <img src="assets/LOGO2.001.png" alt="Logo" class="logo" />
-      <img src="assets/Artists/hit_logo_bil.png" alt="HIT Logo" class="logo" />
+      <img
+        src="assets/logos/HIT/hit_logo_bil.png"
+        alt="HIT Logo"
+        class="logo"
+      />
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
@@ -614,6 +831,32 @@
 
       // Start animation
       animate();
+
+      // Delicate mouse-tracking gradient effect
+      document.addEventListener("mousemove", (event) => {
+        const x = (event.clientX / window.innerWidth) * 100;
+        const y = (event.clientY / window.innerHeight) * 100;
+
+        document.body.style.background = `
+          radial-gradient(
+            circle at ${x}% ${y}%,
+            rgba(255, 255, 255, 0.25) 0%,
+            rgba(255, 255, 255, 0) 35%
+          ),
+          radial-gradient(
+            ellipse at 50% 50%,
+            #f8f0e4 0%,
+            #ede4d8 20%,
+            #e3dbcf 35%,
+            #d0c7bb 50%,
+            #bdb4a8 70%,
+            #a59c90 90%,
+            #8d8478 100%
+          ),
+          url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="1.5" numOctaves="6" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter><rect width="600" height="600" filter="url(%23noise)" opacity="0.75"/></svg>')`;
+        document.body.style.backgroundBlendMode = "normal, multiply, multiply";
+        document.body.style.backgroundSize = "cover, cover, 200px 200px";
+      });
     </script>
   </body>
 </html>
