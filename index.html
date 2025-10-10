@@ -403,28 +403,84 @@
       renderer.setClearColor(0x000000, 0); // Transparent background
       document.body.appendChild(renderer.domElement);
 
-      // Add double-click handler to Three.js canvas
-      renderer.domElement.addEventListener("dblclick", onImageClick);
+      // Global variables for interaction handling
+      let isDragging = false;
+      let touchStartTime = 0;
+      let touchStartX = 0;
+      let touchStartY = 0;
+      let lastClickTime = 0;
 
-      // Add touch support for mobile devices (double-tap)
+      // Mouse events for desktop
+      renderer.domElement.addEventListener("mousedown", (event) => {
+        isDragging = false;
+        touchStartTime = Date.now();
+        touchStartX = event.clientX;
+        touchStartY = event.clientY;
+      });
+
+      renderer.domElement.addEventListener("mousemove", (event) => {
+        if (touchStartTime > 0) {
+          const distance = Math.sqrt(
+            Math.pow(event.clientX - touchStartX, 2) +
+              Math.pow(event.clientY - touchStartY, 2)
+          );
+          if (distance > 5) {
+            isDragging = true;
+          }
+        }
+      });
+
+      renderer.domElement.addEventListener("mouseup", (event) => {
+        if (!isDragging && touchStartTime > 0) {
+          const duration = Date.now() - touchStartTime;
+          if (duration < 300) {
+            if (!isMobile) {
+              // Desktop: double-click detection
+              const currentTime = Date.now();
+              if (currentTime - lastClickTime < 500) {
+                onImageClick(event);
+              }
+              lastClickTime = currentTime;
+            } else {
+              // Mobile: single click
+              onImageClick(event);
+            }
+          }
+        }
+        touchStartTime = 0;
+        isDragging = false;
+      });
+
+      // Touch events for mobile
       if (isMobile) {
-        let touchStartTime = 0;
-        let touchCount = 0;
+        renderer.domElement.addEventListener("touchstart", (event) => {
+          isDragging = false;
+          touchStartTime = Date.now();
+          touchStartX = event.touches[0].clientX;
+          touchStartY = event.touches[0].clientY;
+        });
+
+        renderer.domElement.addEventListener("touchmove", (event) => {
+          if (touchStartTime > 0) {
+            const distance = Math.sqrt(
+              Math.pow(event.touches[0].clientX - touchStartX, 2) +
+                Math.pow(event.touches[0].clientY - touchStartY, 2)
+            );
+            if (distance > 5) {
+              isDragging = true;
+            }
+          }
+        });
 
         renderer.domElement.addEventListener("touchend", (event) => {
-          event.preventDefault();
-          const currentTime = Date.now();
-
-          if (currentTime - touchStartTime < 300) {
-            touchCount++;
-            if (touchCount === 2) {
+          if (!isDragging && touchStartTime > 0) {
+            const duration = Date.now() - touchStartTime;
+            if (duration < 300) {
               onImageClick(event);
-              touchCount = 0;
             }
-          } else {
-            touchCount = 1;
           }
-          touchStartTime = currentTime;
+          touchStartTime = 0;
+          isDragging = false;
         });
       }
 
@@ -1218,9 +1274,9 @@
         },
       };
 
-      // Double-click handler for Three.js images
+      // Click/tap handler for Three.js images
       function onImageClick(event) {
-        console.log("Three.js canvas double-clicked!");
+        console.log("Three.js canvas clicked/tapped!", event.type);
 
         // Calculate mouse position in normalized device coordinates
         const rect = renderer.domElement.getBoundingClientRect();
@@ -1533,13 +1589,24 @@
       controls.enablePan = !isMobile; // Disable pan on mobile for better touch experience
       controls.enableRotate = true;
 
-      // Adjust controls for mobile
+      // Adjust controls for mobile - allow both rotation and our custom handlers
       if (isMobile) {
         controls.touches = {
           ONE: THREE.TOUCH.ROTATE,
           TWO: THREE.TOUCH.DOLLY_PAN,
         };
         controls.enableKeys = false; // Disable keyboard controls on mobile
+
+        // Add a small delay to distinguish between rotation and tap
+        controls.addEventListener("start", () => {
+          isDragging = true;
+        });
+
+        controls.addEventListener("end", () => {
+          setTimeout(() => {
+            isDragging = false;
+          }, 100);
+        });
       }
 
       // Performance optimization variables
