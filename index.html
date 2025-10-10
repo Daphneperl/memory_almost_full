@@ -403,84 +403,75 @@
       renderer.setClearColor(0x000000, 0); // Transparent background
       document.body.appendChild(renderer.domElement);
 
-      // Global variables for interaction handling
-      let isDragging = false;
-      let touchStartTime = 0;
-      let touchStartX = 0;
-      let touchStartY = 0;
-      let lastClickTime = 0;
+      // Add double-click handler to Three.js canvas (desktop)
+      if (!isMobile) {
+        renderer.domElement.addEventListener("dblclick", onImageClick);
+      } else {
+        // Add double-tap support for mobile devices
+        let lastTapTime = 0;
+        let lastTapX = 0;
+        let lastTapY = 0;
+        let touchStartTime = 0;
+        let touchStartX = 0;
+        let touchStartY = 0;
+        const doubleTapDelay = 400; // Maximum time between taps (ms)
+        const tapMovementThreshold = 30; // Maximum movement for a valid tap (pixels)
 
-      // Mouse events for desktop
-      renderer.domElement.addEventListener("mousedown", (event) => {
-        isDragging = false;
-        touchStartTime = Date.now();
-        touchStartX = event.clientX;
-        touchStartY = event.clientY;
-      });
-
-      renderer.domElement.addEventListener("mousemove", (event) => {
-        if (touchStartTime > 0) {
-          const distance = Math.sqrt(
-            Math.pow(event.clientX - touchStartX, 2) +
-              Math.pow(event.clientY - touchStartY, 2)
-          );
-          if (distance > 5) {
-            isDragging = true;
-          }
-        }
-      });
-
-      renderer.domElement.addEventListener("mouseup", (event) => {
-        if (!isDragging && touchStartTime > 0) {
-          const duration = Date.now() - touchStartTime;
-          if (duration < 300) {
-            if (!isMobile) {
-              // Desktop: double-click detection
-              const currentTime = Date.now();
-              if (currentTime - lastClickTime < 500) {
-                onImageClick(event);
-              }
-              lastClickTime = currentTime;
-            } else {
-              // Mobile: single click
-              onImageClick(event);
-            }
-          }
-        }
-        touchStartTime = 0;
-        isDragging = false;
-      });
-
-      // Touch events for mobile
-      if (isMobile) {
         renderer.domElement.addEventListener("touchstart", (event) => {
-          isDragging = false;
           touchStartTime = Date.now();
           touchStartX = event.touches[0].clientX;
           touchStartY = event.touches[0].clientY;
         });
 
-        renderer.domElement.addEventListener("touchmove", (event) => {
-          if (touchStartTime > 0) {
-            const distance = Math.sqrt(
-              Math.pow(event.touches[0].clientX - touchStartX, 2) +
-                Math.pow(event.touches[0].clientY - touchStartY, 2)
-            );
-            if (distance > 5) {
-              isDragging = true;
-            }
-          }
-        });
-
         renderer.domElement.addEventListener("touchend", (event) => {
-          if (!isDragging && touchStartTime > 0) {
-            const duration = Date.now() - touchStartTime;
-            if (duration < 300) {
-              onImageClick(event);
+          const touchEndTime = Date.now();
+          const touchDuration = touchEndTime - touchStartTime;
+          const touchEndX = event.changedTouches[0].clientX;
+          const touchEndY = event.changedTouches[0].clientY;
+          const touchDistance = Math.sqrt(
+            Math.pow(touchEndX - touchStartX, 2) +
+              Math.pow(touchEndY - touchStartY, 2)
+          );
+
+          // Check if this was a quick tap (not a drag)
+          if (touchDuration < 300 && touchDistance < tapMovementThreshold) {
+            const currentTime = touchEndTime;
+            const timeSinceLastTap = currentTime - lastTapTime;
+
+            // Check if this is close to the last tap position
+            const distanceFromLastTap = Math.sqrt(
+              Math.pow(touchEndX - lastTapX, 2) +
+                Math.pow(touchEndY - lastTapY, 2)
+            );
+
+            // If double-tap detected (within time window and position threshold)
+            if (
+              timeSinceLastTap < doubleTapDelay &&
+              timeSinceLastTap > 0 &&
+              distanceFromLastTap < tapMovementThreshold
+            ) {
+              console.log("Double-tap detected!");
+              event.preventDefault();
+              event.stopPropagation();
+
+              // Create a synthetic event with proper coordinates
+              const syntheticEvent = {
+                clientX: touchEndX,
+                clientY: touchEndY,
+                type: "doubletap",
+              };
+              onImageClick(syntheticEvent);
+
+              // Reset to prevent triple-tap triggering
+              lastTapTime = 0;
+            } else {
+              // First tap or too far from last tap
+              console.log("First tap detected, waiting for second tap...");
+              lastTapTime = currentTime;
+              lastTapX = touchEndX;
+              lastTapY = touchEndY;
             }
           }
-          touchStartTime = 0;
-          isDragging = false;
         });
       }
 
@@ -1589,24 +1580,13 @@
       controls.enablePan = !isMobile; // Disable pan on mobile for better touch experience
       controls.enableRotate = true;
 
-      // Adjust controls for mobile - allow both rotation and our custom handlers
+      // Adjust controls for mobile
       if (isMobile) {
         controls.touches = {
           ONE: THREE.TOUCH.ROTATE,
           TWO: THREE.TOUCH.DOLLY_PAN,
         };
         controls.enableKeys = false; // Disable keyboard controls on mobile
-
-        // Add a small delay to distinguish between rotation and tap
-        controls.addEventListener("start", () => {
-          isDragging = true;
-        });
-
-        controls.addEventListener("end", () => {
-          setTimeout(() => {
-            isDragging = false;
-          }, 100);
-        });
       }
 
       // Performance optimization variables
