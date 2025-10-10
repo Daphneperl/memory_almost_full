@@ -2,7 +2,16 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
     <title>memory_almost_full</title>
     <style>
       @font-face {
@@ -40,6 +49,83 @@
         background-size: cover, cover, 200px 200px;
         position: relative;
       }
+
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        body {
+          overflow-x: hidden;
+        }
+
+        header {
+          height: clamp(35px, 8vh, 50px);
+          padding: 0 8px;
+        }
+
+        .logos {
+          bottom: clamp(8px, 2vh, 20px);
+          right: clamp(8px, 2vw, 20px);
+          gap: clamp(6px, 1.5vw, 15px);
+        }
+
+        .popup {
+          width: 95vw;
+          height: 95vh;
+          padding: 20px;
+          max-width: none;
+          max-height: none;
+        }
+
+        .popup h2 {
+          font-size: 20px;
+        }
+
+        .popup p {
+          font-size: 14px;
+          line-height: 1.3;
+        }
+
+        .popup-close {
+          top: 10px;
+          right: 15px;
+          width: 35px;
+          height: 35px;
+          font-size: 20px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        header {
+          height: clamp(30px, 6vh, 40px);
+          padding: 0 5px;
+        }
+
+        .logos {
+          bottom: clamp(6px, 1.5vh, 12px);
+          right: clamp(6px, 1.5vw, 12px);
+          gap: clamp(4px, 1vw, 8px);
+        }
+
+        .popup {
+          width: 98vw;
+          height: 98vh;
+          padding: 15px;
+        }
+
+        .popup h2 {
+          font-size: 18px;
+        }
+
+        .popup p {
+          font-size: 13px;
+        }
+      }
+
+      @media (min-width: 1200px) {
+        .popup {
+          max-width: 1200px;
+          max-height: 800px;
+        }
+      }
       canvas {
         display: block;
         opacity: 0;
@@ -56,12 +142,12 @@
         top: 0;
         left: 0;
         right: 0;
-        height: 50px;
+        height: clamp(40px, 8vh, 50px);
         z-index: 100;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 0 10px;
+        padding: 0 clamp(8px, 2vw, 10px);
       }
 
       header::before {
@@ -108,11 +194,11 @@
 
       #title {
         color: black;
-        font-size: 24px;
+        font-size: clamp(14px, 4vw, 24px);
         font-weight: regular;
         font-family: "IBMPlexMono", monospace;
         text-align: left;
-        letter-spacing: 2px;
+        letter-spacing: clamp(0.5px, 0.3vw, 2px);
         transform: scaleY(1.5) translateY(-3px);
         transform-origin: center left;
         margin: 0;
@@ -122,11 +208,11 @@
 
       #curation-link {
         color: black;
-        font-size: 12px;
+        font-size: clamp(8px, 2.5vw, 12px);
         font-weight: regular;
         font-family: "IBMPlexMono", monospace;
         text-align: right;
-        letter-spacing: 1.5px;
+        letter-spacing: clamp(0.5px, 0.2vw, 1.5px);
         transform: scaleY(1.5) translateY(-2px);
         transform-origin: center right;
         margin: 0;
@@ -143,16 +229,16 @@
 
       .logos {
         position: fixed;
-        bottom: 20px;
-        right: 20px;
+        bottom: clamp(10px, 3vh, 20px);
+        right: clamp(10px, 3vw, 20px);
         display: flex;
-        gap: 15px;
+        gap: clamp(8px, 2vw, 15px);
         z-index: 101;
         align-items: center;
       }
 
       .logo {
-        height: 80px;
+        height: clamp(30px, 8vw, 80px);
         width: auto;
         opacity: 0.9;
         transition: opacity 0.3s ease;
@@ -267,7 +353,7 @@
     <header>
       <div id="title">memory_almost_full</div>
       <div id="curation-link" onclick="showCurationPopup()">
-        Adi Karelitz's curation
+        Curation: Adi Karelitz
       </div>
     </header>
     <div class="logos">
@@ -284,35 +370,74 @@
     <script>
       // Scene setup
       const scene = new THREE.Scene();
+
+      // Detect mobile device
+      const isMobile =
+        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+          navigator.userAgent
+        ) || window.innerWidth <= 768;
+
+      // Adjust camera FOV for mobile
+      const cameraFOV = isMobile ? 60 : 75;
       const camera = new THREE.PerspectiveCamera(
-        75,
+        cameraFOV,
         window.innerWidth / window.innerHeight,
         0.1,
         1000
       );
+
       const renderer = new THREE.WebGLRenderer({
-        antialias: false, // Disable antialiasing for better performance
-        powerPreference: "high-performance", // Use dedicated GPU if available
+        antialias: !isMobile, // Disable antialiasing on mobile for better performance
+        powerPreference: isMobile ? "low-power" : "high-performance", // Use low-power mode on mobile
         alpha: true, // Enable transparency
       });
       renderer.shadowMap.enabled = false; // Disable shadows for better performance
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Limit pixel ratio for performance
+
+      // Adjust pixel ratio for mobile
+      const pixelRatio = isMobile
+        ? Math.min(window.devicePixelRatio, 1.5)
+        : Math.min(window.devicePixelRatio, 2);
+      renderer.setPixelRatio(pixelRatio);
 
       renderer.setSize(window.innerWidth, window.innerHeight);
       renderer.setClearColor(0x000000, 0); // Transparent background
       document.body.appendChild(renderer.domElement);
 
-      // Add click handler to Three.js canvas
-      renderer.domElement.addEventListener("click", onImageClick);
+      // Add double-click handler to Three.js canvas
+      renderer.domElement.addEventListener("dblclick", onImageClick);
 
-      // Add ASCII frame elements behind the 3D environment
-      const asciiFrame = createASCIIFrame();
-      const asciiDecorations = createASCIIDecorations();
-      document.body.appendChild(asciiFrame);
-      document.body.appendChild(asciiDecorations);
+      // Add touch support for mobile devices (double-tap)
+      if (isMobile) {
+        let touchStartTime = 0;
+        let touchCount = 0;
 
-      // Start ASCII animation
-      startASCIIAnimation();
+        renderer.domElement.addEventListener("touchend", (event) => {
+          event.preventDefault();
+          const currentTime = Date.now();
+
+          if (currentTime - touchStartTime < 300) {
+            touchCount++;
+            if (touchCount === 2) {
+              onImageClick(event);
+              touchCount = 0;
+            }
+          } else {
+            touchCount = 1;
+          }
+          touchStartTime = currentTime;
+        });
+      }
+
+      // Add ASCII frame elements behind the 3D environment - reduce on mobile
+      if (!isMobile) {
+        const asciiFrame = createASCIIFrame();
+        const asciiDecorations = createASCIIDecorations();
+        document.body.appendChild(asciiFrame);
+        document.body.appendChild(asciiDecorations);
+
+        // Start ASCII animation
+        startASCIIAnimation();
+      }
 
       // Lighting with shadows
       const ambientLight = new THREE.AmbientLight(0x404040, 0.6);
@@ -468,9 +593,17 @@
         const popup = document.createElement("div");
         popup.className = "popup";
         popup.style.background = "#1d1e19";
-        popup.style.maxWidth = "1200px";
-        popup.style.maxHeight = "800px";
-        popup.style.padding = "50px";
+
+        // Responsive popup sizing
+        if (isMobile) {
+          popup.style.maxWidth = "95vw";
+          popup.style.maxHeight = "95vh";
+          popup.style.padding = "20px";
+        } else {
+          popup.style.maxWidth = "1200px";
+          popup.style.maxHeight = "800px";
+          popup.style.padding = "50px";
+        }
         popup.style.boxSizing = "border-box";
 
         // Create a subtle grain overlay
@@ -786,9 +919,17 @@
         const popup = document.createElement("div");
         popup.className = "popup";
         popup.style.background = "#1d1e19";
-        popup.style.maxWidth = "900px";
-        popup.style.maxHeight = "800px";
-        popup.style.padding = "50px";
+
+        // Responsive popup sizing
+        if (isMobile) {
+          popup.style.maxWidth = "95vw";
+          popup.style.maxHeight = "95vh";
+          popup.style.padding = "20px";
+        } else {
+          popup.style.maxWidth = "900px";
+          popup.style.maxHeight = "800px";
+          popup.style.padding = "50px";
+        }
         popup.style.boxSizing = "border-box";
         popup.style.color = "#e6e6e6";
 
@@ -1077,9 +1218,9 @@
         },
       };
 
-      // Click handler for Three.js images
+      // Double-click handler for Three.js images
       function onImageClick(event) {
-        console.log("Three.js canvas clicked!");
+        console.log("Three.js canvas double-clicked!");
 
         // Calculate mouse position in normalized device coordinates
         const rect = renderer.domElement.getBoundingClientRect();
@@ -1262,11 +1403,13 @@
 
             const plane = new THREE.Mesh(geometry, material);
 
-            // Random position in 3D space
+            // Random position in 3D space - adjust for mobile
+            const spread = isMobile ? 20 : 30; // Smaller spread on mobile
+            const heightSpread = isMobile ? 15 : 20;
             plane.position.set(
-              (Math.random() - 0.5) * 30,
-              (Math.random() - 0.5) * 20,
-              (Math.random() - 0.5) * 30
+              (Math.random() - 0.5) * spread,
+              (Math.random() - 0.5) * heightSpread,
+              (Math.random() - 0.5) * spread
             );
 
             // Ensure images render in front of lines
@@ -1300,8 +1443,10 @@
 
       // Function to create connections between images (optimized)
       function createConnections() {
-        // Reduce number of connections for better performance
-        const maxConnections = Math.min(imagePlanes.length * 0.5, 20); // Limit total connections
+        // Reduce number of connections for better performance - more aggressive on mobile
+        const maxConnections = isMobile
+          ? Math.min(imagePlanes.length * 0.3, 10)
+          : Math.min(imagePlanes.length * 0.5, 20); // Limit total connections
         let connectionCount = 0;
 
         for (
@@ -1377,22 +1522,32 @@
         }
       }
 
-      // Camera position
-      camera.position.z = 25;
+      // Camera position - adjust for mobile
+      camera.position.z = isMobile ? 20 : 25;
 
-      // Simplified orbit controls
+      // Simplified orbit controls with mobile optimizations
       const controls = new THREE.OrbitControls(camera, renderer.domElement);
       controls.enableDamping = true;
-      controls.dampingFactor = 0.05;
+      controls.dampingFactor = isMobile ? 0.1 : 0.05; // Faster damping on mobile
       controls.enableZoom = true;
-      controls.enablePan = true;
+      controls.enablePan = !isMobile; // Disable pan on mobile for better touch experience
+      controls.enableRotate = true;
+
+      // Adjust controls for mobile
+      if (isMobile) {
+        controls.touches = {
+          ONE: THREE.TOUCH.ROTATE,
+          TWO: THREE.TOUCH.DOLLY_PAN,
+        };
+        controls.enableKeys = false; // Disable keyboard controls on mobile
+      }
 
       // Performance optimization variables
       const frustum = new THREE.Frustum();
       const cameraMatrix = new THREE.Matrix4();
 
-      // Rotation animation variables
-      const rotationSpeed = 0.0003; // Slow constant rotation speed
+      // Rotation animation variables - adjust for mobile
+      const rotationSpeed = isMobile ? 0.0001 : 0.0003; // Slower rotation on mobile
 
       // Optimized animation loop
       function animate() {
@@ -1405,8 +1560,10 @@
         );
         frustum.setFromProjectionMatrix(cameraMatrix);
 
-        // Constant slow rotation around Y-axis
-        scene.rotation.y += rotationSpeed;
+        // Constant slow rotation around Y-axis - reduce on mobile
+        if (!isMobile) {
+          scene.rotation.y += rotationSpeed;
+        }
 
         // Optimized billboard behavior with frustum culling
         imagePlanes.forEach((plane) => {
@@ -1428,37 +1585,50 @@
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
         renderer.setSize(window.innerWidth, window.innerHeight);
+
+        // Update mobile detection on resize
+        const newIsMobile =
+          /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+            navigator.userAgent
+          ) || window.innerWidth <= 768;
+        if (newIsMobile !== isMobile) {
+          // Reload page if mobile state changes significantly
+          location.reload();
+        }
       });
 
       // Start animation
       animate();
 
-      // Delicate mouse-tracking gradient effect
-      document.addEventListener("mousemove", (event) => {
-        const x = (event.clientX / window.innerWidth) * 100;
-        const y = (event.clientY / window.innerHeight) * 100;
+      // Delicate mouse-tracking gradient effect - disable on mobile for performance
+      if (!isMobile) {
+        document.addEventListener("mousemove", (event) => {
+          const x = (event.clientX / window.innerWidth) * 100;
+          const y = (event.clientY / window.innerHeight) * 100;
 
-        document.body.style.background = `
-          radial-gradient(
-            circle at ${x}% ${y}%,
-            rgba(255, 255, 255, 0.15) 0%,
-            rgba(255, 255, 255, 0) 30%
-          ),
-          radial-gradient(
-            ellipse at 50% 50%,
-            #f8f0e4 0%,
-            #ede4d8 15%,
-            #e3dbcf 25%,
-            #d0c7bb 40%,
-            #bdb4a8 55%,
-            #a59c90 75%,
-            #7a7164 90%,
-            #625a4e 100%
-          ),
-          url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="1.8" numOctaves="7" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter><rect width="600" height="600" filter="url(%23noise)" opacity="0.95"/></svg>')`;
-        document.body.style.backgroundBlendMode = "normal, multiply, multiply";
-        document.body.style.backgroundSize = "cover, cover, 200px 200px";
-      });
+          document.body.style.background = `
+            radial-gradient(
+              circle at ${x}% ${y}%,
+              rgba(255, 255, 255, 0.15) 0%,
+              rgba(255, 255, 255, 0) 30%
+            ),
+            radial-gradient(
+              ellipse at 50% 50%,
+              #f8f0e4 0%,
+              #ede4d8 15%,
+              #e3dbcf 25%,
+              #d0c7bb 40%,
+              #bdb4a8 55%,
+              #a59c90 75%,
+              #7a7164 90%,
+              #625a4e 100%
+            ),
+            url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="1.8" numOctaves="7" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter><rect width="600" height="600" filter="url(%23noise)" opacity="0.95"/></svg>')`;
+          document.body.style.backgroundBlendMode =
+            "normal, multiply, multiply";
+          document.body.style.backgroundSize = "cover, cover, 200px 200px";
+        });
+      }
     </script>
   </body>
 </html>
