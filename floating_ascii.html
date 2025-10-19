@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Floating ASCII Elements</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #000;
+            overflow: hidden;
+            font-family: 'Courier New', monospace;
+        }
+        #info {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: #fff;
+            font-size: 12px;
+            z-index: 100;
+        }
+    </style>
+</head>
+<body>
+    <div id="info">
+        Floating ASCII Elements - Gentle Animation
+    </div>
+
+    <script>
+        let asciiElements = [];
+        let time = 0;
+
+        function setup() {
+            createCanvas(windowWidth, windowHeight);
+            
+            // ASCII patterns from the experiments
+            const asciiPatterns = [
+                // Owl
+                ['       o        o', '  ___   \\      /   ___', '.` __`-. \\/\\/\\/ .-\'__ \'.', '( /  \\  \\/(..)\/  /  \\ )', '\\ \\ O ) ( (oo) ) ( O / /', ' \\ \\_/ __>----<__ \\_/ /', '  ".   >_      _<   ."', '    >   /      \\   <', '   / /( \\      / )\\ \\', '  / `" _/ ____ \\_ "\' \\', '  \\_.-` A/  & \\A \'-._/'],
+                
+                // Decorative face
+                ['.==-.                   .-==.', ' \\()8`-._  `.   .\'  _.-\'8()/', ' (88"   ::.  \\./  .::   "88)', '  \\_.\'`-::::.(#).::::-\'`._/', '    `._... .q(_)p. ..._\'', '      ""-..-.\'|=|`-..-""', '      .""\' .\'|=|`. `"".', '    ,\':8(o)./|=|\\.(o)8:`.', '   (O :8 ::/ \\_/ \\:: 8: O)', '    \\O `::/       \\::\' O/', '     ""--\'         `--""'],
+                
+                // Simple face
+                ['    .----.   @   @', '   / .-"-.\`.  \\v/', '   | | \'\\ \\ \\_/ )', ' ,-\\ `-.\' /.\'  /', '\'---`----\'----\''],
+                
+                // Caterpillar
+                ['    \\_/-.--.--.--.--.--.', '    (")__)__)__)__)__)__)', '     ^ "" "" "" "" "" ""'],
+                
+                // Simple stick figure
+                ['\\(")/', '-( )-', '/(_)\\'],
+                
+                // Cat
+                ['    =/\\                 /\\=', '    / \\._   (\\_/)   _./\\', '   / .\'\'._\'--(o.o)--\'_.\'\'\\', '  /.\' _/ |`=/ " \\=`| \\_ `.\\', ' /` .\' \\;-,\'\\___/\',-;/ `. \'\\', '/.-\'      `\\(-V-)/`       `-.\\', '`            "   "'],
+                
+                // Pig
+                ['             ___', '          .="   "=._.---.', '        ."         c  Y p', '       /   ,       `.  w_/', '       |   -.   /     /', ' _,..._|      )_-\\ \\_=.\\', '`-....- `------))) =- " '],
+                
+                // Car
+                ['                                  .-.', '     (___________________________()6 `-,', '     (   ______________________   / "`', '     //\\\\                      //\\\\', '     "" ""                     "" ""']
+            ];
+            
+            // Create floating ASCII elements
+            for (let i = 0; i < 8; i++) {
+                let pattern = asciiPatterns[i];
+                let element = {
+                    pattern: pattern,
+                    x: random(width),
+                    y: random(height),
+                    vx: random(-0.5, 0.5),
+                    vy: random(-0.5, 0.5),
+                    rotation: 0,
+                    rotationSpeed: random(-0.02, 0.02),
+                    scale: random(0.8, 1.2),
+                    alpha: random(150, 255),
+                    color: [random(100, 255), random(100, 255), random(100, 255)],
+                    timeOffset: random(0, 100)
+                };
+                asciiElements.push(element);
+            }
+        }
+
+        function draw() {
+            background(0);
+            time += 0.02;
+            
+            // Update and draw each ASCII element
+            for (let element of asciiElements) {
+                updateElement(element);
+                drawElement(element);
+            }
+        }
+        
+        function updateElement(element) {
+            // Gentle floating motion
+            element.x += element.vx;
+            element.y += element.vy;
+            
+            // Add gentle breathing motion
+            let breathX = sin(time + element.timeOffset) * 2;
+            let breathY = cos(time + element.timeOffset * 0.7) * 1;
+            
+            element.x += breathX;
+            element.y += breathY;
+            
+            // Rotation
+            element.rotation += element.rotationSpeed;
+            
+            // Wrap around screen
+            if (element.x < -200) element.x = width + 200;
+            if (element.x > width + 200) element.x = -200;
+            if (element.y < -200) element.y = height + 200;
+            if (element.y > height + 200) element.y = -200;
+        }
+        
+        function drawElement(element) {
+            push();
+            translate(element.x, element.y);
+            rotate(element.rotation);
+            scale(element.scale);
+            
+            // Draw each line of the ASCII pattern
+            for (let y = 0; y < element.pattern.length; y++) {
+                let line = element.pattern[y];
+                let lineX = -line.length * 8 / 2; // Center the line
+                let lineY = -element.pattern.length * 10 / 2 + y * 10;
+                
+                // Add gentle floating motion to each line
+                let lineFloatX = sin(time + y * 0.1) * 1;
+                let lineFloatY = cos(time + y * 0.1) * 0.5;
+                
+                push();
+                translate(lineX + lineFloatX, lineY + lineFloatY);
+                
+                // Draw the line
+                fill(element.color[0], element.color[1], element.color[2], element.alpha);
+                textAlign(LEFT, TOP);
+                textSize(10);
+                textStyle(NORMAL);
+                text(line, 0, 0);
+                pop();
+            }
+            pop();
+        }
+        
+        function windowResized() {
+            resizeCanvas(windowWidth, windowHeight);
+        }
+    </script>
+</body>
+</html>

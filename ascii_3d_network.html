@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASCII to 3D Network</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #000;
+            overflow: hidden;
+            font-family: monospace;
+        }
+        #info {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: #fff;
+            font-size: 12px;
+            z-index: 100;
+        }
+    </style>
+</head>
+<body>
+    <div id="info">
+        Mouse: Rotate & Zoom | Drag: Move nodes | R: Reload | L: Lock/Unlock
+    </div>
+
+    <script>
+        // ASCII Art to convert (replace this with any ASCII art)
+        const ASCII = 
+"     _____              .---...-.\n" +
+"   ,'  -. `.          ,' _____...'\n" +
+"  /   - _ - \\        : .' _   _ \\\\\n" +
+" :    ' _)'  :       | :-(_).(_)::\n" +
+"(_           ;)      | |    -'  ||\n" +
+"  \\     _   /        ; |    _   ||\n" +
+"   `..___..'         `-'..____.'`'\n" +
+"      ;._:               _; :_\n" +
+"     /    \\ SSt        ,'  `' `. SSt";
+
+        let nodes = [];
+        let connections = [];
+        let draggedNode = null;
+        let isDragging = false;
+        let time = 0;
+
+        function setup() {
+            createCanvas(windowWidth, windowHeight);
+            console.log("Canvas created:", width, "x", height);
+            
+            // Parse ASCII and create network
+            parseASCII();
+            
+            // Set up mouse controls
+            lastMouseX = mouseX;
+            lastMouseY = mouseY;
+        }
+
+        function draw() {
+            background(0);
+            time += 0.02;
+            
+            // Update physics
+            updatePhysics();
+            
+            // Draw connections
+            drawConnections();
+            
+            // Draw nodes
+            drawNodes();
+            
+            // Draw instructions
+            fill(255);
+            textAlign(LEFT);
+            textSize(12);
+            text("Drag nodes to pull the network | Release to return to position", 20, 30);
+        }
+        
+        function draw3DASCIIArt() {
+            let lines = ASCII.trim().split('\n');
+            let charSize = 20;
+            let lineHeight = 30;
+            
+            // Calculate center position
+            let maxWidth = 0;
+            for (let line of lines) {
+                if (line.length > maxWidth) maxWidth = line.length;
+            }
+            
+            // Apply zoom and rotation
+            scale(zoom);
+            rotateY(rotationY);
+            rotateX(rotationX);
+            
+            // Draw each line of ASCII art with 3D spheres
+            for (let y = 0; y < lines.length; y++) {
+                let line = lines[y];
+                let lineX = -maxWidth * charSize / 2;
+                let lineY = -lines.length * lineHeight / 2 + y * lineHeight;
+                
+                // Add gentle floating motion
+                let rotX = sin(time + y * 0.05) * 5;
+                let rotY = cos(time + y * 0.05) * 3;
+                
+                push();
+                translate(lineX + rotX, lineY + rotY, 0);
+                
+                // Draw each character as a 3D element
+                for (let x = 0; x < line.length; x++) {
+                    let char = line[x];
+                    if (char !== ' ') {
+                        push();
+                        translate(x * charSize, 0, 0);
+                        
+                        // Style based on character type
+                        if (char === '`' || char === "'" || char === '"' || char === '.' || char === ',' || char === ':' || char === ';') {
+                            // Small details - tiny spheres
+                            fill(200, 200, 200);
+                            sphere(3);
+                        } else if (char === '-' || char === '_' || char === '|' || char === '/' || char === '\\') {
+                            // Lines - small boxes
+                            fill(180, 180, 180);
+                            box(8, 2, 2);
+                        } else if (char === '(' || char === ')' || char === '[' || char === ']' || char === '{' || char === '}') {
+                            // Curves - small spheres
+                            fill(160, 160, 160);
+                            sphere(5);
+                        } else {
+                            // Main characters - larger spheres
+                            fill(255, 255, 255);
+                            sphere(8);
+                        }
+                        pop();
+                    }
+                }
+                pop();
+            }
+        }
+
+        function parseASCII() {
+            nodes = [];
+            connections = [];
+            
+            let lines = ASCII.trim().split('\n');
+            let charSize = 12;
+            let lineHeight = 18;
+            
+            // Calculate center position
+            let maxWidth = 0;
+            for (let line of lines) {
+                if (line.length > maxWidth) maxWidth = line.length;
+            }
+            
+            let centerX = width/2;
+            let centerY = height/2;
+            
+            // Create nodes for each character
+            for (let y = 0; y < lines.length; y++) {
+                let line = lines[y];
+                for (let x = 0; x < line.length; x++) {
+                    let char = line[x];
+                    if (char !== ' ') {
+                        let node = {
+                            id: nodes.length,
+                            char: char,
+                            x: centerX - (maxWidth * charSize) / 2 + x * charSize,
+                            y: centerY - (lines.length * lineHeight) / 2 + y * lineHeight,
+                            originalX: centerX - (maxWidth * charSize) / 2 + x * charSize,
+                            originalY: centerY - (lines.length * lineHeight) / 2 + y * lineHeight,
+                            vx: 0, vy: 0,
+                            isDragged: false
+                        };
+                        nodes.push(node);
+                    }
+                }
+            }
+            
+            // Create connections between nearby nodes
+            for (let i = 0; i < nodes.length; i++) {
+                for (let j = i + 1; j < nodes.length; j++) {
+                    let node1 = nodes[i];
+                    let node2 = nodes[j];
+                    let distance = dist(node1.x, node1.y, node2.x, node2.y);
+                    
+                    // Connect nodes that are close to each other
+                    if (distance < 30) {
+                        connections.push({
+                            from: i,
+                            to: j,
+                            restLength: distance
+                        });
+                    }
+                }
+            }
+            
+            console.log("Created", nodes.length, "nodes and", connections.length, "connections");
+        }
+
+        function isNode(char) {
+            return (char >= 'A' && char <= 'Z') || char === '+';
+        }
+
+        function isPath(char) {
+            return char === '-' || char === '|' || char === '/' || char === '\\' || 
+                   char === ':' || char === '_' || char === '.' || char === ',' || char === '`';
+        }
+
+        function createPolygonConnections(grid, nodeMap) {
+            // Manually create connections based on the specific ASCII art structure
+            // This ensures we get the exact connections from your ASCII art
+            
+            // Find all nodes and their positions
+            let nodePositions = new Map();
+            for (let y = 0; y < grid.length; y++) {
+                for (let x = 0; x < grid[y].length; x++) {
+                    let char = grid[y][x];
+                    if (isNode(char)) {
+                        let node = nodeMap.get(`${x},${y}`);
+                        if (node) {
+                            nodePositions.set(`${x},${y}`, node);
+                        }
+                    }
+                }
+            }
+            
+            // Create connections by following the ASCII paths manually
+            for (let y = 0; y < grid.length; y++) {
+                for (let x = 0; x < grid[y].length; x++) {
+                    let char = grid[y][x];
+                    if (isNode(char)) {
+                        let currentNode = nodeMap.get(`${x},${y}`);
+                        if (currentNode) {
+                            // Check horizontal connections (-)
+                            if (x > 0 && grid[y][x-1] === '-') {
+                                let connectedNode = findNodeInDirection(grid, x, y, -1, 0, nodeMap);
+                                if (connectedNode) addConnection(currentNode, connectedNode);
+                            }
+                            if (x < grid[y].length-1 && grid[y][x+1] === '-') {
+                                let connectedNode = findNodeInDirection(grid, x, y, 1, 0, nodeMap);
+                                if (connectedNode) addConnection(currentNode, connectedNode);
+                            }
+                            
+                            // Check vertical connections (|)
+                            if (y > 0 && grid[y-1][x] === '|') {
+                                let connectedNode = findNodeInDirection(grid, x, y, 0, -1, nodeMap);
+                                if (connectedNode) addConnection(currentNode, connectedNode);
+                            }
+                            if (y < grid.length-1 && grid[y+1][x] === '|') {
+                                let connectedNode = findNodeInDirection(grid, x, y, 0, 1, nodeMap);
+                                if (connectedNode) addConnection(currentNode, connectedNode);
+                            }
+                            
+                            // Check diagonal connections (/, \)
+                            if (x > 0 && y > 0 && grid[y-1][x-1] === '/') {
+                                let connectedNode = findNodeInDirection(grid, x, y, -1, -1, nodeMap);
+                                if (connectedNode) addConnection(currentNode, connectedNode);
+                            }
+                            if (x < grid[y].length-1 && y > 0 && grid[y-1][x+1] === '\\') {
+                                let connectedNode = findNodeInDirection(grid, x, y, 1, -1, nodeMap);
+                                if (connectedNode) addConnection(currentNode, connectedNode);
+                            }
+                            if (x > 0 && y < grid.length-1 && grid[y+1][x-1] === '\\') {
+                                let connectedNode = findNodeInDirection(grid, x, y, -1, 1, nodeMap);
+                                if (connectedNode) addConnection(currentNode, connectedNode);
+                            }
+                            if (x < grid[y].length-1 && y < grid.length-1 && grid[y+1][x+1] === '/') {
+                                let connectedNode = findNodeInDirection(grid, x, y, 1, 1, nodeMap);
+                                if (connectedNode) addConnection(currentNode, connectedNode);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        function findNodeInDirection(grid, startX, startY, dx, dy, nodeMap) {
+            let x = startX + dx;
+            let y = startY + dy;
+            let steps = 0;
+            let maxSteps = 50;
+            
+            while (x >= 0 && x < grid[0].length && y >= 0 && y < grid.length && steps < maxSteps) {
+                let char = grid[y][x];
+                
+                if (isNode(char)) {
+                    return nodeMap.get(`${x},${y}`);
+                }
+                
+                // Stop if we hit a non-path character
+                if (char !== ' ' && !isPath(char)) {
+                    break;
+                }
+                
+                x += dx;
+                y += dy;
+                steps++;
+            }
+            
+            return null;
+        }
+        
+        function addConnection(node1, node2) {
+            // Check if connection already exists
+            let exists = connections.some(conn => 
+                (conn.from === node1.id && conn.to === node2.id) ||
+                (conn.from === node2.id && conn.to === node1.id)
+            );
+            if (!exists) {
+                connections.push({
+                    from: node1.id,
+                    to: node2.id
+                });
+                console.log("Connected", node1.char, "to", node2.char);
+            }
+        }
+
+        function findConnectedNode(grid, startX, startY, dx, dy, nodeMap) {
+            let x = startX + dx;
+            let y = startY + dy;
+            let steps = 0;
+            let maxSteps = 20;
+            
+            while (x >= 0 && x < grid[0].length && y >= 0 && y < grid.length && steps < maxSteps) {
+                let char = grid[y][x];
+                
+                if (isNode(char)) {
+                    return nodeMap.get(`${x},${y}`);
+                }
+                
+                // Stop if we hit a non-path character (except spaces)
+                if (char !== ' ' && !isPath(char)) {
+                    break;
+                }
+                
+                x += dx;
+                y += dy;
+                steps++;
+            }
+            
+            return null;
+        }
+
+        function findConnections(grid, startX, startY, startNode, nodeMap) {
+            // Check all 8 directions for connected nodes
+            let directions = [
+                [-1, -1], [-1, 0], [-1, 1],
+                [0, -1],           [0, 1],
+                [1, -1],  [1, 0],  [1, 1]
+            ];
+            
+            for (let [dx, dy] of directions) {
+                let path = followPath(grid, startX, startY, dx, dy, nodeMap);
+                if (path && path.id !== startNode.id) {
+                    let connection = {
+                        from: startNode.id,
+                        to: path.id
+                    };
+                    // Avoid duplicate connections
+                    let exists = connections.some(conn => 
+                        (conn.from === connection.from && conn.to === connection.to) ||
+                        (conn.from === connection.to && conn.to === connection.from)
+                    );
+                    if (!exists) {
+                        connections.push(connection);
+                        console.log("Connected", startNode.char, "to", path.char);
+                    }
+                }
+            }
+        }
+
+        function followPath(grid, startX, startY, dx, dy, nodeMap) {
+            let x = startX + dx;
+            let y = startY + dy;
+            let steps = 0;
+            let maxSteps = 50; // Prevent infinite loops
+            
+            while (x >= 0 && x < grid[0].length && y >= 0 && y < grid.length && steps < maxSteps) {
+                let char = grid[y][x];
+                
+                if (isNode(char)) {
+                    return nodeMap.get(`${x},${y}`);
+                }
+                
+                // Allow spaces and path characters
+                if (char !== ' ' && !isPath(char)) {
+                    break;
+                }
+                
+                x += dx;
+                y += dy;
+                steps++;
+            }
+            
+            return null;
+        }
+
+        function updatePhysics() {
+            let damping = 0.99; // Very high damping to keep structure
+            let springStrength = 0.001; // Very weak springs
+            let repulsionStrength = 0.01; // Minimal repulsion
+            
+            // Apply spring forces between connected nodes
+            for (let conn of connections) {
+                let node1 = nodes[conn.from];
+                let node2 = nodes[conn.to];
+                
+                let dx = node2.x - node1.x;
+                let dy = node2.y - node1.y;
+                let dz = node2.z - node1.z;
+                let distance = sqrt(dx*dx + dy*dy + dz*dz);
+                
+                if (distance > 0) {
+                    // Calculate target distance based on original ASCII spacing
+                    let targetDistance = 25; // Keep nodes very close to original positions
+                    let force = (distance - targetDistance) * springStrength;
+                    let fx = (dx / distance) * force;
+                    let fy = (dy / distance) * force;
+                    let fz = (dz / distance) * force;
+                    
+                    if (!lockedNodes.has(node1.id)) {
+                        node1.vx += fx;
+                        node1.vy += fy;
+                        node1.vz += fz;
+                    }
+                    
+                    if (!lockedNodes.has(node2.id)) {
+                        node2.vx -= fx;
+                        node2.vy -= fy;
+                        node2.vz -= fz;
+                    }
+                }
+            }
+            
+            // Minimal repulsion only for overlapping nodes
+            for (let i = 0; i < nodes.length; i++) {
+                for (let j = i + 1; j < nodes.length; j++) {
+                    let node1 = nodes[i];
+                    let node2 = nodes[j];
+                    
+                    let dx = node2.x - node1.x;
+                    let dy = node2.y - node1.y;
+                    let dz = node2.z - node1.z;
+                    let distance = sqrt(dx*dx + dy*dy + dz*dz);
+                    
+                    if (distance > 0 && distance < 15) { // Only overlapping nodes
+                        let force = repulsionStrength / (distance * distance);
+                        let fx = (dx / distance) * force;
+                        let fy = (dy / distance) * force;
+                        let fz = (dz / distance) * force;
+                        
+                        if (!lockedNodes.has(node1.id)) {
+                            node1.vx -= fx;
+                            node1.vy -= fy;
+                            node1.vz -= fz;
+                        }
+                        
+                        if (!lockedNodes.has(node2.id)) {
+                            node2.vx += fx;
+                            node2.vy += fy;
+                            node2.vz += fz;
+                        }
+                    }
+                }
+            }
+            
+            // Very gentle floating motion to maintain structure
+            for (let node of nodes) {
+                if (!lockedNodes.has(node.id)) {
+                    // Very subtle floating motion
+                    node.vz += sin(frameCount * 0.005 + node.id) * 0.02;
+                    node.vx += cos(frameCount * 0.003 + node.id) * 0.01;
+                    
+                    node.vx *= damping;
+                    node.vy *= damping;
+                    node.vz *= damping;
+                    
+                    node.x += node.vx;
+                    node.y += node.vy;
+                    node.z += node.vz;
+                }
+            }
+        }
+
+        function updatePhysics() {
+            let damping = 0.95;
+            let springStrength = 0.1;
+            
+            // Apply spring forces
+            for (let conn of connections) {
+                let node1 = nodes[conn.from];
+                let node2 = nodes[conn.to];
+                
+                let dx = node2.x - node1.x;
+                let dy = node2.y - node1.y;
+                let distance = sqrt(dx*dx + dy*dy);
+                
+                if (distance > 0) {
+                    let force = (distance - conn.restLength) * springStrength;
+                    let fx = (dx / distance) * force;
+                    let fy = (dy / distance) * force;
+                    
+                    if (!node1.isDragged) {
+                        node1.vx += fx;
+                        node1.vy += fy;
+                    }
+                    if (!node2.isDragged) {
+                        node2.vx -= fx;
+                        node2.vy -= fy;
+                    }
+                }
+            }
+            
+            // Apply breathing animation
+            for (let node of nodes) {
+                if (!node.isDragged) {
+                    // Gentle breathing motion
+                    let breathX = sin(time + node.id * 0.1) * 2;
+                    let breathY = cos(time + node.id * 0.1) * 1;
+                    
+                    node.vx += (node.originalX + breathX - node.x) * 0.02;
+                    node.vy += (node.originalY + breathY - node.y) * 0.02;
+                }
+            }
+            
+            // Update positions
+            for (let node of nodes) {
+                if (!node.isDragged) {
+                    node.vx *= damping;
+                    node.vy *= damping;
+                    node.x += node.vx;
+                    node.y += node.vy;
+                }
+            }
+        }
+        
+        function drawConnections() {
+            stroke(100, 100, 100, 80);
+            strokeWeight(0.5);
+            for (let conn of connections) {
+                let node1 = nodes[conn.from];
+                let node2 = nodes[conn.to];
+                line(node1.x, node1.y, node2.x, node2.y);
+            }
+        }
+        
+        function drawNodes() {
+            for (let node of nodes) {
+                push();
+                translate(node.x, node.y);
+                
+                // Draw the actual ASCII character
+                fill(255);
+                textAlign(CENTER, CENTER);
+                textSize(12);
+                textStyle(BOLD);
+                text(node.char, 0, 0);
+                pop();
+            }
+        }
+        
+        function mousePressed() {
+            if (mouseButton === LEFT) {
+                // Find closest node
+                let closestNode = null;
+                let closestDistance = Infinity;
+                
+                for (let node of nodes) {
+                    let distance = dist(mouseX, mouseY, node.x, node.y);
+                    if (distance < 20 && distance < closestDistance) {
+                        closestDistance = distance;
+                        closestNode = node;
+                    }
+                }
+                
+                if (closestNode) {
+                    draggedNode = closestNode;
+                    closestNode.isDragged = true;
+                    isDragging = true;
+                }
+            }
+        }
+
+        function mouseDragged() {
+            if (isDragging && draggedNode) {
+                // Move the dragged node
+                draggedNode.x = mouseX;
+                draggedNode.y = mouseY;
+            }
+        }
+
+        function mouseReleased() {
+            if (draggedNode) {
+                draggedNode.isDragged = false;
+            }
+            isDragging = false;
+            draggedNode = null;
+        }
+
+        function getScreenPosition(x, y, z) {
+            // Simple projection (this is approximate)
+            let scale = 200;
+            return {
+                x: width/2 + x * scale / (z + 500),
+                y: height/2 - y * scale / (z + 500)
+            };
+        }
+
+        function keyPressed() {
+            if (key === 'r' || key === 'R') {
+                parseASCII();
+            }
+            
+            if (key === 'l' || key === 'L') {
+                // Toggle lock on closest node to mouse
+                let closestNode = null;
+                let closestDistance = Infinity;
+                
+                for (let node of nodes) {
+                    let screenPos = getScreenPosition(node.x, node.y, node.z);
+                    let distance = dist(mouseX, mouseY, screenPos.x, screenPos.y);
+                    
+                    if (distance < 50 && distance < closestDistance) {
+                        closestDistance = distance;
+                        closestNode = node;
+                    }
+                }
+                
+                if (closestNode) {
+                    if (lockedNodes.has(closestNode.id)) {
+                        lockedNodes.delete(closestNode.id);
+                    } else {
+                        lockedNodes.add(closestNode.id);
+                    }
+                }
+            }
+        }
+
+        function windowResized() {
+            resizeCanvas(windowWidth, windowHeight);
+        }
+        
+        function mouseWheel(event) {
+            // Zoom in/out with mouse wheel
+            zoom += event.delta * 0.001;
+            zoom = constrain(zoom, 0.5, 3.0);
+            return false;
+        }
+    </script>
+</body>
+</html>
