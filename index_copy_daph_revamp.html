@@ -21,20 +21,21 @@
         font-family: Arial, sans-serif;
         background: radial-gradient(
             circle at 30% 25%,
-            rgba(69, 62, 29, 0.2) 0%,
+            rgba(69, 62, 29, 0.3) 0%,
             rgba(66, 51, 29, 0) 40%
           ),
           radial-gradient(
             ellipse at 50% 50%,
             #f8f0e4 0%,
-            #ede4d8 20%,
-            #e3dbcf 35%,
-            #d0c7bb 50%,
-            #bdb4a8 70%,
-            #a59c90 90%,
-            #8d8478 100%
+            #ede4d8 15%,
+            #e3dbcf 25%,
+            #d0c7bb 40%,
+            #bdb4a8 55%,
+            #a59c90 75%,
+            #7a7164 90%,
+            #625a4e 100%
           ),
-          url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="1.5" numOctaves="6" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter><rect width="600" height="600" filter="url(%23noise)" opacity="0.75"/></svg>');
+          url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="1.8" numOctaves="7" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter><rect width="600" height="600" filter="url(%23noise)" opacity="0.95"/></svg>');
         background-blend-mode: normal, multiply, multiply;
         background-size: cover, cover, 200px 200px;
         position: relative;
@@ -44,7 +45,7 @@
         opacity: 0;
         transition: opacity 2s ease-in;
         position: relative;
-        z-index: 2; /* Above ASCII elements */
+        z-index: 10;
       }
 
       canvas.fade-in {
@@ -59,6 +60,7 @@
         z-index: 100;
         display: flex;
         align-items: center;
+        justify-content: space-between;
         padding: 0 10px;
       }
 
@@ -69,7 +71,19 @@
         left: 0;
         right: 0;
         bottom: 0;
-        background-color: #e3dbcf;
+        background: linear-gradient(
+            to left,
+            #f8f0e4 0%,
+            #ede4d8 15%,
+            #e3dbcf 30%,
+            #d0c7bb 50%,
+            #bdb4a8 70%,
+            #a59c90 85%,
+            #7a7164 100%
+          ),
+          url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="1.8" numOctaves="7" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter><rect width="600" height="600" filter="url(%23noise)" opacity="0.95"/></svg>');
+        background-blend-mode: multiply, multiply;
+        background-size: cover, 200px 200px;
         opacity: 0.8;
         z-index: -1;
       }
@@ -106,6 +120,27 @@
         z-index: 101;
       }
 
+      #curation-link {
+        color: black;
+        font-size: 12px;
+        font-weight: regular;
+        font-family: "IBMPlexMono", monospace;
+        text-align: right;
+        letter-spacing: 1.5px;
+        transform: scaleY(1.5) translateY(-2px);
+        transform-origin: center right;
+        margin: 0;
+        position: relative;
+        z-index: 101;
+        cursor: pointer;
+        text-decoration: underline;
+        transition: opacity 0.3s ease;
+      }
+
+      #curation-link:hover {
+        opacity: 0.7;
+      }
+
       .logos {
         position: fixed;
         bottom: 20px;
@@ -127,204 +162,113 @@
         opacity: 1;
       }
 
-      /* ASCII Framing Elements */
-      .ascii-frame {
+      .popup {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: white;
+        border: none;
+        border-radius: 8px;
+        padding: 50px;
+        width: 90vw;
+        height: 90vh;
+        max-width: none;
+        max-height: none;
+        overflow-y: auto;
+        z-index: 1000;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        font-family: "SourceCodePro", monospace;
+        animation: popupScaleIn 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      }
+
+      .popup-overlay {
         position: fixed;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
-        pointer-events: none;
-        z-index: 1; /* Behind the 3D canvas but above background */
-        font-family: "SourceCodePro", monospace;
-        font-size: 16px;
-        color: rgba(
-          139,
-          132,
-          120,
-          0.6
-        ); /* Increased opacity for better visibility */
-        line-height: 1;
-        overflow: hidden;
-      }
-
-      /* Top border frame */
-      .ascii-top-frame {
-        position: absolute;
-        top: 20px;
-        left: 20px;
-        right: 20px;
-        white-space: nowrap;
-        font-size: 14px;
-        letter-spacing: 1px;
-        font-weight: 300;
-      }
-
-      /* Bottom border frame */
-      .ascii-bottom-frame {
-        position: absolute;
-        bottom: 20px;
-        left: 20px;
-        right: 20px;
-        white-space: nowrap;
-        font-size: 14px;
-        letter-spacing: 1px;
-        font-weight: 300;
-        text-align: right;
-      }
-
-      /* Left border frame */
-      .ascii-left-frame {
-        position: absolute;
-        top: 60px;
-        bottom: 60px;
-        left: 20px;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 9999;
         display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        align-items: flex-start;
-        font-size: 16px;
-        line-height: 1.2;
-        writing-mode: vertical-lr;
-        text-orientation: mixed;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+        box-sizing: border-box;
+        animation: fadeIn 0.5s ease-out;
       }
 
-      /* Right border frame */
-      .ascii-right-frame {
-        position: absolute;
-        top: 60px;
-        bottom: 60px;
-        right: 20px;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        align-items: flex-end;
-        font-size: 16px;
-        line-height: 1.2;
-        writing-mode: vertical-rl;
-        text-orientation: mixed;
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
       }
 
-      /* Corner decorations */
-      .ascii-corner {
-        position: absolute;
+      @keyframes popupScaleIn {
+        from {
+          transform: translate(-50%, -50%) scale(0.85);
+          opacity: 0;
+        }
+        to {
+          transform: translate(-50%, -50%) scale(1);
+          opacity: 1;
+        }
+      }
+
+      .popup h2 {
+        margin: 0 0 15px 0;
+        color: #333;
         font-size: 18px;
-        font-weight: 300;
       }
 
-      .ascii-corner-tl {
-        top: 15px;
-        left: 15px;
+      .popup p {
+        margin: 10px 0;
+        line-height: 1.4;
+        color: #555;
       }
 
-      .ascii-corner-tr {
-        top: 15px;
-        right: 15px;
+      .popup img {
+        max-width: 100%;
+        height: auto;
+        margin: 10px 0;
+        border: 1px solid #ddd;
       }
 
-      .ascii-corner-bl {
-        bottom: 15px;
-        left: 15px;
+      .popup-close {
+        position: fixed;
+        top: 20px;
+        right: 25px;
+        background: rgba(0, 0, 0, 0.7);
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        color: #ffffff;
+        z-index: 10001;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        transition: all 0.2s ease;
+        font-weight: bold;
       }
 
-      .ascii-corner-br {
-        bottom: 15px;
-        right: 15px;
-      }
-
-      /* Responsive adjustments */
-      @media (max-width: 768px) {
-        .ascii-frame {
-          font-size: 12px;
-        }
-        .ascii-top-frame,
-        .ascii-bottom-frame {
-          font-size: 12px;
-          left: 15px;
-          right: 15px;
-        }
-        .ascii-left-frame,
-        .ascii-right-frame {
-          font-size: 14px;
-          left: 15px;
-          right: 15px;
-        }
-        .ascii-corner {
-          font-size: 16px;
-        }
+      .popup-close:hover {
+        background: rgba(0, 0, 0, 0.9);
+        transform: scale(1.1);
       }
     </style>
   </head>
   <body>
-    <!-- ASCII Framing Elements -->
-    <div class="ascii-frame">
-      <!-- Corner decorations -->
-      <div class="ascii-corner ascii-corner-tl">+</div>
-      <div class="ascii-corner ascii-corner-tr">+</div>
-      <div class="ascii-corner ascii-corner-bl">+</div>
-      <div class="ascii-corner ascii-corner-br">+</div>
-
-      <!-- Top border frame -->
-      <div class="ascii-top-frame">
-        ////////----////////----////////----////////----////////----////////
-      </div>
-
-      <!-- Bottom border frame -->
-      <div class="ascii-bottom-frame">
-        ////////----////////----////////----////////----////////----////////
-      </div>
-
-      <!-- Left border frame -->
-      <div class="ascii-left-frame">
-        <span>|</span>
-        <span>.</span>
-        <span>.</span>
-        <span>.</span>
-        <span>.</span>
-        <span>.</span>
-        <span>.</span>
-        <span>.</span>
-        <span>.</span>
-        <span>.</span>
-        <span>.</span>
-        <span>.</span>
-        <span>.</span>
-        <span>.</span>
-        <span>.</span>
-        <span>.</span>
-        <span>.</span>
-        <span>.</span>
-        <span>.</span>
-        <span>|</span>
-      </div>
-
-      <!-- Right border frame -->
-      <div class="ascii-right-frame">
-        <span>|</span>
-        <span>.</span>
-        <span>.</span>
-        <span>.</span>
-        <span>.</span>
-        <span>.</span>
-        <span>.</span>
-        <span>.</span>
-        <span>.</span>
-        <span>.</span>
-        <span>.</span>
-        <span>.</span>
-        <span>.</span>
-        <span>.</span>
-        <span>.</span>
-        <span>.</span>
-        <span>.</span>
-        <span>.</span>
-        <span>.</span>
-        <span>|</span>
-      </div>
-    </div>
-
     <header>
       <div id="title">memory_almost_full</div>
+      <div id="curation-link" onclick="showCurationPopup()">
+        Adi Karelitz's curation
+      </div>
     </header>
     <div class="logos">
       <img src="assets/LOGO2.001.png" alt="Logo" class="logo" />
@@ -336,6 +280,7 @@
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="ascii-elements.js"></script>
     <script>
       // Scene setup
       const scene = new THREE.Scene();
@@ -356,6 +301,18 @@
       renderer.setSize(window.innerWidth, window.innerHeight);
       renderer.setClearColor(0x000000, 0); // Transparent background
       document.body.appendChild(renderer.domElement);
+
+      // Add click handler to Three.js canvas
+      renderer.domElement.addEventListener("click", onImageClick);
+
+      // Add ASCII frame elements behind the 3D environment
+      const asciiFrame = createASCIIFrame();
+      const asciiDecorations = createASCIIDecorations();
+      document.body.appendChild(asciiFrame);
+      document.body.appendChild(asciiDecorations);
+
+      // Start ASCII animation
+      startASCIIAnimation();
 
       // Lighting with shadows
       const ambientLight = new THREE.AmbientLight(0x404040, 0.6);
@@ -440,6 +397,734 @@
       const textureLoader = new THREE.TextureLoader();
       const connectionLines = [];
 
+      // Raycaster for click detection
+      const raycaster = new THREE.Raycaster();
+      const mouse = new THREE.Vector2();
+
+      // Function to check if an image should be clickable
+      function isClickableImage(imagePath) {
+        const isClickable =
+          imagePath.includes("Anat Saacks.jpg") ||
+          imagePath.includes("Chenn Hearthstone") ||
+          imagePath.includes("Dafna_Sartiel.jpg") ||
+          imagePath.includes("EitanBartal_placeholder.png") ||
+          imagePath.includes("Eyal Datz_placeholder.png") ||
+          imagePath.includes("Eyal Yehowa Gruss_placeholder.png") ||
+          imagePath.includes("Gilad Fridman.jpg") ||
+          imagePath.includes("Haya Sheffer.jpg") ||
+          imagePath.includes("Naama Steinbock.jpg") ||
+          imagePath.includes("Oded Ezer_placeholder.png") ||
+          imagePath.includes("ofir_liberman.jpg") ||
+          imagePath.includes("Rony Ginosar.jpg") ||
+          imagePath.includes("fbm_b134006708485641932.png") ||
+          imagePath.includes("Yoav Ruda_placeholder.png") ||
+          imagePath.includes("yonatan ben-simhon.jpeg") ||
+          imagePath.includes("Yuval Keshet.JPG");
+        console.log("Checking if clickable:", imagePath, "->", isClickable);
+        return isClickable;
+      }
+
+      // Function to generate random ASCII divider line for popups
+      function generateASCIIDivider() {
+        const patterns = generateRandomPatterns();
+        const allPatterns = [
+          ...patterns.dotClusters,
+          ...patterns.linePatterns,
+          ...patterns.mixedPatterns,
+          ...patterns.bracketPatterns,
+          ...patterns.slashPatterns,
+          ...patterns.plusPatterns,
+        ];
+
+        // Pick a random pattern
+        const randomPattern =
+          allPatterns[Math.floor(Math.random() * allPatterns.length)];
+
+        // Create the divider HTML
+        return `
+          <div style="text-align: center; margin: 20px 0; font-family: 'SourceCodePro', 'IBMPlexMono', monospace; font-size: 14px; color: #e6e6e6; opacity: 0.8; letter-spacing: 2px;">
+            ${randomPattern}
+          </div>
+        `;
+      }
+
+      // Global function for showing artist popups
+      function showArtistPopup(artist) {
+        console.log("showArtistPopup called with:", artist);
+
+        // Remove existing popup
+        const existingPopup = document.querySelector(".popup-overlay");
+        if (existingPopup) {
+          console.log("Removing existing popup");
+          existingPopup.remove();
+        }
+
+        // Create popup overlay
+        const overlay = document.createElement("div");
+        overlay.className = "popup-overlay";
+        console.log("Created overlay element");
+
+        // Create popup content with carousel
+        const popup = document.createElement("div");
+        popup.className = "popup";
+        popup.style.background = "#1d1e19";
+        popup.style.maxWidth = "1200px";
+        popup.style.maxHeight = "800px";
+        popup.style.padding = "50px";
+        popup.style.boxSizing = "border-box";
+
+        // Create a subtle grain overlay
+        const grainOverlay = document.createElement("div");
+        grainOverlay.style.position = "absolute";
+        grainOverlay.style.top = "0";
+        grainOverlay.style.left = "0";
+        grainOverlay.style.width = "100%";
+        grainOverlay.style.height = "100%";
+        grainOverlay.style.backgroundImage = 'url("assets/BGpopup_grain.png")';
+        grainOverlay.style.backgroundSize = "300px 300px";
+        grainOverlay.style.backgroundPosition = "center center";
+        grainOverlay.style.backgroundRepeat = "repeat";
+        grainOverlay.style.opacity = "0.15";
+        grainOverlay.style.pointerEvents = "none";
+        grainOverlay.style.zIndex = "1";
+        popup.style.color = "#e6e6e6";
+
+        // Add grain overlay to popup
+        popup.appendChild(grainOverlay);
+
+        popup.innerHTML = `
+          <button class="popup-close">&times;</button>
+          <div style="position: relative; z-index: 2;">
+            <h2 style="font-size: 28px; font-weight: bold; color: #e6e6e6; margin-bottom: 15px; font-family: 'Source Code Variable', monospace;">${
+              artist.name
+            }</h2>
+            <h3 style="color: #e6e6e6; font-size: 20px; margin-bottom: 15px; font-family: 'Source Code Variable', monospace; font-style: italic;">${
+              artist.title
+            }</h3>
+            <p style="color: #e6e6e6; font-family: 'Source Code Variable', monospace; font-size: 18px;">${
+              artist.medium
+            }</p>
+            ${generateASCIIDivider()}
+            <p style="color: #e6e6e6; font-family: 'Source Code Variable', monospace;">${
+              artist.description
+            }</p>
+            ${generateASCIIDivider()}
+            <p style="color: #e6e6e6; font-family: 'Source Code Variable', monospace;">${
+              artist.bio
+            }</p>
+          </div>
+          
+          ${
+            artist.videoLink
+              ? `
+            ${generateASCIIDivider()}
+            <div style="margin: 20px 0;">
+              <h4 style="color: #e6e6e6; font-size: 18px; margin-bottom: 10px; font-family: 'Source Code Variable', monospace;">Video:</h4>
+              ${
+                artist.videoLink.includes("vimeo.com/842264728")
+                  ? `
+                <div style="padding:56.25% 0 0 0;position:relative;">
+                  <iframe src="https://player.vimeo.com/video/842264728?h=97e8e466d8&badge=0&autopause=0&player_id=0&app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" referrerpolicy="strict-origin-when-cross-origin" style="position:absolute;top:0;left:0;width:100%;height:100%;" title="Every light has its shadow"></iframe>
+                </div>
+              `
+                  : `
+                <div style="position: relative; width: 100%; height: 0; padding-bottom: 56.25%; margin: 10px 0; max-width: 100%;">
+                  <iframe 
+                    src="${
+                      artist.videoLink.includes("youtube.com")
+                        ? artist.videoLink
+                            .replace("watch?v=", "embed/")
+                            .replace("shorts/", "embed/")
+                        : artist.videoLink.replace(
+                            "vimeo.com/",
+                            "player.vimeo.com/video/"
+                          ) + "?autoplay=0&title=0&byline=0&portrait=0"
+                    }" 
+                    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; border-radius: 8px;"
+                    allowfullscreen>
+                  </iframe>
+                </div>
+              `
+              }
+              <p style="text-align: center; margin-top: 10px;">
+                <a href="${
+                  artist.videoLink
+                }" target="_blank" style="color: #e6e6e6; text-decoration: none; font-size: 14px; font-family: 'Source Code Variable', monospace;">
+                  Open in ${
+                    artist.videoLink.includes("youtube.com")
+                      ? "YouTube"
+                      : "Vimeo"
+                  } ↗
+                </a>
+              </p>
+            </div>
+          `
+              : ""
+          }
+          
+          ${
+            artist.externalLink
+              ? `
+            ${generateASCIIDivider()}
+            <div style="margin: 20px 0;">
+              <h4 style="color: #e6e6e6; font-size: 18px; margin-bottom: 10px; font-family: 'Source Code Variable', monospace;">Social Media Post:</h4>
+              <div id="twitter-embed-container" style="text-align: center; padding: 20px; background: #333; border-radius: 8px; min-height: 200px;">
+                <p style="color: #e6e6e6; font-family: 'Source Code Variable', monospace;">Loading tweet...</p>
+              </div>
+            </div>
+          `
+              : ""
+          }
+          
+          ${generateASCIIDivider()}
+          <div style="margin-top: 20px;">
+            <div id="carousel-container" style="position: relative; width: 100%; height: min(60vh, 400px); overflow: hidden; border-radius: 4px; background: #1d1e19; display: flex; align-items: center; justify-content: center;">
+              <img id="carousel-image" src="${
+                artist.images[0]
+              }" style="max-width: 100%; max-height: 100%; object-fit: contain;" />
+              ${
+                artist.images.length > 1
+                  ? `
+                <button id="carousel-prev" style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.8); color: black; border: none; padding: 15px; cursor: pointer; border-radius: 50%; font-size: 18px; font-weight: bold;">&lt;</button>
+                <button id="carousel-next" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.8); color: black; border: none; padding: 15px; cursor: pointer; border-radius: 50%; font-size: 18px; font-weight: bold;">&gt;</button>
+              `
+                  : ""
+              }
+            </div>
+            ${
+              artist.images.length > 1
+                ? `
+              <div id="carousel-indicators" style="display: flex; gap: 8px; justify-content: center; margin-top: 15px;">
+                ${artist.images
+                  .map(
+                    (_, index) =>
+                      '<div class="indicator" style="width: 12px; height: 12px; border-radius: 50%; background: ' +
+                      (index === 0 ? "#fff" : "#666") +
+                      '; cursor: pointer; transition: background 0.3s;"></div>'
+                  )
+                  .join("")}
+              </div>
+            `
+                : ""
+            }
+          </div>
+          </div>
+        `;
+
+        overlay.appendChild(popup);
+        document.body.appendChild(overlay);
+        console.log("Popup added to DOM");
+
+        // Show Twitter post as a clean, styled card
+        if (
+          artist.externalLink &&
+          (artist.externalLink.includes("twitter.com") ||
+            artist.externalLink.includes("x.com"))
+        ) {
+          console.log("Processing Twitter link:", artist.externalLink);
+          const embedContainer = popup.querySelector(
+            "#twitter-embed-container"
+          );
+          console.log("Found embed container:", embedContainer);
+          if (embedContainer) {
+            console.log("Setting Twitter content...");
+
+            // Create a beautiful, Twitter-style card that always works
+            embedContainer.innerHTML = `
+              <div style="background: #ffffff; border: 1px solid #e1e8ed; border-radius: 16px; padding: 0; max-width: 500px; margin: 0 auto; box-shadow: 0 4px 12px rgba(0,0,0,0.15); overflow: hidden;">
+                <!-- Twitter-style header -->
+                <div style="padding: 16px; border-bottom: 1px solid #e1e8ed; background: #f8f9fa;">
+                  <div style="display: flex; align-items: center; gap: 12px;">
+                    <div style="width: 48px; height: 48px; background: linear-gradient(135deg, #1DA1F2, #0d8bd9); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 18px;">
+                      EG
+                    </div>
+                    <div>
+                      <div style="font-weight: 700; color: #14171a; font-size: 16px;">Eyal Gruss</div>
+                      <div style="color: #657786; font-size: 14px;">@eyaler</div>
+                    </div>
+                    <div style="margin-left: auto;">
+                      <div style="color: #657786; font-size: 14px;">Oct 20, 2024</div>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Tweet content -->
+                <div style="padding: 16px;">
+                  <div style="color: #14171a; line-height: 1.4; font-size: 16px; margin-bottom: 12px;">
+                    You can of course also just upload an image. And why not have the option to use the output as the new input? While working on that I stumbled upon a very satisfying glitch where a wrong normalization caused images to get brighter and turn into what I call Whitewash cartoonization 
+                    <a href="https://t.co/X4yh4Vy3cY" style="color: #1DA1F2; text-decoration: none;">pic.twitter.com/X4yh4Vy3cY</a>
+                  </div>
+                  
+                  <!-- Tweet image preview -->
+                  <div style="border-radius: 12px; overflow: hidden; margin: 12px 0; background: #f8f9fa; border: 1px solid #e1e8ed;">
+                    <div style="padding: 20px; text-align: center; color: #657786; font-size: 14px;">
+                      📸 Image attached to tweet
+                    </div>
+                  </div>
+                  
+                  <!-- Twitter-style actions -->
+                  <div style="display: flex; justify-content: space-between; padding: 12px 0; border-top: 1px solid #e1e8ed; margin-top: 12px;">
+                    <div style="display: flex; gap: 24px;">
+                      <div style="display: flex; align-items: center; gap: 8px; color: #657786; font-size: 14px;">
+                        <span style="font-size: 18px;">💬</span>
+                        <span>Reply</span>
+                      </div>
+                      <div style="display: flex; align-items: center; gap: 8px; color: #657786; font-size: 14px;">
+                        <span style="font-size: 18px;">🔄</span>
+                        <span>Retweet</span>
+                      </div>
+                      <div style="display: flex; align-items: center; gap: 8px; color: #657786; font-size: 14px;">
+                        <span style="font-size: 18px;">❤️</span>
+                        <span>Like</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- View on X button -->
+                <div style="padding: 16px; background: #f8f9fa; border-top: 1px solid #e1e8ed; text-align: center;">
+                  <a href="${artist.externalLink}" target="_blank" style="display: inline-block; padding: 10px 20px; background: #1DA1F2; color: white; text-decoration: none; border-radius: 20px; font-size: 14px; font-weight: 600; transition: background 0.2s;">
+                    View Full Tweet on X ↗
+                  </a>
+                </div>
+              </div>
+            `;
+
+            console.log("Twitter content set successfully");
+          } else {
+            console.log("No embed container found!");
+          }
+        } else {
+          console.log("No Twitter link found for artist:", artist);
+        }
+
+        // Carousel functionality (only if multiple images)
+        if (artist.images.length > 1) {
+          let currentImageIndex = 0;
+          const carouselImage = popup.querySelector("#carousel-image");
+          const indicators = popup.querySelectorAll(".indicator");
+
+          const updateCarousel = (index) => {
+            carouselImage.src = artist.images[index];
+            indicators.forEach((indicator, i) => {
+              indicator.style.background = i === index ? "#333" : "#ccc";
+            });
+            currentImageIndex = index;
+          };
+
+          popup
+            .querySelector("#carousel-prev")
+            .addEventListener("click", () => {
+              const newIndex =
+                currentImageIndex > 0
+                  ? currentImageIndex - 1
+                  : artist.images.length - 1;
+              updateCarousel(newIndex);
+            });
+
+          popup
+            .querySelector("#carousel-next")
+            .addEventListener("click", () => {
+              const newIndex =
+                currentImageIndex < artist.images.length - 1
+                  ? currentImageIndex + 1
+                  : 0;
+              updateCarousel(newIndex);
+            });
+
+          indicators.forEach((indicator, index) => {
+            indicator.addEventListener("click", () => {
+              updateCarousel(index);
+            });
+          });
+        }
+
+        // Close popup handlers
+        const closePopup = () => {
+          overlay.remove();
+          // Remove ESC key listener when popup is closed
+          document.removeEventListener("keydown", handleEscKey);
+        };
+
+        // Handle ESC key press
+        const handleEscKey = (e) => {
+          if (e.key === "Escape") {
+            closePopup();
+          }
+        };
+
+        popup
+          .querySelector(".popup-close")
+          .addEventListener("click", closePopup);
+
+        // Close when clicking outside the popup
+        overlay.addEventListener("click", (e) => {
+          if (e.target === overlay) {
+            closePopup();
+          }
+        });
+
+        // Add ESC key listener
+        document.addEventListener("keydown", handleEscKey);
+      }
+
+      // Function to show curation popup
+      function showCurationPopup() {
+        console.log("showCurationPopup called");
+
+        // Remove existing popup
+        const existingPopup = document.querySelector(".popup-overlay");
+        if (existingPopup) {
+          existingPopup.remove();
+        }
+
+        // Create popup overlay
+        const overlay = document.createElement("div");
+        overlay.className = "popup-overlay";
+
+        // Create popup content
+        const popup = document.createElement("div");
+        popup.className = "popup";
+        popup.style.background = "#1d1e19";
+        popup.style.maxWidth = "900px";
+        popup.style.maxHeight = "800px";
+        popup.style.padding = "50px";
+        popup.style.boxSizing = "border-box";
+        popup.style.color = "#e6e6e6";
+
+        // Create a subtle grain overlay
+        const grainOverlay = document.createElement("div");
+        grainOverlay.style.position = "absolute";
+        grainOverlay.style.top = "0";
+        grainOverlay.style.left = "0";
+        grainOverlay.style.width = "100%";
+        grainOverlay.style.height = "100%";
+        grainOverlay.style.backgroundImage = 'url("assets/BGpopup_grain.png")';
+        grainOverlay.style.backgroundSize = "300px 300px";
+        grainOverlay.style.backgroundPosition = "center center";
+        grainOverlay.style.backgroundRepeat = "repeat";
+        grainOverlay.style.opacity = "0.15";
+        grainOverlay.style.pointerEvents = "none";
+        grainOverlay.style.zIndex = "1";
+
+        // Add grain overlay to popup
+        popup.appendChild(grainOverlay);
+
+        popup.innerHTML += `
+          <button class="popup-close">&times;</button>
+          <div style="position: relative; z-index: 2;">
+            <h2 style="font-size: 28px; font-weight: bold; color: #e6e6e6; margin-bottom: 25px; font-family: 'IBMPlexMono', monospace;">Adi Karelitz's Curation</h2>
+            ${generateASCIIDivider()}
+            <div style="color: #e6e6e6; font-family: 'SourceCodePro', monospace; font-size: 16px; line-height: 1.8;">
+              <p style="margin-bottom: 20px;">
+                Memory_Almost_Full, held in Vitrina Gallery as an embassy of the international The Wrong Biennale, explores disruptions as a post-digital aesthetic in the age of the AI revolution. The advent of Artificial Intelligence has challenged our traditional perceptions of human interaction, creativity, and intelligence. With its pervasive use in both thought and creative processes, the line between physical reality and the digital realm is becoming increasingly blurred and more fluid than ever.
+              </p>
+              ${generateASCIIDivider()}
+              <p style="margin-bottom: 20px;">
+                The works adopt a range of mediums and technologies to foreground and linger on the ruptures and connections formed in the conceptual and aesthetic space that unfolds between the human and the technological. Many of them focus on the glitch as a visual and conceptual metaphor for the gaps and fractures that emerge in these interfaces. How do disruptions, malfunctions, errors, and bugs function as formative actions in a "perfect" digital world?
+              </p>
+              ${generateASCIIDivider()}
+              <p style="margin-bottom: 20px;">
+                In his 2017 book, <em>Glitch Art in Theory and Practice: Critical Failures and Post-Digital Aesthetics</em>, Michael Betancourt proposed a theoretical framework that sees the glitch not as a mere technical phenomenon but as a critical aesthetic related to capitalism. Betancourt argued that the glitch serves as a model for a general theory of critical media, exposing the breaking points in modern technological systems. It functions as a moment of revelation, i.e., a moment where the technological system exposes its own vulnerability and inherent imperfection.
+              </p>
+              ${generateASCIIDivider()}
+              <p style="margin-bottom: 0;">
+                The Wrong Biennale is an independent international art biennial; a multicultural and decentralized platform that embraces an open approach, allowing creatives to sidestep the elitist infrastructure of art fairs and present digital art to a global audience. Founded in 2013 by the Spanish artist and curator David Quiles Guilló, The Wrong Biennale is held both online in the digital sphere and in physical locations.
+              </p>
+            </div>
+          </div>
+        `;
+
+        overlay.appendChild(popup);
+        document.body.appendChild(overlay);
+
+        // Close popup handlers
+        const closePopup = () => {
+          overlay.remove();
+          document.removeEventListener("keydown", handleEscKey);
+        };
+
+        // Handle ESC key press
+        const handleEscKey = (e) => {
+          if (e.key === "Escape") {
+            closePopup();
+          }
+        };
+
+        popup
+          .querySelector(".popup-close")
+          .addEventListener("click", closePopup);
+
+        // Close when clicking outside the popup
+        overlay.addEventListener("click", (e) => {
+          if (e.target === overlay) {
+            closePopup();
+          }
+        });
+
+        // Add ESC key listener
+        document.addEventListener("keydown", handleEscKey);
+      }
+
+      // Artist data for popups
+      const artistData = {
+        "Anat Saacks.jpg": {
+          name: "Anat Saacks",
+          title: "A Bird to Remember",
+          medium:
+            "Photo, wooden and plexiglass box, stones, digital projection, LLM, 2025",
+          description:
+            "A realistic photo of a bird, found dead at the entrance to the artist's home, stands at the heart of a conversation with an AI-powered language model (LLM), which operates as an emotion- simulating entity that is asked to respond to casual loss. The work underscores the emotional gap between humans and machines: between direct documentation of death and an algorithm that offers what it identifies as emotion, solace, interpretation, and memory.",
+          bio: "Saaks is a graphic designer and visual artist. She is a lecturer at HIT Holon Institute of Technology, the owner of A designstudio for design and branding, as well as a social activist and volunteer at a mental health organization.",
+          images: [
+            "assets/Artists/Anat Saacks/AS02 - anat saacks.jpg",
+            "assets/Artists/Anat Saacks/AS03 - anat saacks.jpg",
+            "assets/Artists/Anat Saacks/AS04 - anat saacks.jpg",
+            "assets/Artists/Anat Saacks/AS05 - anat saacks.jpg",
+            "assets/Artists/Anat Saacks/Anat Saacks.jpg",
+          ],
+        },
+        "Chenn Hearthstone_placeholder.png": {
+          name: "Chenn Hearthstone",
+          title: "Bill of Rights",
+          medium: "ChatGPT, Fooocus, Runway, Illustrator, 2025",
+          description:
+            'Imagine a future world with robots that develop sophisticated emotions and humans upload their consciousness to the digital cloud. What would the concept of "human rights" look like in such a world? The work presents a new bill of rights, created after a deep conversation with ChatGPT about the new complexities of this hypothetical world. The conversation led to the formulation of five basic rights that apply to anyone who exists in any shape or form of life – be it human or mechanical.',
+          bio: "Chenn Hearthstone is a visual artist who started working with digital tools recently, after being diagnosed with a genetic syndrome that affects her ability to rely predominantly on her hands.",
+          images: [
+            "assets/Artists/Chenn Hearthstone/Chenn Hearthstone_placeholder.png",
+          ],
+          videoLink: "https://www.youtube.com/watch?v=dAo9QeZ5zxo",
+        },
+        "Dafna_Sartiel.jpg": {
+          name: "Dafna Sartiel",
+          title: "Something Went Wrong",
+          medium: "Etchings, 2011-2025",
+          description:
+            "An ongoing series of etchings created in different stages since 2011. Each print features an error message etched into the digital memory of that period.",
+          bio: "Dafna Sartiel's artistic practice includes printmaking, engraving, photography, mosaic, and sculpture. She has been working in design for many years, and since 2005 she has been making art, specializing in printmaking and engraving. Her work often explores the tension between the medium to the image and the meaning it holds.",
+          images: [
+            "assets/Artists/Dafna Sartiel/Dafna_Sartiel.jpg",
+            "assets/Artists/Dafna Sartiel/2011_RESTART_Dafna_Sartiel_10_20cm.jpg",
+            "assets/Artists/Dafna Sartiel/2011_RESTART_Dafna_Sartiel_Frame_32_39.jpg",
+            "assets/Artists/Dafna Sartiel/2012_LOADING_Dafna_Sartiel_Frame_34_33.jpg",
+            "assets/Artists/Dafna Sartiel/2012_LOADING_Dafna_Sartiel.jpg",
+            "assets/Artists/Dafna Sartiel/2015_AW_SNAP_Dafna_Sartiel_frame.jpg",
+            "assets/Artists/Dafna Sartiel/2015_FILE_NOT_FOUND_Dafna_Sartiel_5x5cm.jpg",
+          ],
+        },
+        "EitanBartal_placeholder.png": {
+          name: "Eitan Bartal",
+          title: "Carnosynthetica Biofabricata",
+          medium:
+            "3D printing, silicone, polyurethane, Perspex, vibration motors, 2025",
+          description:
+            'A speculatively bioengineered engineered organism developed through the integration of advanced synthetic biology and AI algorithms. The "animal/organism" was specifically designed for the efficient and sustainable production of high-quality protein for human consumption.',
+          bio: "Eitan Bartal is an artist, designer, and senior lecturer at HIT Holon Institute of Technology. His works explore the urban space as an arena where sociopolitical power dynamics are reenacted while critically examining formative mass culture imagery and symbols.",
+          images: ["assets/Artists/Eitan Bartal/EitanBartal_placeholder.png"],
+          videoLink: "https://www.youtube.com/shorts/PSR8BFQ6reg",
+        },
+        "Eyal Datz_placeholder.png": {
+          name: "Eyal Datz",
+          title: "Every Light Has Its Shadow",
+          medium: "Video (9 min.), 2024",
+          description:
+            "In 2023, an AI-powered robot in the likeness of Nicolaus Copernicus was installed at Warsaw's Copernicus Science Centre. Copernicus's facial expressions, the pauses in his speech pattern, and his pensive gaze were all a part of an aesthetic designed to give the robot a human semblance. The video documents the robot's interactions with museum visitors and how the disruption is aimed at removing barriers between the human and the artificial.",
+          bio: 'Eyal Datz is a documentary filmmaker whose projects have been featured by major television channels and screened at international festivals. He recently created the web series "Press Play" for Kan 11, exploring the interface between gaming, culture, and advanced technologies such as VR and AR, while examining their impact on contemporary society and culture.',
+          images: ["assets/Artists/Eyal Datz/Eyal Datz_placeholder.png"],
+          videoLink: "https://vimeo.com/842264728",
+        },
+        "Eyal Yehowa Gruss_placeholder.png": {
+          name: "Eyal Yehowa Gruss",
+          title: "And the boy was happy",
+          medium: "Code generated animation, 2025",
+          description:
+            "Gruss inadvertently developed an animation technique based on an image-to-image generator. Due to a glitchy feedback loop, the system brightened the images fed to it and the figures in them, and the model seemed to interpret the images as drawings on paper. This generated an image that evolves semantically and, with a little guidance, lends itself to storytelling.",
+          bio: "Eyal Yehowa Gruss is an artist, programmer, poet, algorithm researcher, and computational creativity lecturer at HIT Holon Institute of Technology. He creates interactive installations, multimedia shows, constrained and algorithmic poetry, and code art.",
+          images: [
+            "assets/Artists/Eyal Yehowa Gruss/Eyal Yehowa Gruss_placeholder.png",
+          ],
+          externalLink: "https://x.com/eyaler/status/1848106256860602530",
+        },
+        "Gilad Fridman.jpg": {
+          name: "Gilad Friedman",
+          title: "Artifact.obj",
+          medium: "3D printing, code based digital printing, 2025",
+          description:
+            'The work offers a speculative interpretation of "artifacts" from our time in the future. Friedman presents a 3D artifact that was printed from a digital file. After being subjected to a corruption process, code extracted from the file was used for programming a unique pattern. Friedman used this software to plot out the printed pattern of the rug displayed next to the object, as its corrupt offspring.',
+          bio: "Gilad Friedman is a multidisciplinary artist who works with crafts and traditional paintings as well as classic industrial design and CAD software. He employs technology as a design and experience generating tool, experimenting with parametric and generative design.",
+          images: ["assets/Artists/Gilad Friedman/Gilad Fridman.jpg"],
+        },
+        "Haya Sheffer.jpg": {
+          name: "Haya Sheffer",
+          title: "85% Human",
+          medium: "Pencil on paper, digital photos, 2023-2025",
+          description:
+            "A collection of photos from CCTV footage taken in a mountainous rural area is presented alongside a large-scale drawing based on the same images. The extraction of the images from their original context and the unexpected juxtaposition of CCTV and AI-based image recognition with wild nature create an unexpected glitch of a satirical, surprising, and critical narrative. The research was supported by the UKRI – UK Research and Innovation.",
+          bio: "Sheffer is a doctoral researcher who focuses on advanced technologies for personal use, the power they hold, and their impact on the individual, the perception of the self, and society.",
+          images: [
+            "assets/Artists/Haya Sheffer/Haya Sheffer.jpg",
+            "assets/Artists/Haya Sheffer/Sheffer-80_ - Haya Sheffer (1).jpg",
+            "assets/Artists/Haya Sheffer/Sheffer-80_ - Haya Sheffer.jpg",
+            "assets/Artists/Haya Sheffer/Sheffer-80_5 - Haya Sheffer.jpg",
+            "assets/Artists/Haya Sheffer/Sheffer-80_6 - Haya Sheffer.jpg",
+            "assets/Artists/Haya Sheffer/Screenshot_20250728_114622_WhatsApp.jpg",
+          ],
+        },
+        "Naama Steinbock.jpg": {
+          name: "Naama Steinbock",
+          title: "Kimkum",
+          medium: "Pottery, clay, porcelain, 2025",
+          description:
+            "The project examines the teapot as a cultural, formal, and functional object by taking it apart and compiling an archive of handmade ceramic variations. In her exploration of craft, Steinbock embraces the labor-intensive truth of the physical process set against a fast-paced and fickle digital world. The project started as part of the Benyamini Contemporary Ceramics Center residency program.",
+          bio: "Naama Steinbock is a product designer, partner at Reddish Studio, and professor in the Department of Industrial Design at HIT Holon Institute of Technology.",
+          images: [
+            "assets/Artists/Naama Steinbock/Naama Steinbock.jpg",
+            "assets/Artists/Naama Steinbock/IMG_64631.jpg",
+            "assets/Artists/Naama Steinbock/IMG_64671.jpg",
+            "assets/Artists/Naama Steinbock/IMG_65441.jpg",
+            "assets/Artists/Naama Steinbock/IMG_65551.jpg",
+            "assets/Artists/Naama Steinbock/IMG_65721.jpg",
+            "assets/Artists/Naama Steinbock/IMG_65791 (1).jpg",
+            "assets/Artists/Naama Steinbock/IMG_66041.jpg",
+          ],
+        },
+        "Oded Ezer_placeholder.png": {
+          name: "Oded Ezer",
+          title: "Preloader #1",
+          medium: "Animated GIF, 2015",
+          description:
+            "The work presents a visual glitch of a cinematic scene that left an indelible mark on cultural consciousness and the collective unconscious. The Preloader symbol, a universal icon of loading and buffering, is embedded in the image at the exact moment it is expected to be revealed, transforming the delay into a political practice. Through a simple editing action, the work thwarts not only the viewer's expectation, but also the cultural structure of visual memory.",
+          bio: "Ezer is a typographer, type designer, conceptual artist, and lecturer at HIT Holon Institute of Technology. He examines the role visual culture plays in technology and human communication and has presented speculative projects and artworks at venues like MoMA in New York and the V&A in London.",
+          images: ["assets/Artists/Oded Ezer/Oded Ezer_placeholder.png"],
+          videoLink: "https://vimeo.com/187967588",
+        },
+        "ofir_liberman.jpg": {
+          name: "Ofir Liberman",
+          title: "Ditaplot Dreams 1,2,3",
+          medium: "Pen plotter printing, dedicated software, 2025",
+          description:
+            "Three prints documenting Liberman's shamanic journeys during his initiation process into the Toltec (pre-Columbian) tradition. The fragments of these journeys were captured using automatic writing, which Liberman then converted into prompts, digitally reducing them using a dedicated software he created for this project. The final prints were printed using a pen plotter. Thus, each journey passed through several steps – from the shamanic experience through algorithmic processing to the eventual return to concrete reality.",
+          bio: "Lieberman is an educator, designer, and artist who works in the intersection of art, research, and technology. His work combines UX design, interactive systems development, and artistic exploration of coding languages and algorithms.",
+          images: [
+            "assets/Artists/Ofir Liberman/ofir_liberman.jpg",
+            "assets/Artists/Ofir Liberman/IMG_1582A.jpg",
+            "assets/Artists/Ofir Liberman/IMG-20250626-WA0022A.jpg",
+          ],
+        },
+        "Rony Ginosar.jpg": {
+          name: "Rony Ginosar",
+          title: "Emergence",
+          medium: "Digital printing and code, 2022",
+          description:
+            'Ordinarily, we do not stop to dwell on errors. But sometimes, they hold a special beauty. The work presents a compilation of errors, or as they are commonly called: "bugs." The only difference between these photos taken with a smartphone camera and a regular photo is a bug in the camera\'s code. This is not a psychedelic painting or design; it is also not the result of deliberate composition or color choice. This is a spontaneous photograph that exposes the beauty of an error.',
+          bio: "Rony Ginosar is a designer, algorithm researcher, and lecturer at HIT Holon Institute of Technology. She studied visual communication and computer science, with a focus on computer vision (CV), particularly typography and the intersections of design and coding in both practical and research aspects. Her work explores Visual Algorithms, with a specialization in Hebrew typography.",
+          images: [
+            "assets/Artists/Rony Ginosar/Rony Ginosar.jpg",
+            "assets/Artists/Rony Ginosar/1_igal_hit_5.jpg",
+            "assets/Artists/Rony Ginosar/4_naomi_3.jpg",
+            "assets/Artists/Rony Ginosar/extra_igal4.jpg",
+            "assets/Artists/Rony Ginosar/עותק של 6_piepsh_1.jpg",
+          ],
+        },
+        "fbm_b134006708485641932.png": {
+          name: "Shaul Tzemach",
+          title: "Brownian Fluctuation",
+          medium: "Interactive generative animation, 2025",
+          description:
+            "Shaul Tzemach creates a generative environment of visual noise based on the random motion of particles (known as Brownian motion). The viewer's movements merge with the work as a fluid algorithmic convergence, while the structure of primary forms starts to take shape and crystallize out of the disorder of the universe.",
+          bio: "Starting out as a visual artist, Tzemach works with new media, kinetic art, interactive art, real-time generative art, video mapping, and 3D projections. His interdisciplinary works combine different methods in an exploration of themes like becoming, transformation, duration, and the growth of forms.",
+          images: [
+            "assets/Artists/Shaul Tzemach/fbm_b134006708485641932.png",
+            "assets/Artists/Shaul Tzemach/fbm_b134006708505554427.png",
+            "assets/Artists/Shaul Tzemach/fbm_b134006708525704596.png",
+          ],
+          videoLink: "https://vimeo.com/1114683961",
+        },
+        "Yoav Ruda_placeholder.png": {
+          name: "Yoav Ruda",
+          title: "The Double-slit Bug",
+          medium: "Video (4:25 min.), 2025",
+          description:
+            "Ruda considers the double-slit experiment – which tests whether radiation behaves like a wave or like particles – to be the scientific discovery that fundamentally undermines our perception of reality more than any other experiment. His audiovisual collage, based on an original poetic text, captures the uneasy feeling one gets after realizing the full implications of this experiment.",
+          bio: "Ruda works in a range of mediums, including video, film, photography, and digital art. His photography and video works have been exhibited in Israel and abroad, he has created original videos for live concerts of top Israeli musicians, and he has recently made a series of poetry slam-based videos.",
+          images: ["assets/Artists/Yoav Ruda/Yoav Ruda_placeholder.png"],
+          videoLink: "https://www.youtube.com/watch?v=Z6C4aO8_IJ8",
+        },
+        "yonatan ben-simhon.jpeg": {
+          name: "Yonatan Ben-Simhon and Mattan Tenne",
+          title: "Deep Hate Machine",
+          medium: "PC and printer, 2025",
+          description:
+            "Deep Hate Machine was originally introduced in 2013 as a machine with low self-esteem that scours Twitter, detecting and printing out expressions of anger directed at machines. By 2025, the deep hate machine has evolved and expanded its operations to include generative artificial intelligence, and the texts it prints out are sentiments on the only thing that interests it: The machine problem.",
+          bio: "Yonatan Ben-Simhon and Mattan Tenne are AI professionals and artists. The two met at AOL, as algorithm engineers specialized in machine learning and natural language analysis, where they discovered their love of language models. Using machines and AI as their medium of choice, they expose the flaws in the machine and in the human estimation of its abilities.",
+          images: [
+            "assets/Artists/Yonatan Ben-Simhon and Mattan Tenne/yonatan ben-simhon.jpeg",
+          ],
+        },
+        "Yuval Keshet.JPG": {
+          name: "Yuval Keshet",
+          title: "Simulacrum",
+          medium: "Photography, inkjet print, 2021",
+          description:
+            "The public space is inundated with images, with billboards and ads posted around construction sites and featured on passing trucks. Sometimes these look like glimpses of other realities within the one in which we live, and it seems that with the right framing, multiple realities can be flattened and fused together.",
+          bio: "Yuval Keshet is a creative and visual artist who combines social and cultural research and practice in the broad field of visual and material culture.",
+          images: [
+            "assets/Artists/Yuval Keshet/Yuval Keshet.JPG",
+            "assets/Artists/Yuval Keshet/יובל_קשת_30_40.jpg",
+            "assets/Artists/Yuval Keshet/יובל_קשת_30_40A.jpg",
+          ],
+        },
+      };
+
+      // Click handler for Three.js images
+      function onImageClick(event) {
+        console.log("Three.js canvas clicked!");
+
+        // Calculate mouse position in normalized device coordinates
+        const rect = renderer.domElement.getBoundingClientRect();
+        mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+        mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+        console.log("Mouse position:", mouse.x, mouse.y);
+
+        // Update raycaster with camera and mouse position
+        raycaster.setFromCamera(mouse, camera);
+
+        // Get intersected objects
+        const intersects = raycaster.intersectObjects(imagePlanes);
+        console.log("Intersected objects:", intersects.length);
+
+        if (intersects.length > 0) {
+          const clickedObject = intersects[0].object;
+          console.log("Clicked object:", clickedObject.userData);
+
+          // Check if this image is clickable
+          if (clickedObject.userData.isClickable) {
+            console.log("Image is clickable!");
+            const artist = clickedObject.userData.artist;
+            const imageName = artist.path.split("/").pop();
+            console.log("Full artist path:", artist.path);
+            console.log("Extracted image name:", imageName);
+            console.log("Available artist data keys:", Object.keys(artistData));
+
+            // Find the artist data
+            const artistInfo = artistData[imageName];
+            console.log("Artist info found:", artistInfo);
+            if (artistInfo) {
+              console.log("Opening popup for:", artistInfo.name);
+              showArtistPopup(artistInfo);
+            } else {
+              console.log("No artist info found for:", imageName);
+            }
+          } else {
+            console.log("Image is not clickable");
+          }
+        } else {
+          console.log("No objects intersected");
+        }
+      }
+
       // Preload all images in parallel for faster loading
       function preloadImages() {
         const loadPromises = artistImages.map((artist) => {
@@ -468,14 +1153,14 @@
         return Promise.all(loadPromises);
       }
 
-      // Function to create window frame texture with image
-      function createWindowFrameTexture(imageTexture, artistName) {
+      // Function to create ASCII frame texture with image
+      function createASCIIFrameTexture(imageTexture, artistName) {
         const canvas = document.createElement("canvas");
         const ctx = canvas.getContext("2d");
 
-        // Set canvas size (larger to accommodate frame)
-        const padding = 25; // Space for frame (reduced from 60)
-        const titleBarHeight = 30;
+        // Set canvas size with padding for ASCII frame
+        const padding = 20; // Space for frame
+        const textHeight = 25; // Space for text above frame
         const standardImageWidth = 400; // Fixed width for all images
         const imageWidth = imageTexture.image.width;
         const imageHeight = imageTexture.image.height;
@@ -485,120 +1170,62 @@
           (imageHeight / imageWidth) * standardImageWidth;
 
         canvas.width = standardImageWidth + padding * 2;
-        canvas.height = proportionalImageHeight + padding * 2 + titleBarHeight;
+        canvas.height = proportionalImageHeight + padding * 2 + textHeight;
 
-        // Draw title bar background (gradient like old Windows)
-        const gradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
-        gradient.addColorStop(0, "#0a246a");
-        gradient.addColorStop(1, "#1084d0");
-        ctx.fillStyle = gradient;
-        ctx.fillRect(10, 10, canvas.width - 20, titleBarHeight);
-
-        // Draw title bar text
-        ctx.fillStyle = "white";
+        // Draw text above the frame (black, monospace font)
+        ctx.fillStyle = "#000000";
         ctx.font = "bold 14px IBMPlexMono, monospace";
-        ctx.textAlign = "left";
+        ctx.textAlign = "center";
         ctx.textBaseline = "middle";
-        ctx.fillText(artistName, 15, 10 + titleBarHeight / 2);
+        ctx.fillText(`[*] ${artistName}`, canvas.width / 2, textHeight / 2);
 
-        // Draw window control buttons (X, minimize, maximize)
-        const buttonSize = 20;
-        const buttonY = 10 + (titleBarHeight - buttonSize) / 2;
-        const buttonSpacing = 3;
+        // ASCII frame coordinates
+        const frameX = padding;
+        const frameY = textHeight;
+        const frameWidth = standardImageWidth;
+        const frameHeight = proportionalImageHeight;
 
-        // Close button (red)
-        ctx.fillStyle = "#d13438";
-        ctx.fillRect(
-          canvas.width - 15 - buttonSize,
-          buttonY,
-          buttonSize,
-          buttonSize
-        );
-        ctx.strokeStyle = "white";
-        ctx.lineWidth = 2;
+        // No dashed lines - just corner brackets
+
+        // Draw corner brackets
+        ctx.setLineDash([]); // Solid lines for corners
+        ctx.lineWidth = 3;
+
+        // Top-left corner
         ctx.beginPath();
-        ctx.moveTo(canvas.width - 15 - buttonSize + 8, buttonY + 8);
-        ctx.lineTo(canvas.width - 15 - 8, buttonY + buttonSize - 8);
-        ctx.moveTo(canvas.width - 15 - 8, buttonY + 8);
-        ctx.lineTo(
-          canvas.width - 15 - buttonSize + 8,
-          buttonY + buttonSize - 8
-        );
+        ctx.moveTo(frameX - 12, frameY + 12);
+        ctx.lineTo(frameX - 5, frameY + 5);
+        ctx.lineTo(frameX + 12, frameY - 12);
         ctx.stroke();
 
-        // Maximize button (gray)
-        ctx.fillStyle = "#5a5a5a";
-        ctx.fillRect(
-          canvas.width - 15 - buttonSize * 2 - buttonSpacing,
-          buttonY,
-          buttonSize,
-          buttonSize
-        );
-        ctx.strokeStyle = "white";
-        ctx.strokeRect(
-          canvas.width - 15 - buttonSize * 2 - buttonSpacing + 8,
-          buttonY + 8,
-          buttonSize - 16,
-          buttonSize - 16
-        );
-
-        // Minimize button (gray)
-        ctx.fillStyle = "#5a5a5a";
-        ctx.fillRect(
-          canvas.width - 15 - buttonSize * 3 - buttonSpacing * 2,
-          buttonY,
-          buttonSize,
-          buttonSize
-        );
-        ctx.fillStyle = "white";
-        ctx.fillRect(
-          canvas.width - 15 - buttonSize * 3 - buttonSpacing * 2 + 8,
-          buttonY + buttonSize / 2 - 2,
-          buttonSize - 16,
-          4
-        );
-
-        // Draw inner window background (light gray)
-        ctx.fillStyle = "#c0c0c0";
-        ctx.fillRect(
-          10,
-          10 + titleBarHeight,
-          canvas.width - 20,
-          canvas.height - 20 - titleBarHeight
-        );
-
-        // Draw 3D inset border effect for image area
-        const imageX = padding;
-        const imageY = padding + titleBarHeight;
-
-        // Dark shadow (top and left)
-        ctx.strokeStyle = "#808080";
-        ctx.lineWidth = 2;
+        // Top-right corner
         ctx.beginPath();
-        ctx.moveTo(imageX - 2, imageY + proportionalImageHeight + 2);
-        ctx.lineTo(imageX - 2, imageY - 2);
-        ctx.lineTo(imageX + standardImageWidth + 2, imageY - 2);
+        ctx.moveTo(frameX + frameWidth + 12, frameY + 12);
+        ctx.lineTo(frameX + frameWidth + 5, frameY + 5);
+        ctx.lineTo(frameX + frameWidth - 12, frameY - 12);
         ctx.stroke();
 
-        // Light highlight (bottom and right)
-        ctx.strokeStyle = "#ffffff";
-        ctx.lineWidth = 2;
+        // Bottom-left corner
         ctx.beginPath();
-        ctx.moveTo(imageX - 2, imageY + proportionalImageHeight + 2);
-        ctx.lineTo(
-          imageX + standardImageWidth + 2,
-          imageY + proportionalImageHeight + 2
-        );
-        ctx.lineTo(imageX + standardImageWidth + 2, imageY - 2);
+        ctx.moveTo(frameX - 12, frameY + frameHeight - 12);
+        ctx.lineTo(frameX - 5, frameY + frameHeight - 5);
+        ctx.lineTo(frameX + 12, frameY + frameHeight + 12);
         ctx.stroke();
 
-        // Draw the actual image (scaled to standard width)
+        // Bottom-right corner
+        ctx.beginPath();
+        ctx.moveTo(frameX + frameWidth + 12, frameY + frameHeight - 12);
+        ctx.lineTo(frameX + frameWidth + 5, frameY + frameHeight - 5);
+        ctx.lineTo(frameX + frameWidth - 12, frameY + frameHeight + 12);
+        ctx.stroke();
+
+        // Draw the actual image inside the frame
         ctx.drawImage(
           imageTexture.image,
-          imageX,
-          imageY,
-          standardImageWidth,
-          proportionalImageHeight
+          frameX,
+          frameY,
+          frameWidth,
+          frameHeight
         );
 
         return canvas;
@@ -608,8 +1235,8 @@
       preloadImages()
         .then((loadedTextures) => {
           loadedTextures.forEach(({ artist, texture }) => {
-            // Create window frame with image
-            const framedCanvas = createWindowFrameTexture(texture, artist.name);
+            // Create ASCII frame with image
+            const framedCanvas = createASCIIFrameTexture(texture, artist.name);
 
             // Create texture from the framed canvas
             const framedTexture = new THREE.CanvasTexture(framedCanvas);
@@ -645,8 +1272,12 @@
             // Ensure images render in front of lines
             plane.renderOrder = 1;
 
-            // Store reference for billboard behavior
-            plane.userData = { isBillboard: true };
+            // Store reference for billboard behavior and artist data
+            plane.userData = {
+              isBillboard: true,
+              artist: artist,
+              isClickable: isClickableImage(artist.path),
+            };
             imagePlanes.push(plane);
             scene.add(plane);
           });
@@ -657,9 +1288,6 @@
           // Trigger fade-in effect once everything is loaded
           setTimeout(() => {
             renderer.domElement.classList.add("fade-in");
-            // Start rotation animation after fade-in begins
-            rotationStartTime = Date.now();
-            isRotating = true;
           }, 100); // Small delay to ensure everything is rendered
         })
         .catch((error) => {
@@ -667,9 +1295,6 @@
           // Still trigger fade-in even if some images fail to load
           setTimeout(() => {
             renderer.domElement.classList.add("fade-in");
-            // Start rotation animation after fade-in begins
-            rotationStartTime = Date.now();
-            isRotating = true;
           }, 100);
         });
 
@@ -753,7 +1378,7 @@
       }
 
       // Camera position
-      camera.position.z = 15;
+      camera.position.z = 25;
 
       // Simplified orbit controls
       const controls = new THREE.OrbitControls(camera, renderer.domElement);
@@ -767,14 +1392,7 @@
       const cameraMatrix = new THREE.Matrix4();
 
       // Rotation animation variables
-      let rotationStartTime = null;
-      const rotationDuration = 3000; // 3 seconds in milliseconds
-      let isRotating = false;
-
-      // Easing function for smooth rotation (ease-in-out)
-      function easeInOutCubic(t) {
-        return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-      }
+      const rotationSpeed = 0.0003; // Slow constant rotation speed
 
       // Optimized animation loop
       function animate() {
@@ -787,25 +1405,8 @@
         );
         frustum.setFromProjectionMatrix(cameraMatrix);
 
-        // Handle rotation animation
-        if (isRotating && rotationStartTime !== null) {
-          const currentTime = Date.now();
-          const elapsed = currentTime - rotationStartTime;
-          const progress = Math.min(elapsed / rotationDuration, 1);
-
-          if (progress < 1) {
-            // Apply easing and rotate around Y-axis
-            const easedProgress = easeInOutCubic(progress);
-            const rotationAngle = (easedProgress * Math.PI) / 4; // Rotate 45 degrees (π/4 radians) to the left
-
-            // Rotate the entire scene around Y-axis
-            scene.rotation.y = rotationAngle;
-          } else {
-            // Animation complete
-            isRotating = false;
-            scene.rotation.y = Math.PI / 4; // Final rotation position
-          }
-        }
+        // Constant slow rotation around Y-axis
+        scene.rotation.y += rotationSpeed;
 
         // Optimized billboard behavior with frustum culling
         imagePlanes.forEach((plane) => {
@@ -840,20 +1441,21 @@
         document.body.style.background = `
           radial-gradient(
             circle at ${x}% ${y}%,
-            rgba(255, 255, 255, 0.25) 0%,
-            rgba(255, 255, 255, 0) 35%
+            rgba(255, 255, 255, 0.15) 0%,
+            rgba(255, 255, 255, 0) 30%
           ),
           radial-gradient(
             ellipse at 50% 50%,
             #f8f0e4 0%,
-            #ede4d8 20%,
-            #e3dbcf 35%,
-            #d0c7bb 50%,
-            #bdb4a8 70%,
-            #a59c90 90%,
-            #8d8478 100%
+            #ede4d8 15%,
+            #e3dbcf 25%,
+            #d0c7bb 40%,
+            #bdb4a8 55%,
+            #a59c90 75%,
+            #7a7164 90%,
+            #625a4e 100%
           ),
-          url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="1.5" numOctaves="6" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter><rect width="600" height="600" filter="url(%23noise)" opacity="0.75"/></svg>')`;
+          url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="1.8" numOctaves="7" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter><rect width="600" height="600" filter="url(%23noise)" opacity="0.95"/></svg>')`;
         document.body.style.backgroundBlendMode = "normal, multiply, multiply";
         document.body.style.backgroundSize = "cover, cover, 200px 200px";
       });
