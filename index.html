@@ -1082,6 +1082,7 @@
             'assets/Artists/Eyal Yehowa Gruss/EyalGruss.png'
           ],
           videoLink: 'https://www.youtube.com/watch?v=M8qbfkifG84'
+        },
 
         "Gilad Fridman.jpg": {
           name: "Gilad Friedman",
@@ -1210,7 +1211,7 @@
           images: [
             "assets/Artists/Yuval Keshet/Yuval Keshet.JPG",
             "assets/Artists/Yuval Keshet/יובל_קשת_30_40.jpg",
-            "assets/Artists/Yuval Keshet/יובל_קשת_30_40A.jpg",
+            "assets/Artists/Yuval Keshet/יובל_קשת_30_40A.jpg"
           ],
         },
       };
@@ -1360,7 +1361,7 @@
 
             const material = new THREE.MeshBasicMaterial({
               map: framedTexture,
-              transparent: true,
+        transparent: true,
               opacity: 0.95,
               side: THREE.DoubleSide,
               alphaTest: 0.1, // Optimize transparency rendering
@@ -1514,6 +1515,482 @@
       // Rotation animation variables - adjust for mobile
       const rotationSpeed = isMobile ? 0.0001 : 0.0003; // Slower rotation on mobile
 
+      // Floating ASCII elements system
+      let asciiElements = [];
+      let asciiTime = 0;
+      let asciiCanvas, asciiCtx;
+      
+      // ASCII patterns
+      const asciiPatterns = [
+        // Owl
+        ['       o        o', '  ___   \\      /   ___', '.` __`-. \\/\\/\\/ .-\'__ \'.', '( /  \\  \\/(..)\/  /  \\ )', '\\ \\ O ) ( (oo) ) ( O / /', ' \\ \\_/ __>----<__ \\_/ /', '  ".   >_      _<   ."', '    >   /      \\   <', '   / /( \\      / )\\ \\', '  / `" _/ ____ \\_ "\' \\', '  \\_.-` A/  & \\A \'-._/'],
+        
+        // Decorative face
+        ['.==-.                   .-==.', ' \\()8`-._  `.   .\'  _.-\'8()/', ' (88"   ::.  \\./  .::   "88)', '  \\_.\'`-::::.(#).::::-\'`._/', '    `._... .q(_)p. ..._\'', '      ""-..-.\'|=|`-..-""', '      .""\' .\'|=|`. `"".', '    ,\':8(o)./|=|\\.(o)8:`.', '   (O :8 ::/ \\_/ \\:: 8: O)', '    \\O `::/       \\::\' O/', '     ""--\'         `--""'],
+        
+        // Simple face
+        ['    .----.   @   @', '   / .-"-.\`.  \\v/', '   | | \'\\ \\ \\_/ )', ' ,-\\ `-.\' /.\'  /', '\'---`----\'----\''],
+        
+        // Caterpillar
+        ['    \\_/-.--.--.--.--.--.', '    (")__)__)__)__)__)__)', '     ^ "" "" "" "" "" ""'],
+        
+        // Simple stick figure
+        ['\\(")/', '-( )-', '/(_)\\'],
+        
+        // Cat
+        ['    =/\\                 /\\=', '    / \\._   (\\_/)   _./\\', '   / .\'\'._\'--(o.o)--\'_.\'\'\\', '  /.\' _/ |`=/ " \\=`| \\_ `.\\', ' /` .\' \\;-,\'\\___/\',-;/ `. \'\\', '/.-\'      `\\(-V-)/`       `-.\\', '`            "   "'],
+        
+        // Pig
+        ['             ___', '          .="   "=._.---.', '        ."         c  Y p', '       /   ,       `.  w_/', '       |   -.   /     /', ' _,..._|      )_-\\ \\_=.\\', '`-....- `------))) =- " '],
+        
+        // Car
+        ['                                  .-.', '     (___________________________()6 `-,', '     (   ______________________   / "`', '     //\\\\                      //\\\\', '     "" ""                     "" ""']
+      ];
+
+      // Initialize ASCII elements system
+      function initASCIIElements() {
+        asciiCanvas = document.createElement('canvas');
+        asciiCanvas.id = 'ascii-canvas';
+        asciiCanvas.style.position = 'fixed';
+        asciiCanvas.style.top = '0px';
+        asciiCanvas.style.left = '0px';
+        asciiCanvas.style.width = '100vw';
+        asciiCanvas.style.height = '100vh';
+        asciiCanvas.style.pointerEvents = 'none';
+        asciiCanvas.style.zIndex = '99999';
+        asciiCanvas.style.backgroundColor = 'rgba(255, 0, 0, 0.3)'; // More visible red tint
+        asciiCanvas.style.border = '10px solid yellow';
+        asciiCanvas.style.boxSizing = 'border-box';
+        
+        // Try to add it as the last child of body (on top of everything)
+        document.body.appendChild(asciiCanvas);
+        console.log("ASCII canvas added to DOM:", asciiCanvas);
+        console.log("Canvas position:", asciiCanvas.style.position);
+        console.log("Canvas z-index:", asciiCanvas.style.zIndex);
+        
+        asciiCtx = asciiCanvas.getContext('2d');
+        console.log("ASCII context created:", asciiCtx);
+        resizeASCIICanvas();
+        console.log("ASCII canvas resized to:", asciiCanvas.width, "x", asciiCanvas.height);
+        
+        // Test canvas context immediately
+        console.log("Testing canvas context...");
+        asciiCtx.fillStyle = 'red';
+        asciiCtx.fillRect(0, 0, 100, 100);
+        console.log("Drew test rectangle");
+        
+        // Check if canvas has any content
+        const imageData = asciiCtx.getImageData(0, 0, 10, 10);
+        console.log("Canvas image data:", imageData.data.slice(0, 20));
+        
+        // Create initial ASCII elements
+        for (let i = 0; i < 3; i++) {
+          createASCIIElement();
+        }
+        
+        // Add a test element in the center to verify visibility
+        let testElement = {
+          pattern: ['TEST', 'ASCII'],
+          x: window.innerWidth / 2,
+          y: window.innerHeight / 2,
+          vx: 0,
+          vy: 0,
+          rotation: 0,
+          rotationSpeed: 0,
+          scale: 1,
+          alpha: 255,
+          timeOffset: 0,
+          life: 0,
+          maxLife: 1000
+        };
+        asciiElements.push(testElement);
+        
+        console.log("ASCII elements system initialized with", asciiElements.length, "elements");
+        
+        // Immediate test - draw something very obvious
+        console.log("Canvas dimensions:", asciiCanvas.width, "x", asciiCanvas.height);
+        console.log("Context:", asciiCtx);
+        
+        // Clear the canvas first
+        asciiCtx.clearRect(0, 0, asciiCanvas.width, asciiCanvas.height);
+        
+        // Draw a big red rectangle first
+        asciiCtx.fillStyle = 'rgba(255, 0, 0, 0.8)';
+        asciiCtx.fillRect(50, 50, 300, 100);
+        
+        // Then draw text
+        asciiCtx.fillStyle = 'rgba(255, 255, 255, 1)'; // White text
+        asciiCtx.font = 'bold 32px Arial';
+        asciiCtx.textAlign = 'center';
+        asciiCtx.textBaseline = 'middle';
+        asciiCtx.fillText('CAN YOU SEE THIS?', asciiCanvas.width / 2, asciiCanvas.height / 2);
+        
+        // Draw another rectangle in center
+        asciiCtx.fillStyle = 'rgba(0, 255, 0, 0.8)';
+        asciiCtx.fillRect(asciiCanvas.width / 2 - 100, asciiCanvas.height / 2 - 50, 200, 100);
+        
+        console.log("Drew immediate test text and rectangle");
+        
+        // Test div overlay removed - clean interface
+        
+        // Don't create initial ASCII elements - start clean
+        console.log("ASCII elements system initialized - starting clean");
+        
+        // Test if canvas is actually visible
+        setTimeout(() => {
+          const canvas = document.getElementById('ascii-canvas');
+          if (canvas) {
+            console.log("Canvas found in DOM:", canvas);
+            console.log("Canvas computed style:", window.getComputedStyle(canvas));
+            console.log("Canvas offset:", canvas.offsetWidth, "x", canvas.offsetHeight);
+          } else {
+            console.log("ERROR: Canvas not found in DOM!");
+          }
+        }, 1000);
+      }
+
+      function resizeASCIICanvas() {
+        asciiCanvas.width = window.innerWidth;
+        asciiCanvas.height = window.innerHeight;
+      }
+
+      function createASCIIElement() {
+        let pattern = asciiPatterns[Math.floor(Math.random() * asciiPatterns.length)];
+        let element = {
+          pattern: pattern,
+          x: window.innerWidth / 2 + Math.random() * 200 - 100,
+          y: window.innerHeight / 2 + Math.random() * 200 - 100,
+          vx: (Math.random() - 0.5) * 0.5,
+          vy: (Math.random() - 0.5) * 0.5,
+          rotation: 0,
+          rotationSpeed: (Math.random() - 0.5) * 0.02,
+          scale: Math.random() * 0.4 + 0.8,
+          alpha: Math.random() * 100 + 155,
+          timeOffset: Math.random() * 100,
+          life: 0,
+          maxLife: Math.random() * 300 + 200
+        };
+        asciiElements.push(element);
+      }
+
+      function updateASCIIElements() {
+        asciiTime += 0.02;
+        
+        // Check network position to determine if ASCII elements should appear
+        let networkPosition = getNetworkPosition();
+        let shouldShowASCII = networkPosition.x < -0.1 && networkPosition.y < -0.1;
+        
+        // Debug: log position occasionally
+        if (Math.random() < 0.001) {
+          console.log("Network position:", networkPosition, "Should show ASCII:", shouldShowASCII);
+        }
+        
+        if (shouldShowASCII && asciiElements.length < 8) {
+          // Create new ASCII elements from center to right up
+          if (Math.random() < 0.1) {
+            createASCIIElement();
+            console.log("Created ASCII element! Total:", asciiElements.length);
+          }
+        }
+        
+        // Also create elements occasionally regardless of position for testing
+        if (asciiElements.length < 3 && Math.random() < 0.01) {
+          createASCIIElement();
+          console.log("Created test ASCII element! Total:", asciiElements.length);
+        }
+        
+        // Update existing elements
+        for (let i = asciiElements.length - 1; i >= 0; i--) {
+          let element = asciiElements[i];
+          element.life++;
+          
+          // Remove old elements
+          if (element.life > element.maxLife) {
+            asciiElements.splice(i, 1);
+            continue;
+          }
+          
+          // Update position
+          element.x += element.vx;
+          element.y += element.vy;
+          
+          // Add gentle floating motion
+          let breathX = Math.sin(asciiTime + element.timeOffset) * 2;
+          let breathY = Math.cos(asciiTime + element.timeOffset * 0.7) * 1;
+          
+          element.x += breathX;
+          element.y += breathY;
+          
+          // Rotation
+          element.rotation += element.rotationSpeed;
+          
+          // Fade out over time
+          element.alpha = Math.max(0, 255 - (element.life / element.maxLife) * 100);
+        }
+      }
+
+      function drawASCIIElements() {
+        asciiCtx.clearRect(0, 0, asciiCanvas.width, asciiCanvas.height);
+        
+        // Debug: log drawing occasionally
+        if (asciiElements.length > 0 && Math.random() < 0.01) {
+          console.log("Drawing", asciiElements.length, "ASCII elements");
+        }
+        
+        for (let element of asciiElements) {
+          asciiCtx.save();
+          asciiCtx.translate(element.x, element.y);
+          asciiCtx.rotate(element.rotation);
+          asciiCtx.scale(element.scale, element.scale);
+          
+          // Draw each line of the ASCII pattern
+          for (let y = 0; y < element.pattern.length; y++) {
+            let line = element.pattern[y];
+            let lineX = -line.length * 8 / 2;
+            let lineY = -element.pattern.length * 10 / 2 + y * 10;
+            
+            // Add gentle floating motion to each line
+            let lineFloatX = Math.sin(asciiTime + y * 0.1) * 1;
+            let lineFloatY = Math.cos(asciiTime + y * 0.1) * 0.5;
+            
+            asciiCtx.save();
+            asciiCtx.translate(lineX + lineFloatX, lineY + lineFloatY);
+            
+            // Draw the line in sharp green
+            asciiCtx.fillStyle = `rgba(0, 255, 0, ${Math.max(0.9, element.alpha / 255)})`;
+            asciiCtx.font = 'bold 14px monospace';
+            asciiCtx.textAlign = 'left';
+            asciiCtx.textBaseline = 'top';
+            asciiCtx.fillText(line, 0, 0);
+            asciiCtx.restore();
+          }
+          asciiCtx.restore();
+        }
+      }
+
+      function getNetworkPosition() {
+        // Get the current camera/network position
+        let position = {
+          x: (camera.position.x - 0) / 50, // Normalize to -1 to 1
+          y: (camera.position.y - 0) / 50,
+          z: (camera.position.z - 25) / 25
+        };
+        return position;
+      }
+
+      // Create ASCII elements as HTML divs (working solution!)
+      function createHTMLASCIIElements() {
+        console.log("Creating HTML ASCII elements...");
+        
+        // Create initial ASCII elements
+        for (let i = 0; i < 3; i++) {
+          createHTMLASCIIElement();
+        }
+      }
+
+      function createHTMLASCIIElement() {
+        let pattern = asciiPatterns[Math.floor(Math.random() * asciiPatterns.length)];
+        let asciiDiv = document.createElement('div');
+        asciiDiv.className = 'ascii-element';
+        asciiDiv.style.position = 'fixed';
+        asciiDiv.style.left = Math.random() * window.innerWidth + 'px';
+        asciiDiv.style.top = Math.random() * window.innerHeight + 'px';
+        asciiDiv.style.color = 'lime';
+        asciiDiv.style.fontFamily = 'monospace';
+        asciiDiv.style.fontSize = '12px';
+        asciiDiv.style.fontWeight = 'bold';
+        asciiDiv.style.zIndex = '999999';
+        asciiDiv.style.pointerEvents = 'none';
+        asciiDiv.style.whiteSpace = 'pre';
+        asciiDiv.style.lineHeight = '1.2';
+        asciiDiv.style.textAlign = 'left';
+        asciiDiv.style.transform = `scale(${Math.random() * 0.5 + 0.8})`;
+        asciiDiv.style.opacity = '0.9';
+        asciiDiv.style.transition = 'all 0.1s ease-out';
+        asciiDiv.textContent = pattern.join('\n');
+        
+        // Add animation properties
+        asciiDiv.vx = (Math.random() - 0.5) * 0.2;
+        asciiDiv.vy = (Math.random() - 0.5) * 0.2;
+        asciiDiv.rotation = 0;
+        asciiDiv.rotationSpeed = (Math.random() - 0.5) * 0.01;
+        asciiDiv.timeOffset = Math.random() * 100;
+        asciiDiv.life = 0;
+        asciiDiv.maxLife = Math.random() * 300 + 200;
+        
+        document.body.appendChild(asciiDiv);
+        console.log("Created HTML ASCII element with pattern:", pattern[0]);
+        return asciiDiv;
+      }
+
+      // Track previous camera position to detect movement
+      let previousCameraPosition = { x: 0, y: 0, z: 0 };
+      let isDragging = false;
+      let dragStartTime = 0;
+
+      function updateHTMLASCIIElements() {
+        asciiTime += 0.01;
+        
+        // Get current camera position
+        let currentPosition = {
+          x: camera.position.x,
+          y: camera.position.y,
+          z: camera.position.z
+        };
+        
+        // Calculate movement
+        let movement = {
+          x: currentPosition.x - previousCameraPosition.x,
+          y: currentPosition.y - previousCameraPosition.y,
+          z: currentPosition.z - previousCameraPosition.z
+        };
+        
+        // Check if there's significant movement (dragging)
+        let currentlyDragging = Math.abs(movement.x) > 0.5 || Math.abs(movement.y) > 0.5 || Math.abs(movement.z) > 0.5;
+        
+        // Detect drag start
+        if (currentlyDragging && !isDragging) {
+          isDragging = true;
+          dragStartTime = Date.now();
+          createAnimatedASCIIElement();
+        }
+        
+        // Detect drag end
+        if (!currentlyDragging && isDragging) {
+          isDragging = false;
+        }
+        
+        // Update previous position
+        previousCameraPosition = { ...currentPosition };
+        
+        // Update existing elements
+        const elements = document.querySelectorAll('.ascii-element');
+        for (let i = elements.length - 1; i >= 0; i--) {
+          let element = elements[i];
+          element.life++;
+          
+          // Remove elements after 5 seconds (300 frames at 60fps)
+          if (element.life > 300) {
+            // Fade out before removing
+            element.style.transition = 'opacity 0.5s ease-out';
+            element.style.opacity = '0';
+            setTimeout(() => {
+              if (element.parentNode) {
+                element.remove();
+              }
+            }, 500);
+            continue;
+          }
+          
+          // Update animation for elements that are still animating
+          if (element.isAnimating) {
+            let progress = Math.min(1, (Date.now() - element.startTime) / element.animationDuration);
+            
+            // Ease out animation
+            let easedProgress = 1 - Math.pow(1 - progress, 3);
+            
+            // Calculate position from center to target
+            let currentX = element.startX + (element.targetX - element.startX) * easedProgress;
+            let currentY = element.startY + (element.targetY - element.startY) * easedProgress;
+            
+            // Calculate scale from 0 to 1
+            let currentScale = easedProgress;
+            
+            // Calculate opacity from 0 to 1
+            let currentOpacity = easedProgress;
+            
+            element.style.left = currentX + 'px';
+            element.style.top = currentY + 'px';
+            element.style.transform = `scale(${currentScale})`;
+            element.style.opacity = currentOpacity;
+            
+            // Mark as finished animating
+            if (progress >= 1) {
+              element.isAnimating = false;
+            }
+          } else {
+            // Gentle floating for finished elements
+            if (element.life % 10 === 0) {
+              let currentLeft = parseFloat(element.style.left);
+              let currentTop = parseFloat(element.style.top);
+              
+              // Very subtle movement
+              let newLeft = currentLeft + element.vx * 0.005;
+              let newTop = currentTop + element.vy * 0.005;
+              
+              // Very subtle breathing
+              let breathX = Math.sin(asciiTime * 0.2 + element.timeOffset) * 0.05;
+              let breathY = Math.cos(asciiTime * 0.15 + element.timeOffset) * 0.03;
+              
+              newLeft += breathX;
+              newTop += breathY;
+              
+              element.style.left = newLeft + 'px';
+              element.style.top = newTop + 'px';
+              
+              // Very gentle rotation
+              element.rotation += element.rotationSpeed * 0.01;
+              element.style.transform = `scale(${0.8 + Math.random() * 0.2}) rotate(${element.rotation}rad)`;
+            }
+          }
+        }
+      }
+
+      function createAnimatedASCIIElement() {
+        // Create ASCII element that animates from center to empty space
+        let pattern = asciiPatterns[Math.floor(Math.random() * asciiPatterns.length)];
+        let asciiDiv = document.createElement('div');
+        asciiDiv.className = 'ascii-element';
+        asciiDiv.style.position = 'fixed';
+        asciiDiv.style.color = 'lime';
+        asciiDiv.style.fontFamily = 'monospace';
+        asciiDiv.style.fontSize = '12px';
+        asciiDiv.style.fontWeight = 'bold';
+        asciiDiv.style.zIndex = '999999';
+        asciiDiv.style.pointerEvents = 'none';
+        asciiDiv.style.whiteSpace = 'pre';
+        asciiDiv.style.lineHeight = '1.2';
+        asciiDiv.style.textAlign = 'left';
+        asciiDiv.textContent = pattern.join('\n');
+        
+        // Start from center of screen
+        let centerX = window.innerWidth / 2;
+        let centerY = window.innerHeight / 2;
+        
+        // Choose random empty space as target
+        let targetX = Math.random() * window.innerWidth;
+        let targetY = Math.random() * window.innerHeight;
+        
+        // Set initial position (center)
+        asciiDiv.style.left = centerX + 'px';
+        asciiDiv.style.top = centerY + 'px';
+        
+        // Set initial scale and opacity (0)
+        asciiDiv.style.transform = 'scale(0)';
+        asciiDiv.style.opacity = '0';
+        
+        // Animation properties
+        asciiDiv.isAnimating = true;
+        asciiDiv.startTime = Date.now();
+        asciiDiv.animationDuration = 1000; // 1 second animation
+        asciiDiv.startX = centerX;
+        asciiDiv.startY = centerY;
+        asciiDiv.targetX = targetX;
+        asciiDiv.targetY = targetY;
+        
+        // Add floating properties for after animation
+        asciiDiv.vx = (Math.random() - 0.5) * 0.02;
+        asciiDiv.vy = (Math.random() - 0.5) * 0.02;
+        asciiDiv.rotation = 0;
+        asciiDiv.rotationSpeed = (Math.random() - 0.5) * 0.001;
+        asciiDiv.timeOffset = Math.random() * 100;
+        asciiDiv.life = 0;
+        asciiDiv.maxLife = 300; // 5 seconds at 60fps
+        
+        document.body.appendChild(asciiDiv);
+        console.log("Created animated ASCII element from center to empty space");
+      }
+
       // Optimized animation loop
       function animate() {
         requestAnimationFrame(animate);
@@ -1543,6 +2020,9 @@
 
         controls.update();
         renderer.render(scene, camera);
+        
+        // Update HTML ASCII elements
+        updateHTMLASCIIElements();
       }
 
       // Optimized window resize handler
@@ -1550,6 +2030,11 @@
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
         renderer.setSize(window.innerWidth, window.innerHeight);
+        
+        // Resize ASCII canvas
+        if (asciiCanvas) {
+          resizeASCIICanvas();
+        }
 
         // Update mobile detection on resize
         const newIsMobile =
@@ -1561,6 +2046,9 @@
           location.reload();
         }
       });
+
+      // Initialize ASCII elements system
+      initASCIIElements();
 
       // Start animation
       animate();
