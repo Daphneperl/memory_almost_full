@@ -521,7 +521,7 @@
         },
         {
           name: "Eyal Yehowa Gruss",
-          path: "assets/Artists/Eyal Yehowa Gruss/Eyal Yehowa Gruss_placeholder.png",
+          path: "assets/Artists/Eyal Yehowa Gruss/EyalGruss.png",
         },
         {
           name: "Gilad Friedman",
@@ -575,24 +575,25 @@
 
       // Function to check if an image should be clickable
       function isClickableImage(imagePath) {
-        const isClickable =
-          imagePath.includes("Anat Saacks.jpg") ||
-          imagePath.includes("Chenn Hearthstone") ||
-          imagePath.includes("Dafna_Sartiel.jpg") ||
-          imagePath.includes("EitanBartal_placeholder.png") ||
-          imagePath.includes("Eyal Datz_placeholder.png") ||
-          imagePath.includes("Eyal Yehowa Gruss_placeholder.png") ||
-          imagePath.includes("Gilad Fridman.jpg") ||
-          imagePath.includes("Haya Sheffer.jpg") ||
-          imagePath.includes("Naama Steinbock.jpg") ||
-          imagePath.includes("Oded Ezer_placeholder.png") ||
-          imagePath.includes("ofir_liberman.jpg") ||
-          imagePath.includes("Rony Ginosar.jpg") ||
-          imagePath.includes("fbm_b134006708485641932.png") ||
-          imagePath.includes("Yoav Ruda_placeholder.png") ||
-          imagePath.includes("yonatan ben-simhon.jpeg") ||
-          imagePath.includes("Yuval Keshet.JPG");
-        console.log("Checking if clickable:", imagePath, "->", isClickable);
+
+        const isClickable = imagePath.includes('Anat Saacks.jpg') || 
+               imagePath.includes('Chenn Hearthstone') ||
+               imagePath.includes('Dafna_Sartiel.jpg') ||
+               imagePath.includes('EitanBartal_placeholder.png') ||
+               imagePath.includes('Eyal Datz_placeholder.png') ||
+               imagePath.includes('EyalGruss.png') ||
+               imagePath.includes('Gilad Fridman.jpg') ||
+               imagePath.includes('Haya Sheffer.jpg') ||
+               imagePath.includes('Naama Steinbock.jpg') ||
+               imagePath.includes('Oded Ezer_placeholder.png') ||
+               imagePath.includes('ofir_liberman.jpg') ||
+               imagePath.includes('Rony Ginosar.jpg') ||
+               imagePath.includes('fbm_b134006708485641932.png') ||
+               imagePath.includes('Yoav Ruda_placeholder.png') ||
+               imagePath.includes('yonatan ben-simhon.jpeg') ||
+               imagePath.includes('Yuval Keshet.JPG');
+        console.log('Checking if clickable:', imagePath, '->', isClickable);
+
         return isClickable;
       }
 
@@ -1134,6 +1135,18 @@
           ],
           externalLink: "https://x.com/eyaler/status/1848106256860602530",
         },
+
+        'EyalGruss.png': {
+          name: 'Eyal Yehowa Gruss',
+          title: 'And the boy was happy',
+          medium: 'Code generated animation, 2025',
+          description: 'Gruss inadvertently developed an animation technique based on an image-to-image generator. Due to a glitchy feedback loop, the system brightened the images fed to it and the figures in them, and the model seemed to interpret the images as drawings on paper. This generated an image that evolves semantically and, with a little guidance, lends itself to storytelling.',
+          bio: 'Eyal Yehowa Gruss is an artist, programmer, poet, algorithm researcher, and computational creativity lecturer at HIT Holon Institute of Technology. He creates interactive installations, multimedia shows, constrained and algorithmic poetry, and code art.',
+          images: [
+            'assets/Artists/Eyal Yehowa Gruss/EyalGruss.png'
+          ],
+          videoLink: 'https://www.youtube.com/watch?v=M8qbfkifG84'
+
         "Gilad Fridman.jpg": {
           name: "Gilad Friedman",
           title: "Artifact.obj",
@@ -1158,6 +1171,7 @@
             "assets/Artists/Haya Sheffer/Sheffer-80_6 - Haya Sheffer.jpg",
             "assets/Artists/Haya Sheffer/Screenshot_20250728_114622_WhatsApp.jpg",
           ],
+
         },
         "Naama Steinbock.jpg": {
           name: "Naama Steinbock",
