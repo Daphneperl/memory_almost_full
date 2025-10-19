@@ -29,20 +29,21 @@
         overflow: hidden;
         font-family: Arial, sans-serif;
         background: radial-gradient(
-            circle at 30% 25%,
-            rgba(69, 62, 29, 0.3) 0%,
-            rgba(66, 51, 29, 0) 40%
+            circle at 50% 50%,
+            rgba(70, 70, 70, 0.35) 0%,
+            rgba(50, 50, 50, 0.2) 40%,
+            rgba(30, 30, 30, 0.1) 70%,
+            rgba(15, 15, 15, 0) 100%
           ),
           radial-gradient(
             ellipse at 50% 50%,
-            #f8f0e4 0%,
-            #ede4d8 15%,
-            #e3dbcf 25%,
-            #d0c7bb 40%,
-            #bdb4a8 55%,
-            #a59c90 75%,
-            #7a7164 90%,
-            #625a4e 100%
+            #c0c0c0 0%,
+            #a8a8a8 20%,
+            #808080 40%,
+            #585858 60%,
+            #303030 80%,
+            #181818 95%,
+            #080808 100%
           ),
           url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="1.8" numOctaves="7" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter><rect width="600" height="600" filter="url(%23noise)" opacity="0.95"/></svg>');
         background-blend-mode: normal, multiply, multiply;
@@ -54,6 +55,13 @@
       @media (max-width: 768px) {
         body {
           overflow-x: hidden;
+        }
+
+        #curation-link {
+          font-size: clamp(8px, 2.5vw, 16px);
+          right: clamp(5px, 1.5vw, 10px);
+          top: clamp(12px, 2.5vh, 22px);
+          max-width: 35vw;
         }
 
         .logos {
@@ -89,6 +97,13 @@
       }
 
       @media (max-width: 480px) {
+        #curation-link {
+          font-size: clamp(7px, 2vw, 14px);
+          right: clamp(3px, 1vw, 8px);
+          top: clamp(10px, 2vh, 17px);
+          max-width: 30vw;
+        }
+
         .logos {
           bottom: clamp(6px, 1.5vh, 12px);
           right: clamp(6px, 1.5vw, 12px);
@@ -140,22 +155,24 @@
       }
 
       #curation-link {
-        color: black;
-        font-size: clamp(14px, 4vw, 20px);
+        color: rgb(255, 255, 255);
+        font-size: clamp(10px, 3vw, 20px);
         font-weight: regular;
         font-family: "IBMPlexMono", monospace;
         text-align: right;
-        letter-spacing: clamp(0.5px, 0.2vw, 1.5px);
-        transform: scaleY(1.5) translateY(-2px);
+        letter-spacing: clamp(0.3px, 0.1vw, 1px);
+        transform: scaleY(1.2) translateY(-1px);
         transform-origin: center right;
         margin: 0;
         position: fixed;
-        top: 20px;
-        right: clamp(8px, 2vw, 10px);
+        top: clamp(18px, 3.5vh, 28px);
+        right: clamp(15px, 4vw, 30px);
         z-index: 101;
         cursor: pointer;
         text-decoration: underline;
         transition: opacity 0.3s ease;
+        max-width: 40vw;
+        word-wrap: break-word;
       }
 
       #curation-link:hover {
@@ -173,7 +190,7 @@
       }
 
       .logo {
-        height: clamp(30px, 8vw, 80px);
+        height: clamp(60px, 12vw, 120px);
         width: auto;
         opacity: 0.9;
         transition: opacity 0.3s ease;
@@ -290,7 +307,7 @@
       Curation: Adi Karelitz
     </div>
     <div class="logos">
-      <img src="assets/LOGO2.001.png" alt="Logo" class="logo" />
+      <img src="assets/artists/LOGO-WHITE.001.png" alt="Logo" class="logo" />
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
@@ -403,16 +420,7 @@
         });
       }
 
-      // Add ASCII frame elements behind the 3D environment - reduce on mobile
-      if (!isMobile) {
-        const asciiFrame = createASCIIFrame();
-        const asciiDecorations = createASCIIDecorations();
-        document.body.appendChild(asciiFrame);
-        document.body.appendChild(asciiDecorations);
-
-        // Start ASCII animation
-        startASCIIAnimation();
-      }
+      // ASCII frame elements removed
 
       // Lighting with shadows
       const ambientLight = new THREE.AmbientLight(0x404040, 0.6);
@@ -1288,9 +1296,9 @@
         canvas.width = standardImageWidth + padding * 2;
         canvas.height = proportionalImageHeight + padding * 2 + textHeight;
 
-        // Draw text above the frame (black, monospace font)
-        ctx.fillStyle = "#000000";
-        ctx.font = "bold 14px IBMPlexMono, monospace";
+        // Draw text above the frame (white, monospace font)
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "bold 20px IBMPlexMono, monospace";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         ctx.fillText(`[*] ${artistName}`, canvas.width / 2, textHeight / 2);
@@ -1301,39 +1309,7 @@
         const frameWidth = standardImageWidth;
         const frameHeight = proportionalImageHeight;
 
-        // No dashed lines - just corner brackets
-
-        // Draw corner brackets
-        ctx.setLineDash([]); // Solid lines for corners
-        ctx.lineWidth = 3;
-
-        // Top-left corner
-        ctx.beginPath();
-        ctx.moveTo(frameX - 12, frameY + 12);
-        ctx.lineTo(frameX - 5, frameY + 5);
-        ctx.lineTo(frameX + 12, frameY - 12);
-        ctx.stroke();
-
-        // Top-right corner
-        ctx.beginPath();
-        ctx.moveTo(frameX + frameWidth + 12, frameY + 12);
-        ctx.lineTo(frameX + frameWidth + 5, frameY + 5);
-        ctx.lineTo(frameX + frameWidth - 12, frameY - 12);
-        ctx.stroke();
-
-        // Bottom-left corner
-        ctx.beginPath();
-        ctx.moveTo(frameX - 12, frameY + frameHeight - 12);
-        ctx.lineTo(frameX - 5, frameY + frameHeight - 5);
-        ctx.lineTo(frameX + 12, frameY + frameHeight + 12);
-        ctx.stroke();
-
-        // Bottom-right corner
-        ctx.beginPath();
-        ctx.moveTo(frameX + frameWidth + 12, frameY + frameHeight - 12);
-        ctx.lineTo(frameX + frameWidth + 5, frameY + frameHeight - 5);
-        ctx.lineTo(frameX + frameWidth - 12, frameY + frameHeight + 12);
-        ctx.stroke();
+        // Corner brackets removed
 
         // Draw the actual image inside the frame
         ctx.drawImage(
@@ -1473,11 +1449,11 @@
 
               const geometry = new THREE.BufferGeometry().setFromPoints(points);
 
-              // Create line material with thick black dashed appearance
+              // Create line material with thick green dashed appearance
               const material = new THREE.LineDashedMaterial({
-                color: 0x000000,
-                dashSize: 0.15,
-                gapSize: 0.08,
+                color: 0x00ff00,
+                dashSize: 0.25,
+                gapSize: 0.05,
                 depthTest: true,
                 depthWrite: false,
               });
@@ -1584,19 +1560,20 @@
           document.body.style.background = `
             radial-gradient(
               circle at ${x}% ${y}%,
-              rgba(255, 255, 255, 0.15) 0%,
-              rgba(255, 255, 255, 0) 30%
+              rgba(90, 90, 90, 0.3) 0%,
+              rgba(70, 70, 70, 0.15) 40%,
+              rgba(50, 50, 50, 0.08) 70%,
+              rgba(30, 30, 30, 0) 100%
             ),
             radial-gradient(
               ellipse at 50% 50%,
-              #f8f0e4 0%,
-              #ede4d8 15%,
-              #e3dbcf 25%,
-              #d0c7bb 40%,
-              #bdb4a8 55%,
-              #a59c90 75%,
-              #7a7164 90%,
-              #625a4e 100%
+              #c0c0c0 0%,
+              #a8a8a8 20%,
+              #808080 40%,
+              #585858 60%,
+              #303030 80%,
+              #181818 95%,
+              #080808 100%
             ),
             url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="1.8" numOctaves="7" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter><rect width="600" height="600" filter="url(%23noise)" opacity="0.95"/></svg>')`;
           document.body.style.backgroundBlendMode =
