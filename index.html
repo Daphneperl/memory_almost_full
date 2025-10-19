@@ -56,11 +56,6 @@
           overflow-x: hidden;
         }
 
-        header {
-          height: clamp(35px, 8vh, 50px);
-          padding: 0 8px;
-        }
-
         .logos {
           bottom: clamp(8px, 2vh, 20px);
           right: clamp(8px, 2vw, 20px);
@@ -94,11 +89,6 @@
       }
 
       @media (max-width: 480px) {
-        header {
-          height: clamp(30px, 6vh, 40px);
-          padding: 0 5px;
-        }
-
         .logos {
           bottom: clamp(6px, 1.5vh, 12px);
           right: clamp(6px, 1.5vw, 12px);
@@ -137,78 +127,21 @@
       canvas.fade-in {
         opacity: 1;
       }
-      header {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: clamp(40px, 8vh, 50px);
-        z-index: 100;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 0 clamp(8px, 2vw, 10px);
-      }
-
-      header::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: linear-gradient(
-            to left,
-            #f8f0e4 0%,
-            #ede4d8 15%,
-            #e3dbcf 30%,
-            #d0c7bb 50%,
-            #bdb4a8 70%,
-            #a59c90 85%,
-            #7a7164 100%
-          ),
-          url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="1.8" numOctaves="7" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter><rect width="600" height="600" filter="url(%23noise)" opacity="0.95"/></svg>');
-        background-blend-mode: multiply, multiply;
-        background-size: cover, 200px 200px;
-        opacity: 0.8;
-        z-index: -1;
-      }
-
-      header::after {
-        content: "";
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        height: 2px;
-        background-image: linear-gradient(
-          to right,
-          black 0%,
-          black 60%,
-          transparent 60%,
-          transparent 100%
-        );
-        background-size: 20px 2px;
-        background-repeat: repeat-x;
-      }
 
       #title {
-        color: black;
-        font-size: clamp(14px, 4vw, 24px);
-        font-weight: regular;
-        font-family: "IBMPlexMono", monospace;
-        text-align: left;
-        letter-spacing: clamp(0.5px, 0.3vw, 2px);
-        transform: scaleY(1.5) translateY(-3px);
-        transform-origin: center left;
-        margin: 0;
-        position: relative;
+        height: clamp(60px, 12vh, 120px);
+        width: auto;
+        max-width: 600px;
+        object-fit: contain;
+        position: fixed;
+        top: 20px;
+        left: clamp(8px, 2vw, 10px);
         z-index: 101;
       }
 
       #curation-link {
         color: black;
-        font-size: clamp(8px, 2.5vw, 12px);
+        font-size: clamp(14px, 4vw, 20px);
         font-weight: regular;
         font-family: "IBMPlexMono", monospace;
         text-align: right;
@@ -216,7 +149,9 @@
         transform: scaleY(1.5) translateY(-2px);
         transform-origin: center right;
         margin: 0;
-        position: relative;
+        position: fixed;
+        top: 20px;
+        right: clamp(8px, 2vw, 10px);
         z-index: 101;
         cursor: pointer;
         text-decoration: underline;
@@ -350,19 +285,12 @@
     </style>
   </head>
   <body>
-    <header>
-      <div id="title">memory_almost_full</div>
-      <div id="curation-link" onclick="showCurationPopup()">
-        Curation: Adi Karelitz
-      </div>
-    </header>
+    <img id="title" src="assets/logos/logo02.png" alt="Memory Almost Full" />
+    <div id="curation-link" onclick="showCurationPopup()">
+      Curation: Adi Karelitz
+    </div>
     <div class="logos">
       <img src="assets/LOGO2.001.png" alt="Logo" class="logo" />
-      <img
-        src="assets/logos/HIT/hit_logo_bil.png"
-        alt="HIT Logo"
-        class="logo"
-      />
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
