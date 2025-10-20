@@ -205,8 +205,16 @@
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        background: white;
-        border: none;
+        background: #000000;
+        background-image: 
+          radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.005) 0%, transparent 50%),
+          radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.005) 0%, transparent 50%),
+          radial-gradient(circle at 40% 80%, rgba(255, 255, 255, 0.005) 0%, transparent 50%),
+          radial-gradient(circle at 0% 100%, rgba(255, 255, 255, 0.005) 0%, transparent 50%),
+          radial-gradient(circle at 100% 0%, rgba(255, 255, 255, 0.005) 0%, transparent 50%);
+        background-size: 200px 200px, 300px 300px, 150px 150px, 250px 250px, 180px 180px;
+        border: 1px solid #00ff00;
+        border-style: dashed;
         border-radius: 8px;
         padding: 50px;
         width: 90vw;
@@ -258,14 +266,15 @@
 
       .popup h2 {
         margin: 0 0 15px 0;
-        color: #333;
+        color: #ffffff;
         font-size: 18px;
+        font-weight: bold;
       }
 
       .popup p {
         margin: 10px 0;
         line-height: 1.4;
-        color: #555;
+        color: #e6e6e6;
       }
 
       .popup img {
@@ -279,11 +288,11 @@
         position: fixed;
         top: 20px;
         right: 25px;
-        background: rgba(0, 0, 0, 0.7);
+        background: rgba(255, 255, 255, 0.8);
         border: none;
-        font-size: 24px;
+        font-size: 18px;
         cursor: pointer;
-        color: #ffffff;
+        color: black;
         z-index: 10001;
         width: 40px;
         height: 40px;
@@ -293,11 +302,24 @@
         border-radius: 50%;
         transition: all 0.2s ease;
         font-weight: bold;
+        padding: 15px;
       }
 
       .popup-close:hover {
-        background: rgba(0, 0, 0, 0.9);
+        background: rgba(255, 255, 255, 1);
         transform: scale(1.1);
+      }
+
+      #copyright {
+        position: fixed;
+        bottom: 20px;
+        left: 20px;
+        color: #ffffff;
+        font-size: 12px;
+        font-family: "SourceCodePro", monospace;
+        z-index: 1000;
+        opacity: 0.7;
+        line-height: 1.4;
       }
     </style>
   </head>
@@ -308,6 +330,9 @@
     </div>
     <div class="logos">
       <img src="assets/artists/LOGO-WHITE.001.png" alt="Logo" class="logo" />
+    </div>
+    <div id="copyright">
+      © 2025 Daphne Perlman & Amit Cohen – Designed & Built by Daphne Perlman & Amit Cohen
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
@@ -1544,7 +1569,31 @@
         ['             ___', '          .="   "=._.---.', '        ."         c  Y p', '       /   ,       `.  w_/', '       |   -.   /     /', ' _,..._|      )_-\\ \\_=.\\', '`-....- `------))) =- " '],
         
         // Car
-        ['                                  .-.', '     (___________________________()6 `-,', '     (   ______________________   / "`', '     //\\\\                      //\\\\', '     "" ""                     "" ""']
+        ['                                  .-.', '     (___________________________()6 `-,', '     (   ______________________   / "`', '     //\\\\                      //\\\\', '     "" ""                     "" ""'],
+        
+        // Building/Structure
+        ['   /|~|\\', '  / |=| \\', ' /  | |  \\', '|   | |   |', '|   | |   |', '|   | |   |', '|   |=|   |', '|  //A\\\\  |', '| /// \\\\\\ |', '|///   \\\\\\|', '`         `'],
+        
+        // Rocket/Ship
+        ['               .', '                    / V\\', '                  / `  /', '                 <<   |', '                 /    |', '               /      |', '             /        |', '           /    \\  \\ /', '          (      ) | |', '  ________|   _/_  | |', '<__________\\______)\\__)'],
+        
+        // Cat face
+        ['                  ,,__', '        ..  ..   / o._)                   .---.', '       /--\'/--\\  \\-\'||        .----.    .\'     \'.', '      /        \\_/ / |      .\'      \'..\'         \'-.', '    .\'\\  \\__\\  __.\'.\'     .\'          i-._', '      )\\ |  )\\ |      _.\'', '     // \\\\ // \\\\', '    ||_  \\\\|_  \\\\_', '    \'--\' \'--\'\' \'--\'\''],
+        
+        // Mouse
+        ['    |\\__/,|   (`\\', '  _.|o o  |_   ) )', '-(((---(((--------'],
+        
+        // Fish
+        ['  _      _      _', '>(.)__ <(.)__ =(.)__', ' (___/  (___/  (___/'],
+        
+        // Dragon
+        ['          ,  ,', '          \\\\ \\\\', '          ) \\\\ \\\\    _p_', '          )^\\\\)\\)\\)  /  *\\', '           \\_|| || / /^`-\'', '  __       -\\ \\\\--/ /', '<\'  \\\\___/   ___. )\'', '     `====\\ )___/\\\\', '          //     `"', '          \\\\    /  \\', '          `"'],
+        
+        // Face
+        ['            ;,\'', '     _o_    ;:;\'', ' ,-.\'---`.__ ;', '((j`=====\',-\'', ' `-\\     /', '    `-=\''],
+        
+        // Mail/Envelope
+        ['           _', '          |E]', '        .-|=====-.', '        | | mail |', '     ___|________|', '            ||', '            ||', '            ||   www', '     ,;,    ||   )_(,;;;,', '     <_>  \\ ||   \\|/ \\_/', '     \\|/  \\\\||  \\\\|   |//', '_jgs_\\|//_\\\\|///_\\V/_\\|//__']
       ];
 
       // Initialize ASCII elements system
@@ -1809,14 +1858,21 @@
         asciiDiv.style.transition = 'all 0.1s ease-out';
         asciiDiv.textContent = pattern.join('\n');
         
-        // Add animation properties
-        asciiDiv.vx = (Math.random() - 0.5) * 0.2;
-        asciiDiv.vy = (Math.random() - 0.5) * 0.2;
+        // Add gentle breathing animation properties
+        asciiDiv.vx = 0; // No initial velocity
+        asciiDiv.vy = 0;
         asciiDiv.rotation = 0;
-        asciiDiv.rotationSpeed = (Math.random() - 0.5) * 0.01;
-        asciiDiv.timeOffset = Math.random() * 100;
+        asciiDiv.rotationSpeed = (Math.random() - 0.5) * 0.005; // Very slow rotation
+        asciiDiv.timeOffset = Math.random() * Math.PI * 2;
         asciiDiv.life = 0;
         asciiDiv.maxLife = Math.random() * 300 + 200;
+        
+        // Add very subtle breathing properties
+        asciiDiv.floatAmplitude = Math.random() * 3 + 2; // 2-5px very gentle floating
+        asciiDiv.floatSpeed = Math.random() * 0.002 + 0.001; // Extremely slow breathing
+        asciiDiv.floatPhase = Math.random() * Math.PI * 2;
+        asciiDiv.driftX = 0; // No drift, just gentle breathing
+        asciiDiv.driftY = 0;
         
         document.body.appendChild(asciiDiv);
         console.log("Created HTML ASCII element with pattern:", pattern[0]);
@@ -1909,29 +1965,28 @@
               element.isAnimating = false;
             }
           } else {
-            // Gentle floating for finished elements
-            if (element.life % 10 === 0) {
-              let currentLeft = parseFloat(element.style.left);
-              let currentTop = parseFloat(element.style.top);
-              
-              // Very subtle movement
-              let newLeft = currentLeft + element.vx * 0.005;
-              let newTop = currentTop + element.vy * 0.005;
-              
-              // Very subtle breathing
-              let breathX = Math.sin(asciiTime * 0.2 + element.timeOffset) * 0.05;
-              let breathY = Math.cos(asciiTime * 0.15 + element.timeOffset) * 0.03;
-              
-              newLeft += breathX;
-              newTop += breathY;
-              
-              element.style.left = newLeft + 'px';
-              element.style.top = newTop + 'px';
-              
-              // Very gentle rotation
-              element.rotation += element.rotationSpeed * 0.01;
-              element.style.transform = `scale(${0.8 + Math.random() * 0.2}) rotate(${element.rotation}rad)`;
-            }
+            // Organic breathing animation - focus on scale changes to feel alive
+            let time = asciiTime * element.floatSpeed + element.floatPhase;
+            
+            // Keep position static - no movement, just breathing
+            let currentLeft = parseFloat(element.style.left);
+            let currentTop = parseFloat(element.style.top);
+            element.style.left = currentLeft + 'px';
+            element.style.top = currentTop + 'px';
+            
+            // Continuous gentle breathing through scale changes
+            let baseScale = 0.8;
+            let breathScale = Math.sin(time) * 0.03; // Very subtle scale breathing
+            let scale = baseScale + breathScale;
+            
+            // Very gentle rotation
+            element.rotation += element.rotationSpeed;
+            
+            // Apply breathing scale and rotation
+            element.style.transform = `scale(${scale}) rotate(${element.rotation}rad)`;
+            
+            // Keep opacity stable - focus on scale breathing
+            element.style.opacity = '0.7';
           }
         }
       }
@@ -1978,14 +2033,21 @@
         asciiDiv.targetX = targetX;
         asciiDiv.targetY = targetY;
         
-        // Add floating properties for after animation
-        asciiDiv.vx = (Math.random() - 0.5) * 0.02;
-        asciiDiv.vy = (Math.random() - 0.5) * 0.02;
+        // Add gentle breathing properties for after animation
+        asciiDiv.vx = 0; // No velocity, just gentle breathing
+        asciiDiv.vy = 0;
         asciiDiv.rotation = 0;
-        asciiDiv.rotationSpeed = (Math.random() - 0.5) * 0.001;
-        asciiDiv.timeOffset = Math.random() * 100;
+        asciiDiv.rotationSpeed = (Math.random() - 0.5) * 0.005; // Very slow rotation
+        asciiDiv.timeOffset = Math.random() * Math.PI * 2;
         asciiDiv.life = 0;
         asciiDiv.maxLife = 300; // 5 seconds at 60fps
+        
+        // Add very subtle breathing properties
+        asciiDiv.floatAmplitude = Math.random() * 3 + 2; // 2-5px very gentle floating
+        asciiDiv.floatSpeed = Math.random() * 0.002 + 0.001; // Extremely slow breathing
+        asciiDiv.floatPhase = Math.random() * Math.PI * 2;
+        asciiDiv.driftX = 0; // No drift, just gentle breathing
+        asciiDiv.driftY = 0;
         
         document.body.appendChild(asciiDiv);
         console.log("Created animated ASCII element from center to empty space");
