@@ -144,14 +144,92 @@
       }
 
       #title {
-        height: clamp(60px, 12vh, 120px);
+        height: clamp(40px, 8vh, 120px);
         width: auto;
-        max-width: 600px;
+        max-width: clamp(200px, 50vw, 600px);
         object-fit: contain;
         position: fixed;
         top: 20px;
         left: clamp(8px, 2vw, 10px);
         z-index: 101;
+      }
+      
+      @media (max-width: 768px) {
+        #title {
+          height: clamp(30px, 6vh, 80px);
+          max-width: clamp(150px, 40vw, 400px);
+          top: 15px;
+          left: clamp(5px, 1vw, 8px);
+        }
+      }
+      
+      @media (max-width: 480px) {
+        #title {
+          height: clamp(25px, 5vh, 60px);
+          max-width: clamp(120px, 35vw, 300px);
+          top: 10px;
+          left: clamp(3px, 0.5vw, 5px);
+        }
+      }
+
+      /* ASCII Element Animation */
+      .ascii-element {
+        animation: cray 6s infinite steps(50);
+        display: inline-block;
+      }
+
+      @keyframes cray {
+        0% { font-weight: 100; font-style: normal; text-decoration: none; text-transform: none; }
+        2% { font-weight: 200; font-style: italic; text-decoration: none; text-transform: none; }
+        4% { font-weight: 300; font-style: normal; text-decoration: line-through; text-transform: uppercase; }
+        6% { font-weight: 400; font-style: normal; text-decoration: underline; text-transform: lowercase; }
+        8% { font-weight: 500; font-style: normal; text-decoration: none; text-transform: capitalize; }
+        10% { font-weight: 600; font-style: italic; text-decoration: none; text-transform: none; }
+        12% { font-weight: 700; font-style: normal; text-decoration: line-through; text-transform: uppercase; }
+        14% { font-weight: 100; font-style: normal; text-decoration: underline; text-transform: lowercase; }
+        16% { font-weight: 200; font-style: italic; text-decoration: none; text-transform: capitalize; }
+        18% { font-weight: 300; font-style: normal; text-decoration: none; text-transform: none; }
+        20% { font-weight: 400; font-style: normal; text-decoration: line-through; text-transform: uppercase; }
+        22% { font-weight: 500; font-style: italic; text-decoration: underline; text-transform: lowercase; }
+        24% { font-weight: 600; font-style: normal; text-decoration: none; text-transform: capitalize; }
+        26% { font-weight: 700; font-style: normal; text-decoration: line-through; text-transform: none; }
+        28% { font-weight: 100; font-style: italic; text-decoration: underline; text-transform: uppercase; }
+        30% { font-weight: 200; font-style: normal; text-decoration: none; text-transform: lowercase; }
+        32% { font-weight: 300; font-style: normal; text-decoration: line-through; text-transform: capitalize; }
+        34% { font-weight: 400; font-style: italic; text-decoration: underline; text-transform: none; }
+        36% { font-weight: 500; font-style: normal; text-decoration: none; text-transform: uppercase; }
+        38% { font-weight: 600; font-style: normal; text-decoration: line-through; text-transform: lowercase; }
+        40% { font-weight: 700; font-style: italic; text-decoration: underline; text-transform: capitalize; }
+        42% { font-weight: 100; font-style: normal; text-decoration: none; text-transform: none; }
+        44% { font-weight: 200; font-style: normal; text-decoration: line-through; text-transform: uppercase; }
+        46% { font-weight: 300; font-style: italic; text-decoration: underline; text-transform: lowercase; }
+        48% { font-weight: 400; font-style: normal; text-decoration: none; text-transform: capitalize; }
+        50% { font-weight: 500; font-style: normal; text-decoration: line-through; text-transform: none; }
+        52% { font-weight: 600; font-style: italic; text-decoration: underline; text-transform: uppercase; }
+        54% { font-weight: 700; font-style: normal; text-decoration: none; text-transform: lowercase; }
+        56% { font-weight: 100; font-style: normal; text-decoration: line-through; text-transform: capitalize; }
+        58% { font-weight: 200; font-style: italic; text-decoration: underline; text-transform: none; }
+        60% { font-weight: 300; font-style: normal; text-decoration: none; text-transform: uppercase; }
+        62% { font-weight: 400; font-style: normal; text-decoration: line-through; text-transform: lowercase; }
+        64% { font-weight: 500; font-style: italic; text-decoration: underline; text-transform: capitalize; }
+        66% { font-weight: 600; font-style: normal; text-decoration: none; text-transform: none; }
+        68% { font-weight: 700; font-style: normal; text-decoration: line-through; text-transform: uppercase; }
+        70% { font-weight: 100; font-style: italic; text-decoration: underline; text-transform: lowercase; }
+        72% { font-weight: 200; font-style: normal; text-decoration: none; text-transform: capitalize; }
+        74% { font-weight: 300; font-style: normal; text-decoration: line-through; text-transform: none; }
+        76% { font-weight: 400; font-style: italic; text-decoration: underline; text-transform: uppercase; }
+        78% { font-weight: 500; font-style: normal; text-decoration: none; text-transform: lowercase; }
+        80% { font-weight: 600; font-style: normal; text-decoration: line-through; text-transform: capitalize; }
+        82% { font-weight: 700; font-style: italic; text-decoration: underline; text-transform: none; }
+        84% { font-weight: 100; font-style: normal; text-decoration: none; text-transform: uppercase; }
+        86% { font-weight: 200; font-style: normal; text-decoration: line-through; text-transform: lowercase; }
+        88% { font-weight: 300; font-style: italic; text-decoration: underline; text-transform: capitalize; }
+        90% { font-weight: 400; font-style: normal; text-decoration: none; text-transform: none; }
+        92% { font-weight: 500; font-style: normal; text-decoration: line-through; text-transform: uppercase; }
+        94% { font-weight: 600; font-style: italic; text-decoration: underline; text-transform: lowercase; }
+        96% { font-weight: 700; font-style: normal; text-decoration: none; text-transform: capitalize; }
+        98% { font-weight: 100; font-style: normal; text-decoration: line-through; text-transform: none; }
+        100% { font-weight: 200; font-style: italic; text-decoration: underline; text-transform: uppercase; }
       }
 
       #curation-link {
@@ -321,6 +399,34 @@
         opacity: 0.7;
         line-height: 1.4;
       }
+
+      @keyframes floatAcross {
+        0% {
+          top: 20px;
+          left: -100px;
+          transform: rotate(0deg);
+        }
+        25% {
+          top: 50vh;
+          left: 50vw;
+          transform: rotate(90deg);
+        }
+        50% {
+          top: 80vh;
+          left: 100vw;
+          transform: rotate(180deg);
+        }
+        75% {
+          top: 30vh;
+          left: 50vw;
+          transform: rotate(270deg);
+        }
+        100% {
+          top: 20px;
+          left: -100px;
+          transform: rotate(360deg);
+        }
+      }
     </style>
   </head>
   <body>
@@ -332,8 +438,10 @@
       <img src="assets/artists/LOGO-WHITE.001.png" alt="Logo" class="logo" />
     </div>
     <div id="copyright">
-      © 2025 Daphne Perlman & Amit Cohen – Designed & Built by Daphne Perlman & Amit Cohen
+      © 2025 Designed & Built by Daphne Perlman & Amit Cohen
     </div>
+    
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
     <script src="ascii-elements.js"></script>
@@ -927,7 +1035,9 @@
         // Create popup content
         const popup = document.createElement("div");
         popup.className = "popup";
-        popup.style.background = "#1d1e19";
+        popup.style.background = "linear-gradient(rgba(0, 0, 0, 0.44), rgba(0, 0, 0, 0.44)), url('assets/Artists/popup_bkg.jpg')";
+        popup.style.backgroundSize = "cover";
+        popup.style.backgroundPosition = "center";
 
         // Responsive popup sizing
         if (isMobile) {
@@ -935,8 +1045,8 @@
           popup.style.maxHeight = "95vh";
           popup.style.padding = "20px";
         } else {
-          popup.style.maxWidth = "900px";
-          popup.style.maxHeight = "800px";
+          popup.style.maxWidth = "1200px";
+          popup.style.maxHeight = "900px";
           popup.style.padding = "50px";
         }
         popup.style.boxSizing = "border-box";
@@ -964,6 +1074,20 @@
           <button class="popup-close">&times;</button>
           <div style="position: relative; z-index: 2;">
             <h2 style="font-size: 28px; font-weight: bold; color: #e6e6e6; margin-bottom: 25px; font-family: 'IBMPlexMono', monospace;">Adi Karelitz's Curation</h2>
+            <div style="text-align: center; margin-bottom: 30px; position: relative; display: inline-block;">
+              <img src="assets/Artists/Adi Karelitz/Adi Karelitz by Michal Chelbin.jpg" alt="Adi Karelitz by Michal Chelbin" style="max-width: 300px; max-height: 300px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);">
+              <div style="position: absolute; bottom: 10px; left: 10px; color: #e6e6e6; font-family: 'SourceCodePro', monospace; font-size: 11px; background: rgba(0, 0, 0, 0.8); padding: 4px 8px; border-radius: 3px; white-space: nowrap;">© Michal Chelbin</div>
+            </div>
+            
+            <!-- Gallery Carousel -->
+            <div style="margin-top: 40px; margin-bottom: 30px;">
+              <h3 style="font-size: 20px; font-weight: bold; color: #e6e6e6; margin-bottom: 20px; font-family: 'SourceCodePro', monospace; text-align: center;">Gallery</h3>
+              <div id="carousel-container" style="position: relative; width: 100%; height: min(60vh, 400px); display: flex; align-items: center; justify-content: center; perspective: 1000px;">
+                <div id="carousel" style="position: absolute; left: 50%; top: 50%; width: 500px; height: 320px; margin-left: -250px; margin-top: -160px; transform-style: preserve-3d; cursor: grab;">
+                  <!-- Gallery images will be inserted here -->
+                </div>
+              </div>
+            </div>
             ${generateASCIIDivider()}
             <div style="color: #e6e6e6; font-family: 'SourceCodePro', monospace; font-size: 16px; line-height: 1.8;">
               <p style="margin-bottom: 20px;">
@@ -987,6 +1111,11 @@
 
         overlay.appendChild(popup);
         document.body.appendChild(overlay);
+        
+        // Create gallery carousel after popup is added to DOM
+        setTimeout(() => {
+          createGalleryCarousel();
+        }, 100);
 
         // Close popup handlers
         const closePopup = () => {
@@ -1753,6 +1882,8 @@
           let element = asciiElements[i];
           element.life++;
           
+          // No rotation
+          
           // Remove old elements
           if (element.life > element.maxLife) {
             asciiElements.splice(i, 1);
@@ -1770,8 +1901,7 @@
           element.x += breathX;
           element.y += breathY;
           
-          // Rotation
-          element.rotation += element.rotationSpeed;
+          // No rotation
           
           // Fade out over time
           element.alpha = Math.max(0, 255 - (element.life / element.maxLife) * 100);
@@ -1789,7 +1919,7 @@
         for (let element of asciiElements) {
           asciiCtx.save();
           asciiCtx.translate(element.x, element.y);
-          asciiCtx.rotate(element.rotation);
+          // No rotation
           asciiCtx.scale(element.scale, element.scale);
           
           // Draw each line of the ASCII pattern
@@ -1861,8 +1991,7 @@
         // Add gentle breathing animation properties
         asciiDiv.vx = 0; // No initial velocity
         asciiDiv.vy = 0;
-        asciiDiv.rotation = 0;
-        asciiDiv.rotationSpeed = (Math.random() - 0.5) * 0.005; // Very slow rotation
+        // No rotation
         asciiDiv.timeOffset = Math.random() * Math.PI * 2;
         asciiDiv.life = 0;
         asciiDiv.maxLife = Math.random() * 300 + 200;
@@ -1925,6 +2054,8 @@
           let element = elements[i];
           element.life++;
           
+          // No rotation
+          
           // Remove elements after 5 seconds (300 frames at 60fps)
           if (element.life > 300) {
             // Fade out before removing
@@ -1979,11 +2110,8 @@
             let breathScale = Math.sin(time) * 0.03; // Very subtle scale breathing
             let scale = baseScale + breathScale;
             
-            // Very gentle rotation
-            element.rotation += element.rotationSpeed;
-            
-            // Apply breathing scale and rotation
-            element.style.transform = `scale(${scale}) rotate(${element.rotation}rad)`;
+            // Apply breathing scale only (no rotation)
+            element.style.transform = `scale(${scale})`;
             
             // Keep opacity stable - focus on scale breathing
             element.style.opacity = '0.7';
@@ -2036,8 +2164,7 @@
         // Add gentle breathing properties for after animation
         asciiDiv.vx = 0; // No velocity, just gentle breathing
         asciiDiv.vy = 0;
-        asciiDiv.rotation = 0;
-        asciiDiv.rotationSpeed = (Math.random() - 0.5) * 0.005; // Very slow rotation
+        // No rotation
         asciiDiv.timeOffset = Math.random() * Math.PI * 2;
         asciiDiv.life = 0;
         asciiDiv.maxLife = 300; // 5 seconds at 60fps
@@ -2145,6 +2272,162 @@
           document.body.style.backgroundSize = "cover, cover, 200px 200px";
         });
       }
+
+            // Gallery functionality
+            const galleryImages = [
+              { src: 'assets/Artists/Gallery/20250918_153711.jpg', credit: '© Dafna Sartiel' },
+              { src: 'assets/Artists/Gallery/Dafna_Sartiel_1.jpg', credit: '© Dafna Sartiel' },
+              { src: 'assets/Artists/Gallery/Dafna_Sartiel_2.jpg', credit: '© Dafna Sartiel' },
+              { src: 'assets/Artists/Gallery/Dafna_Sartiel_3.jpg', credit: '© Dafna Sartiel' },
+              { src: 'assets/Artists/Gallery/Dafna_Sartiel_4.jpg', credit: '© Dafna Sartiel' },
+              { src: 'assets/Artists/Gallery/Dafna_Sartiel_5.jpg', credit: '© Dafna Sartiel' },
+              { src: 'assets/Artists/Gallery/Dafna_Sartiel_6.jpg', credit: '© Dafna Sartiel' },
+              { src: 'assets/Artists/Gallery/Dafna_Sartiel_7.jpg', credit: '© Dafna Sartiel' },
+              { src: 'assets/Artists/Gallery/Dafna_Sartiel_8.jpg', credit: '© Dafna Sartiel' },
+              { src: 'assets/Artists/Gallery/Dafna_Sartiel_9.jpg', credit: '© Dafna Sartiel' },
+              { src: 'assets/Artists/Gallery/Dafna_Sartiel_10.jpg', credit: '© Dafna Sartiel' },
+              { src: 'assets/Artists/Gallery/Dafna_Sartiel_11.jpg', credit: '© Dafna Sartiel' },
+              { src: 'assets/Artists/Gallery/Dafna_Sartiel_12.jpg', credit: '© Dafna Sartiel' },
+              { src: 'assets/Artists/Gallery/Tamar Lev-On_1.jpg', credit: '© Tamar Lev-On' },
+              { src: 'assets/Artists/Gallery/Tamar Lev-On_2.jpg', credit: '© Tamar Lev-On' },
+              { src: 'assets/Artists/Gallery/Adi Karelitz.jpg', credit: '© Adi Karelitz' },
+              { src: 'assets/Artists/Gallery/Anat Sacks.jpg', credit: '© Dafna Sartiel' }
+            ];
+
+
+      // Create gallery carousel in curation popup
+      function createGalleryCarousel() {
+        const carousel = document.getElementById('carousel');
+        if (!carousel) return;
+        
+        carousel.innerHTML = '';
+        
+        galleryImages.forEach((image, index) => {
+          const angle = (360 / galleryImages.length) * index;
+          const face = document.createElement('div');
+          face.className = 'gallery-carousel__face';
+          face.style.cssText = `
+            position: absolute;
+            width: 220px;
+            height: 150px;
+            background-image: url('${image.src}');
+            background-size: contain;
+            background-position: center;
+            background-repeat: no-repeat;
+            display: flex;
+            align-items: flex-end;
+            justify-content: flex-start;
+            transform: rotateY(${angle}deg) translateZ(450px);
+            cursor: pointer;
+          `;
+          
+          // Add credit overlay
+          const credit = document.createElement('div');
+          credit.style.cssText = `
+            position: absolute;
+            bottom: 5px;
+            left: 5px;
+            color: #e6e6e6;
+            font-family: 'SourceCodePro', monospace;
+            font-size: 8px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 2px 4px;
+            border-radius: 2px;
+            white-space: nowrap;
+          `;
+          credit.textContent = image.credit;
+          face.appendChild(credit);
+          
+          carousel.appendChild(face);
+        });
+        
+        // Add carousel interaction
+        let currentRotation = 0;
+        const rotationStep = 360 / galleryImages.length;
+        let isDragging = false;
+        let startX = 0;
+        let startRotation = 0;
+        let isAnimating = false;
+        let animationId = null;
+        let lastAnimationTime = Date.now();
+        const dragSensitivity = 0.5;
+
+        // Auto-rotation
+        function animateRotation() {
+          if (!isAnimating && !isDragging) {
+            const now = Date.now();
+            const deltaTime = now - lastAnimationTime;
+            lastAnimationTime = now;
+            currentRotation += (deltaTime / 1000) * (360 / 120);
+            carousel.style.transform = `rotateY(${currentRotation}deg)`;
+          }
+          animationId = requestAnimationFrame(animateRotation);
+        }
+
+        animateRotation();
+
+        // Mouse events
+        carousel.addEventListener('mousedown', (e) => {
+          if (isAnimating) return;
+          isDragging = true;
+          startX = e.clientX;
+          startRotation = currentRotation;
+          carousel.style.cursor = 'grabbing';
+          e.preventDefault();
+        });
+
+        document.addEventListener('mousemove', (e) => {
+          if (!isDragging) return;
+          e.preventDefault();
+          const deltaX = e.clientX - startX;
+          const rotationDelta = (deltaX / carousel.offsetWidth) * 360 * dragSensitivity;
+          const newRotation = startRotation + rotationDelta;
+          carousel.style.transform = `rotateY(${newRotation}deg)`;
+          currentRotation = newRotation;
+        });
+
+        document.addEventListener('mouseup', () => {
+          if (!isDragging) return;
+          isDragging = false;
+          carousel.style.cursor = 'grab';
+          lastAnimationTime = Date.now();
+        });
+
+        // Face click events
+        const faces = carousel.querySelectorAll('.gallery-carousel__face');
+        faces.forEach((face, index) => {
+          face.addEventListener('click', (e) => {
+            if (isDragging) return;
+            isAnimating = true;
+            const targetRotation = -index * rotationStep;
+            const currentRotationNormalized = ((currentRotation % 360) + 360) % 360;
+            let rotationDiff = targetRotation - currentRotationNormalized;
+            if (rotationDiff > 180) rotationDiff -= 360;
+            if (rotationDiff < -180) rotationDiff += 360;
+            const newRotation = currentRotation + rotationDiff;
+            carousel.style.transition = 'transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+            carousel.style.transform = `rotateY(${newRotation}deg)`;
+            currentRotation = newRotation;
+            setTimeout(() => {
+              carousel.style.transition = 'none';
+              isAnimating = false;
+              lastAnimationTime = Date.now();
+            }, 800);
+          });
+        });
+      }
+
+      // Change the floating image periodically
+      function changeFloatingImage() {
+        const randomImage = galleryImages[Math.floor(Math.random() * galleryImages.length)];
+        const img = galleryToggle.querySelector('img');
+        if (img) {
+          img.src = randomImage.src;
+        }
+      }
+
+      // Change image every 10 seconds
+      setInterval(changeFloatingImage, 10000);
     </script>
   </body>
 </html>
