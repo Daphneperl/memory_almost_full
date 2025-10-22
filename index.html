@@ -94,6 +94,15 @@
           height: 35px;
           font-size: 20px;
         }
+
+        /* Tablet carousel responsive styles */
+        #carousel-container {
+          height: min(55vh, 350px) !important;
+          margin-bottom: 50px !important;
+          padding-bottom: 30px !important;
+        }
+
+        /* Carousel scaling handled by JavaScript */
       }
 
       @media (max-width: 480px) {
@@ -123,6 +132,15 @@
         .popup p {
           font-size: 13px;
         }
+
+        /* Mobile carousel responsive styles */
+        #carousel-container {
+          height: min(50vh, 300px) !important;
+          margin-bottom: 40px !important;
+          padding-bottom: 20px !important;
+        }
+
+        /* Carousel scaling handled by JavaScript */
       }
 
       @media (min-width: 1200px) {
@@ -153,7 +171,7 @@
         left: clamp(8px, 2vw, 10px);
         z-index: 101;
       }
-      
+
       @media (max-width: 768px) {
         #title {
           height: clamp(35px, 7vh, 90px);
@@ -167,7 +185,7 @@
           font-size: clamp(9px, 2.2vw, 12px);
         }
       }
-      
+
       @media (max-width: 480px) {
         #title {
           height: clamp(30px, 6vh, 70px);
@@ -194,57 +212,312 @@
       }
 
       @keyframes cray {
-        0% { font-weight: 100; font-style: normal; text-decoration: none; text-transform: none; }
-        2% { font-weight: 200; font-style: italic; text-decoration: none; text-transform: none; }
-        4% { font-weight: 300; font-style: normal; text-decoration: line-through; text-transform: uppercase; }
-        6% { font-weight: 400; font-style: normal; text-decoration: underline; text-transform: lowercase; }
-        8% { font-weight: 500; font-style: normal; text-decoration: none; text-transform: capitalize; }
-        10% { font-weight: 600; font-style: italic; text-decoration: none; text-transform: none; }
-        12% { font-weight: 700; font-style: normal; text-decoration: line-through; text-transform: uppercase; }
-        14% { font-weight: 100; font-style: normal; text-decoration: underline; text-transform: lowercase; }
-        16% { font-weight: 200; font-style: italic; text-decoration: none; text-transform: capitalize; }
-        18% { font-weight: 300; font-style: normal; text-decoration: none; text-transform: none; }
-        20% { font-weight: 400; font-style: normal; text-decoration: line-through; text-transform: uppercase; }
-        22% { font-weight: 500; font-style: italic; text-decoration: underline; text-transform: lowercase; }
-        24% { font-weight: 600; font-style: normal; text-decoration: none; text-transform: capitalize; }
-        26% { font-weight: 700; font-style: normal; text-decoration: line-through; text-transform: none; }
-        28% { font-weight: 100; font-style: italic; text-decoration: underline; text-transform: uppercase; }
-        30% { font-weight: 200; font-style: normal; text-decoration: none; text-transform: lowercase; }
-        32% { font-weight: 300; font-style: normal; text-decoration: line-through; text-transform: capitalize; }
-        34% { font-weight: 400; font-style: italic; text-decoration: underline; text-transform: none; }
-        36% { font-weight: 500; font-style: normal; text-decoration: none; text-transform: uppercase; }
-        38% { font-weight: 600; font-style: normal; text-decoration: line-through; text-transform: lowercase; }
-        40% { font-weight: 700; font-style: italic; text-decoration: underline; text-transform: capitalize; }
-        42% { font-weight: 100; font-style: normal; text-decoration: none; text-transform: none; }
-        44% { font-weight: 200; font-style: normal; text-decoration: line-through; text-transform: uppercase; }
-        46% { font-weight: 300; font-style: italic; text-decoration: underline; text-transform: lowercase; }
-        48% { font-weight: 400; font-style: normal; text-decoration: none; text-transform: capitalize; }
-        50% { font-weight: 500; font-style: normal; text-decoration: line-through; text-transform: none; }
-        52% { font-weight: 600; font-style: italic; text-decoration: underline; text-transform: uppercase; }
-        54% { font-weight: 700; font-style: normal; text-decoration: none; text-transform: lowercase; }
-        56% { font-weight: 100; font-style: normal; text-decoration: line-through; text-transform: capitalize; }
-        58% { font-weight: 200; font-style: italic; text-decoration: underline; text-transform: none; }
-        60% { font-weight: 300; font-style: normal; text-decoration: none; text-transform: uppercase; }
-        62% { font-weight: 400; font-style: normal; text-decoration: line-through; text-transform: lowercase; }
-        64% { font-weight: 500; font-style: italic; text-decoration: underline; text-transform: capitalize; }
-        66% { font-weight: 600; font-style: normal; text-decoration: none; text-transform: none; }
-        68% { font-weight: 700; font-style: normal; text-decoration: line-through; text-transform: uppercase; }
-        70% { font-weight: 100; font-style: italic; text-decoration: underline; text-transform: lowercase; }
-        72% { font-weight: 200; font-style: normal; text-decoration: none; text-transform: capitalize; }
-        74% { font-weight: 300; font-style: normal; text-decoration: line-through; text-transform: none; }
-        76% { font-weight: 400; font-style: italic; text-decoration: underline; text-transform: uppercase; }
-        78% { font-weight: 500; font-style: normal; text-decoration: none; text-transform: lowercase; }
-        80% { font-weight: 600; font-style: normal; text-decoration: line-through; text-transform: capitalize; }
-        82% { font-weight: 700; font-style: italic; text-decoration: underline; text-transform: none; }
-        84% { font-weight: 100; font-style: normal; text-decoration: none; text-transform: uppercase; }
-        86% { font-weight: 200; font-style: normal; text-decoration: line-through; text-transform: lowercase; }
-        88% { font-weight: 300; font-style: italic; text-decoration: underline; text-transform: capitalize; }
-        90% { font-weight: 400; font-style: normal; text-decoration: none; text-transform: none; }
-        92% { font-weight: 500; font-style: normal; text-decoration: line-through; text-transform: uppercase; }
-        94% { font-weight: 600; font-style: italic; text-decoration: underline; text-transform: lowercase; }
-        96% { font-weight: 700; font-style: normal; text-decoration: none; text-transform: capitalize; }
-        98% { font-weight: 100; font-style: normal; text-decoration: line-through; text-transform: none; }
-        100% { font-weight: 200; font-style: italic; text-decoration: underline; text-transform: uppercase; }
+        0% {
+          font-weight: 100;
+          font-style: normal;
+          text-decoration: none;
+          text-transform: none;
+        }
+        2% {
+          font-weight: 200;
+          font-style: italic;
+          text-decoration: none;
+          text-transform: none;
+        }
+        4% {
+          font-weight: 300;
+          font-style: normal;
+          text-decoration: line-through;
+          text-transform: uppercase;
+        }
+        6% {
+          font-weight: 400;
+          font-style: normal;
+          text-decoration: underline;
+          text-transform: lowercase;
+        }
+        8% {
+          font-weight: 500;
+          font-style: normal;
+          text-decoration: none;
+          text-transform: capitalize;
+        }
+        10% {
+          font-weight: 600;
+          font-style: italic;
+          text-decoration: none;
+          text-transform: none;
+        }
+        12% {
+          font-weight: 700;
+          font-style: normal;
+          text-decoration: line-through;
+          text-transform: uppercase;
+        }
+        14% {
+          font-weight: 100;
+          font-style: normal;
+          text-decoration: underline;
+          text-transform: lowercase;
+        }
+        16% {
+          font-weight: 200;
+          font-style: italic;
+          text-decoration: none;
+          text-transform: capitalize;
+        }
+        18% {
+          font-weight: 300;
+          font-style: normal;
+          text-decoration: none;
+          text-transform: none;
+        }
+        20% {
+          font-weight: 400;
+          font-style: normal;
+          text-decoration: line-through;
+          text-transform: uppercase;
+        }
+        22% {
+          font-weight: 500;
+          font-style: italic;
+          text-decoration: underline;
+          text-transform: lowercase;
+        }
+        24% {
+          font-weight: 600;
+          font-style: normal;
+          text-decoration: none;
+          text-transform: capitalize;
+        }
+        26% {
+          font-weight: 700;
+          font-style: normal;
+          text-decoration: line-through;
+          text-transform: none;
+        }
+        28% {
+          font-weight: 100;
+          font-style: italic;
+          text-decoration: underline;
+          text-transform: uppercase;
+        }
+        30% {
+          font-weight: 200;
+          font-style: normal;
+          text-decoration: none;
+          text-transform: lowercase;
+        }
+        32% {
+          font-weight: 300;
+          font-style: normal;
+          text-decoration: line-through;
+          text-transform: capitalize;
+        }
+        34% {
+          font-weight: 400;
+          font-style: italic;
+          text-decoration: underline;
+          text-transform: none;
+        }
+        36% {
+          font-weight: 500;
+          font-style: normal;
+          text-decoration: none;
+          text-transform: uppercase;
+        }
+        38% {
+          font-weight: 600;
+          font-style: normal;
+          text-decoration: line-through;
+          text-transform: lowercase;
+        }
+        40% {
+          font-weight: 700;
+          font-style: italic;
+          text-decoration: underline;
+          text-transform: capitalize;
+        }
+        42% {
+          font-weight: 100;
+          font-style: normal;
+          text-decoration: none;
+          text-transform: none;
+        }
+        44% {
+          font-weight: 200;
+          font-style: normal;
+          text-decoration: line-through;
+          text-transform: uppercase;
+        }
+        46% {
+          font-weight: 300;
+          font-style: italic;
+          text-decoration: underline;
+          text-transform: lowercase;
+        }
+        48% {
+          font-weight: 400;
+          font-style: normal;
+          text-decoration: none;
+          text-transform: capitalize;
+        }
+        50% {
+          font-weight: 500;
+          font-style: normal;
+          text-decoration: line-through;
+          text-transform: none;
+        }
+        52% {
+          font-weight: 600;
+          font-style: italic;
+          text-decoration: underline;
+          text-transform: uppercase;
+        }
+        54% {
+          font-weight: 700;
+          font-style: normal;
+          text-decoration: none;
+          text-transform: lowercase;
+        }
+        56% {
+          font-weight: 100;
+          font-style: normal;
+          text-decoration: line-through;
+          text-transform: capitalize;
+        }
+        58% {
+          font-weight: 200;
+          font-style: italic;
+          text-decoration: underline;
+          text-transform: none;
+        }
+        60% {
+          font-weight: 300;
+          font-style: normal;
+          text-decoration: none;
+          text-transform: uppercase;
+        }
+        62% {
+          font-weight: 400;
+          font-style: normal;
+          text-decoration: line-through;
+          text-transform: lowercase;
+        }
+        64% {
+          font-weight: 500;
+          font-style: italic;
+          text-decoration: underline;
+          text-transform: capitalize;
+        }
+        66% {
+          font-weight: 600;
+          font-style: normal;
+          text-decoration: none;
+          text-transform: none;
+        }
+        68% {
+          font-weight: 700;
+          font-style: normal;
+          text-decoration: line-through;
+          text-transform: uppercase;
+        }
+        70% {
+          font-weight: 100;
+          font-style: italic;
+          text-decoration: underline;
+          text-transform: lowercase;
+        }
+        72% {
+          font-weight: 200;
+          font-style: normal;
+          text-decoration: none;
+          text-transform: capitalize;
+        }
+        74% {
+          font-weight: 300;
+          font-style: normal;
+          text-decoration: line-through;
+          text-transform: none;
+        }
+        76% {
+          font-weight: 400;
+          font-style: italic;
+          text-decoration: underline;
+          text-transform: uppercase;
+        }
+        78% {
+          font-weight: 500;
+          font-style: normal;
+          text-decoration: none;
+          text-transform: lowercase;
+        }
+        80% {
+          font-weight: 600;
+          font-style: normal;
+          text-decoration: line-through;
+          text-transform: capitalize;
+        }
+        82% {
+          font-weight: 700;
+          font-style: italic;
+          text-decoration: underline;
+          text-transform: none;
+        }
+        84% {
+          font-weight: 100;
+          font-style: normal;
+          text-decoration: none;
+          text-transform: uppercase;
+        }
+        86% {
+          font-weight: 200;
+          font-style: normal;
+          text-decoration: line-through;
+          text-transform: lowercase;
+        }
+        88% {
+          font-weight: 300;
+          font-style: italic;
+          text-decoration: underline;
+          text-transform: capitalize;
+        }
+        90% {
+          font-weight: 400;
+          font-style: normal;
+          text-decoration: none;
+          text-transform: none;
+        }
+        92% {
+          font-weight: 500;
+          font-style: normal;
+          text-decoration: line-through;
+          text-transform: uppercase;
+        }
+        94% {
+          font-weight: 600;
+          font-style: italic;
+          text-decoration: underline;
+          text-transform: lowercase;
+        }
+        96% {
+          font-weight: 700;
+          font-style: normal;
+          text-decoration: none;
+          text-transform: capitalize;
+        }
+        98% {
+          font-weight: 100;
+          font-style: normal;
+          text-decoration: line-through;
+          text-transform: none;
+        }
+        100% {
+          font-weight: 200;
+          font-style: italic;
+          text-decoration: underline;
+          text-transform: uppercase;
+        }
       }
 
       #curation-link {
@@ -290,7 +563,7 @@
       }
 
       .logo {
-        height: clamp(60px, 12vw, 120px);
+        height: clamp(40px, 8vw, 80px);
         width: auto;
         opacity: 0.9;
         transition: opacity 0.3s ease;
@@ -305,24 +578,21 @@
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        background: #000000;
-        background-image: 
-          radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.005) 0%, transparent 50%),
-          radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.005) 0%, transparent 50%),
-          radial-gradient(circle at 40% 80%, rgba(255, 255, 255, 0.005) 0%, transparent 50%),
-          radial-gradient(circle at 0% 100%, rgba(255, 255, 255, 0.005) 0%, transparent 50%),
-          radial-gradient(circle at 100% 0%, rgba(255, 255, 255, 0.005) 0%, transparent 50%);
-        background-size: 200px 200px, 300px 300px, 150px 150px, 250px 250px, 180px 180px;
+        background: linear-gradient(rgba(0, 0, 0, 0.44), rgba(0, 0, 0, 0.44)),
+          url("assets/Artists/popup_bkg.jpg");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
         border: 1px solid #00ff00;
         border-style: dashed;
-        border-radius: 8px;
+        border-radius: 0px;
         padding: 50px;
         width: 90vw;
         height: 90vh;
         max-width: none;
         max-height: none;
         overflow-y: auto;
-        z-index: 1000;
+        z-index: 999999;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
         font-family: "SourceCodePro", monospace;
         animation: popupScaleIn 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
@@ -335,7 +605,7 @@
         width: 100%;
         height: 100%;
         background: rgba(0, 0, 0, 0.5);
-        z-index: 9999;
+        z-index: 999999;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -388,26 +658,36 @@
         position: fixed;
         top: 20px;
         right: 25px;
-        background: rgba(255, 255, 255, 0.8);
+        background: transparent;
         border: none;
         font-size: 18px;
         cursor: pointer;
-        color: black;
-        z-index: 10001;
+        color: #00ff00;
+        z-index: 999999;
         width: 40px;
         height: 40px;
         display: flex;
         align-items: center;
         justify-content: center;
-        border-radius: 50%;
         transition: all 0.2s ease;
         font-weight: bold;
-        padding: 15px;
+        pointer-events: auto;
+        user-select: none;
+        outline: none;
+        -webkit-tap-highlight-color: transparent;
       }
 
       .popup-close:hover {
-        background: rgba(255, 255, 255, 1);
+        background: transparent;
+        color: #00ff00;
         transform: scale(1.1);
+        opacity: 0.7;
+      }
+
+      .popup-close:active {
+        background: transparent;
+        color: #ffffff;
+        transform: scale(0.95);
       }
 
       #copyright {
@@ -463,11 +743,11 @@
     <div id="copyright">
       © 2025 Designed & Built by Daphne Perlman & Amit Cohen
     </div>
-    
-    
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
     <script src="ascii-elements.js"></script>
+    <script src="dot-art-elements.js"></script>
     <script>
       // Scene setup
       const scene = new THREE.Scene();
@@ -667,24 +947,24 @@
 
       // Function to check if an image should be clickable
       function isClickableImage(imagePath) {
-
-        const isClickable = imagePath.includes('Anat Saacks.jpg') || 
-               imagePath.includes('Chenn Hearthstone') ||
-               imagePath.includes('Dafna_Sartiel.jpg') ||
-               imagePath.includes('EitanBartal_placeholder.png') ||
-               imagePath.includes('Eyal Datz_placeholder.png') ||
-               imagePath.includes('EyalGruss.png') ||
-               imagePath.includes('Gilad Fridman.jpg') ||
-               imagePath.includes('Haya Sheffer.jpg') ||
-               imagePath.includes('Naama Steinbock.jpg') ||
-               imagePath.includes('Oded Ezer_placeholder.png') ||
-               imagePath.includes('ofir_liberman.jpg') ||
-               imagePath.includes('Rony Ginosar.jpg') ||
-               imagePath.includes('fbm_b134006708485641932.png') ||
-               imagePath.includes('Yoav Ruda_placeholder.png') ||
-               imagePath.includes('yonatan ben-simhon.jpeg') ||
-               imagePath.includes('Yuval Keshet.JPG');
-        console.log('Checking if clickable:', imagePath, '->', isClickable);
+        const isClickable =
+          imagePath.includes("Anat Saacks.jpg") ||
+          imagePath.includes("Chenn Hearthstone") ||
+          imagePath.includes("Dafna_Sartiel.jpg") ||
+          imagePath.includes("EitanBartal_placeholder.png") ||
+          imagePath.includes("Eyal Datz_placeholder.png") ||
+          imagePath.includes("EyalGruss.png") ||
+          imagePath.includes("Gilad Fridman.jpg") ||
+          imagePath.includes("Haya Sheffer.jpg") ||
+          imagePath.includes("Naama Steinbock.jpg") ||
+          imagePath.includes("Oded Ezer_placeholder.png") ||
+          imagePath.includes("ofir_liberman.jpg") ||
+          imagePath.includes("Rony Ginosar.jpg") ||
+          imagePath.includes("fbm_b134006708485641932.png") ||
+          imagePath.includes("Yoav Ruda_placeholder.png") ||
+          imagePath.includes("yonatan ben-simhon.jpeg") ||
+          imagePath.includes("Yuval Keshet.JPG");
+        console.log("Checking if clickable:", imagePath, "->", isClickable);
 
         return isClickable;
       }
@@ -713,6 +993,129 @@
         `;
       }
 
+      // Function to create random dot art elements for popups
+      function createRandomDotArt(seed = null) {
+        const availablePatterns = getAllDotArt();
+        const selectedPatterns = [];
+
+        // Use seed for deterministic randomness if provided
+        let randomIndex = seed
+          ? seed % availablePatterns.length
+          : Math.floor(Math.random() * availablePatterns.length);
+
+        // Select 2 unique patterns with more randomization
+        while (selectedPatterns.length < 2) {
+          // Use more random selection instead of sequential
+          randomIndex = Math.floor(Math.random() * availablePatterns.length);
+          const pattern = availablePatterns[randomIndex];
+          if (!selectedPatterns.includes(pattern)) {
+            selectedPatterns.push(pattern);
+          }
+        }
+
+        // 3 possible positions for each dot art
+        const positionSets = [
+          [
+            { top: "5%", left: "5%" },
+            { bottom: "5%", right: "5%" },
+            { top: "50%", left: "50%", transform: "translate(-50%, -50%)" },
+          ],
+          [
+            { top: "10%", right: "10%" },
+            { bottom: "10%", left: "10%" },
+            { top: "30%", left: "80%" },
+          ],
+          [
+            { top: "20%", left: "80%" },
+            { bottom: "20%", right: "20%" },
+            { top: "80%", left: "20%" },
+          ],
+        ];
+
+        // Select random position set
+        const selectedPositionSet =
+          positionSets[Math.floor(Math.random() * positionSets.length)];
+
+        return selectedPatterns
+          .map((patternName, index) => {
+            const pattern = getDotArt(patternName);
+            const position = selectedPositionSet[index];
+
+            return `
+            <div class="dot-art-${index}" style="
+              position: absolute;
+              ${position.top ? `top: ${position.top};` : ""}
+              ${position.left ? `left: ${position.left};` : ""}
+              ${position.bottom ? `bottom: ${position.bottom};` : ""}
+              ${position.right ? `right: ${position.right};` : ""}
+              ${position.transform ? `transform: ${position.transform};` : ""}
+              z-index: -1;
+              color: #00ff00;
+              opacity: 0.25;
+              font-family: 'SourceCodePro', 'IBMPlexMono', monospace;
+              font-size: 24px;
+              line-height: 1;
+              white-space: pre;
+              pointer-events: none;
+              user-select: none;
+            ">${pattern}</div>
+          `;
+          })
+          .join("");
+      }
+
+      // Function to animate dot art positions
+      function animateDotArt() {
+        const dotArtElements = document.querySelectorAll('[class^="dot-art-"]');
+        if (dotArtElements.length === 0) return;
+
+        // 3 possible positions for each dot art
+        const positionSets = [
+          [
+            { top: "5%", left: "5%" },
+            { bottom: "5%", right: "5%" },
+            { top: "50%", left: "50%", transform: "translate(-50%, -50%)" },
+          ],
+          [
+            { top: "10%", right: "10%" },
+            { bottom: "10%", left: "10%" },
+            { top: "30%", left: "80%" },
+          ],
+          [
+            { top: "20%", left: "80%" },
+            { bottom: "20%", right: "20%" },
+            { top: "80%", left: "20%" },
+          ],
+        ];
+
+        // Calculate which element should move based on 2-second intervals
+        const currentTime = Date.now();
+        const secondsElapsed = Math.floor(currentTime / 2000);
+        const elementIndex = secondsElapsed % dotArtElements.length;
+        const element = dotArtElements[elementIndex];
+
+        if (element) {
+          // Select a random position set for this element
+          const randomPositionSet =
+            positionSets[Math.floor(Math.random() * positionSets.length)];
+          const position = randomPositionSet[elementIndex % 3]; // Use modulo to cycle through positions
+
+          // Remove any existing position styles first
+          element.style.top = "auto";
+          element.style.left = "auto";
+          element.style.bottom = "auto";
+          element.style.right = "auto";
+          element.style.transform = "none";
+
+          // Apply new position instantly (no animation)
+          if (position.top) element.style.top = position.top;
+          if (position.left) element.style.left = position.left;
+          if (position.bottom) element.style.bottom = position.bottom;
+          if (position.right) element.style.right = position.right;
+          if (position.transform) element.style.transform = position.transform;
+        }
+      }
+
       // Global function for showing artist popups
       function showArtistPopup(artist) {
         console.log("showArtistPopup called with:", artist);
@@ -732,7 +1135,11 @@
         // Create popup content with carousel
         const popup = document.createElement("div");
         popup.className = "popup";
-        popup.style.background = "#1d1e19";
+        popup.style.background =
+          "linear-gradient(rgba(0, 0, 0, 0.44), rgba(0, 0, 0, 0.44)), url('assets/Artists/popup_bkg.jpg')";
+        popup.style.backgroundSize = "cover";
+        popup.style.backgroundPosition = "center";
+        popup.style.backgroundRepeat = "no-repeat";
 
         // Responsive popup sizing
         if (isMobile) {
@@ -746,43 +1153,27 @@
         }
         popup.style.boxSizing = "border-box";
 
-        // Create a subtle grain overlay
-        const grainOverlay = document.createElement("div");
-        grainOverlay.style.position = "absolute";
-        grainOverlay.style.top = "0";
-        grainOverlay.style.left = "0";
-        grainOverlay.style.width = "100%";
-        grainOverlay.style.height = "100%";
-        grainOverlay.style.backgroundImage = 'url("assets/BGpopup_grain.png")';
-        grainOverlay.style.backgroundSize = "300px 300px";
-        grainOverlay.style.backgroundPosition = "center center";
-        grainOverlay.style.backgroundRepeat = "repeat";
-        grainOverlay.style.opacity = "0.15";
-        grainOverlay.style.pointerEvents = "none";
-        grainOverlay.style.zIndex = "1";
         popup.style.color = "#e6e6e6";
 
-        // Add grain overlay to popup
-        popup.appendChild(grainOverlay);
+        // Add random dot art elements (use artist name as seed for consistency)
+        popup.innerHTML = createRandomDotArt(artist.name.length);
 
-        popup.innerHTML = `
+        popup.innerHTML += `
           <button class="popup-close">&times;</button>
-          <div style="position: relative; z-index: 2;">
-            <h2 style="font-size: 28px; font-weight: bold; color: #e6e6e6; margin-bottom: 15px; font-family: 'Source Code Variable', monospace;">${
+          <div style="position: relative; z-index: 999999;">
+            <h2 style="font-size: 28px; font-weight: bold; color: #e6e6e6; margin-bottom: 35px; font-family: 'Source Code Variable', monospace;">${
               artist.name
             }</h2>
-            <h3 style="color: #e6e6e6; font-size: 20px; margin-bottom: 15px; font-family: 'Source Code Variable', monospace; font-style: italic;">${
+            <h3 style="color: #e6e6e6; font-size: 20px; margin-bottom: 30px; font-family: 'Source Code Variable', monospace; font-style: italic;">${
               artist.title
             }</h3>
-            <p style="color: #e6e6e6; font-family: 'Source Code Variable', monospace; font-size: 18px;">${
+            <p style="color: #e6e6e6; font-family: 'Source Code Variable', monospace; font-size: 18px; margin-bottom: 30px;">${
               artist.medium
             }</p>
-            ${generateASCIIDivider()}
-            <p style="color: #e6e6e6; font-family: 'Source Code Variable', monospace;">${
+            <p style="color: #e6e6e6; font-family: 'Source Code Variable', monospace; margin-bottom: 30px;">${
               artist.description
             }</p>
-            ${generateASCIIDivider()}
-            <p style="color: #e6e6e6; font-family: 'Source Code Variable', monospace;">${
+            <p style="color: #e6e6e6; font-family: 'Source Code Variable', monospace; margin-bottom: 40px;">${
               artist.bio
             }</p>
           </div>
@@ -790,9 +1181,8 @@
           ${
             artist.videoLink
               ? `
-            ${generateASCIIDivider()}
-            <div style="margin: 20px 0;">
-              <h4 style="color: #e6e6e6; font-size: 18px; margin-bottom: 10px; font-family: 'Source Code Variable', monospace;">Video:</h4>
+            <div style="margin: 40px 0;">
+              <h4 style="color: #e6e6e6; font-size: 18px; margin-bottom: 20px; font-family: 'Source Code Variable', monospace;">Video:</h4>
               ${
                 artist.videoLink.includes("vimeo.com/842264728")
                   ? `
@@ -813,7 +1203,7 @@
                             "player.vimeo.com/video/"
                           ) + "?autoplay=0&title=0&byline=0&portrait=0"
                     }" 
-                    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; border-radius: 8px;"
+                    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; border-radius: 0px;"
                     allowfullscreen>
                   </iframe>
                 </div>
@@ -838,10 +1228,9 @@
           ${
             artist.externalLink
               ? `
-            ${generateASCIIDivider()}
-            <div style="margin: 20px 0;">
-              <h4 style="color: #e6e6e6; font-size: 18px; margin-bottom: 10px; font-family: 'Source Code Variable', monospace;">Social Media Post:</h4>
-              <div id="twitter-embed-container" style="text-align: center; padding: 20px; background: #333; border-radius: 8px; min-height: 200px;">
+            <div style="margin: 40px 0;">
+              <h4 style="color: #e6e6e6; font-size: 18px; margin-bottom: 20px; font-family: 'Source Code Variable', monospace;">Social Media Post:</h4>
+              <div id="twitter-embed-container" style="text-align: center; padding: 20px; background: #333; border-radius: 0px; min-height: 200px;">
                 <p style="color: #e6e6e6; font-family: 'Source Code Variable', monospace;">Loading tweet...</p>
               </div>
             </div>
@@ -849,44 +1238,154 @@
               : ""
           }
           
-          ${generateASCIIDivider()}
-          <div style="margin-top: 20px;">
-            <div id="carousel-container" style="position: relative; width: 100%; height: min(60vh, 400px); overflow: hidden; border-radius: 4px; background: #1d1e19; display: flex; align-items: center; justify-content: center;">
-              <img id="carousel-image" src="${
-                artist.images[0]
-              }" style="max-width: 100%; max-height: 100%; object-fit: contain;" />
-              ${
-                artist.images.length > 1
-                  ? `
-                <button id="carousel-prev" style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.8); color: black; border: none; padding: 15px; cursor: pointer; border-radius: 50%; font-size: 18px; font-weight: bold;">&lt;</button>
-                <button id="carousel-next" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.8); color: black; border: none; padding: 15px; cursor: pointer; border-radius: 50%; font-size: 18px; font-weight: bold;">&gt;</button>
-              `
-                  : ""
-              }
-            </div>
+          ${
+            // Only show image section for artists that should have images
+            ![
+              "Chenn Hearthstone",
+              "Oded Ezer",
+              "Eitan Bartal",
+              "Eyal Yehowa Gruss",
+            ].includes(artist.name)
+              ? `
+          <div style="margin-top: 120px;">
             ${
               artist.images.length > 1
                 ? `
-              <div id="carousel-indicators" style="display: flex; gap: 8px; justify-content: center; margin-top: 15px;">
+            <div id="carousel-container" style="position: relative; width: 100%; height: min(50vh, 400px); display: flex; align-items: ${
+              ["Yuval Keshet", "Shaul Tzemach", "Ofir Liberman"].includes(
+                artist.name
+              )
+                ? "flex-end"
+                : "center"
+            }; justify-content: center; perspective: 1000px; margin-bottom: 60px; padding-bottom: 40px;">
+              <div id="carousel" style="position: relative; width: ${
+                artist.images.length === 3 &&
+                ["Yuval Keshet", "Shaul Tzemach", "Ofir Liberman"].includes(
+                  artist.name
+                )
+                  ? "500px"
+                  : artist.images.length === 3
+                  ? "370px"
+                  : "300px"
+              }; height: ${
+                    artist.images.length === 3 &&
+                    ["Yuval Keshet", "Shaul Tzemach", "Ofir Liberman"].includes(
+                      artist.name
+                    )
+                      ? "320px"
+                      : artist.images.length === 3
+                      ? "240px"
+                      : "200px"
+                  }; transform-style: preserve-3d; cursor: grab;">
                 ${artist.images
-                  .map(
-                    (_, index) =>
-                      '<div class="indicator" style="width: 12px; height: 12px; border-radius: 50%; background: ' +
-                      (index === 0 ? "#fff" : "#666") +
-                      '; cursor: pointer; transition: background 0.3s;"></div>'
-                  )
+                  .map((image, index) => {
+                    const angle = (360 / artist.images.length) * index;
+                    const isThreeImages = artist.images.length === 3;
+                    const faceWidth =
+                      isThreeImages &&
+                      [
+                        "Yuval Keshet",
+                        "Shaul Tzemach",
+                        "Ofir Liberman",
+                      ].includes(artist.name)
+                        ? "470px"
+                        : isThreeImages
+                        ? "350px"
+                        : "280px";
+                    const faceHeight =
+                      isThreeImages &&
+                      [
+                        "Yuval Keshet",
+                        "Shaul Tzemach",
+                        "Ofir Liberman",
+                      ].includes(artist.name)
+                        ? "300px"
+                        : isThreeImages
+                        ? "220px"
+                        : "180px";
+                    const topOffset = isThreeImages ? "0px" : "10px";
+                    const leftOffset = isThreeImages ? "0px" : "10px";
+                    return `
+                       <div class="carousel__face" style="position: absolute; width: ${faceWidth}; height: ${faceHeight}; top: ${topOffset}; left: ${leftOffset}; background-image: url('${image}'); background-size: contain; background-position: center; background-repeat: no-repeat; display: flex; align-items: center; justify-content: center;                       transform: rotateY(${angle}deg) translateZ(${
+                      isThreeImages &&
+                      [
+                        "Yuval Keshet",
+                        "Shaul Tzemach",
+                        "Ofir Liberman",
+                      ].includes(artist.name)
+                        ? "450px"
+                        : "430px"
+                    });">
+                      <span style="margin: auto; font-size: 1.5rem; color: transparent; font-family: 'SourceCodePro', monospace; pointer-events: none;">${
+                        index + 1
+                      }</span>
+                    </div>
+                  `;
+                  })
                   .join("")}
               </div>
+            </div>
             `
-                : ""
+                : `
+            <div style="position: relative; width: 100%; height: min(50vh, 400px); display: flex; align-items: center; justify-content: center; margin-bottom: 60px; padding-bottom: 40px;">
+              <img src="${artist.images[0]}" style="max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 0px;" />
+            </div>
+            `
             }
           </div>
+          `
+              : ""
+          }
+          <!-- Bottom spacer to ensure proper scrolling -->
+          <div style="height: 100px; width: 100%;"></div>
           </div>
         `;
 
         overlay.appendChild(popup);
         document.body.appendChild(overlay);
         console.log("Popup added to DOM");
+
+        // Start dot art animation
+        const animationInterval = setInterval(animateDotArt, 2000);
+
+        // Store interval ID for cleanup
+        overlay.dataset.animationInterval = animationInterval;
+
+        // Define ESC handler before using it
+        const handleEscKey = (e) => {
+          if (e.key === "Escape") {
+            console.log("ESC key pressed, closing popup");
+            // Clear animation interval
+            if (overlay.dataset.animationInterval) {
+              clearInterval(overlay.dataset.animationInterval);
+            }
+            overlay.remove();
+            document.removeEventListener("keydown", handleEscKey);
+          }
+        };
+
+        // Attach close button listener IMMEDIATELY after DOM insertion
+        const closeButton = popup.querySelector(".popup-close");
+        console.log("Immediately looking for close button:", closeButton);
+        if (closeButton) {
+          console.log("Found close button immediately, attaching listener");
+          closeButton.addEventListener("click", (e) => {
+            console.log("Close button clicked - immediate listener");
+            e.preventDefault();
+            e.stopPropagation();
+            // Clear animation interval
+            if (overlay.dataset.animationInterval) {
+              clearInterval(overlay.dataset.animationInterval);
+            }
+            overlay.remove();
+            document.removeEventListener("keydown", handleEscKey);
+          });
+        } else {
+          console.error("Close button not found immediately!");
+        }
+
+        // Add ESC key listener immediately
+        document.addEventListener("keydown", handleEscKey);
 
         // Show Twitter post as a clean, styled card
         if (
@@ -904,11 +1403,11 @@
 
             // Create a beautiful, Twitter-style card that always works
             embedContainer.innerHTML = `
-              <div style="background: #ffffff; border: 1px solid #e1e8ed; border-radius: 16px; padding: 0; max-width: 500px; margin: 0 auto; box-shadow: 0 4px 12px rgba(0,0,0,0.15); overflow: hidden;">
+              <div style="background: #ffffff; border: 1px solid #e1e8ed; border-radius: 0px; padding: 0; max-width: 500px; margin: 0 auto; box-shadow: 0 4px 12px rgba(0,0,0,0.15); overflow: hidden;">
                 <!-- Twitter-style header -->
                 <div style="padding: 16px; border-bottom: 1px solid #e1e8ed; background: #f8f9fa;">
                   <div style="display: flex; align-items: center; gap: 12px;">
-                    <div style="width: 48px; height: 48px; background: linear-gradient(135deg, #1DA1F2, #0d8bd9); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 18px;">
+                    <div style="width: 48px; height: 48px; background: linear-gradient(135deg, #1DA1F2, #0d8bd9); border-radius: 0px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 18px;">
                       EG
                     </div>
                     <div>
@@ -929,7 +1428,7 @@
                   </div>
                   
                   <!-- Tweet image preview -->
-                  <div style="border-radius: 12px; overflow: hidden; margin: 12px 0; background: #f8f9fa; border: 1px solid #e1e8ed;">
+                  <div style="border-radius: 0px; overflow: hidden; margin: 12px 0; background: #f8f9fa; border: 1px solid #e1e8ed;">
                     <div style="padding: 20px; text-align: center; color: #657786; font-size: 14px;">
                       📸 Image attached to tweet
                     </div>
@@ -956,7 +1455,7 @@
                 
                 <!-- View on X button -->
                 <div style="padding: 16px; background: #f8f9fa; border-top: 1px solid #e1e8ed; text-align: center;">
-                  <a href="${artist.externalLink}" target="_blank" style="display: inline-block; padding: 10px 20px; background: #1DA1F2; color: white; text-decoration: none; border-radius: 20px; font-size: 14px; font-weight: 600; transition: background 0.2s;">
+                  <a href="${artist.externalLink}" target="_blank" style="display: inline-block; padding: 10px 20px; background: #1DA1F2; color: white; text-decoration: none; border-radius: 0px; font-size: 14px; font-weight: 600; transition: background 0.2s;">
                     View Full Tweet on X ↗
                   </a>
                 </div>
@@ -971,74 +1470,198 @@
           console.log("No Twitter link found for artist:", artist);
         }
 
-        // Carousel functionality (only if multiple images)
-        if (artist.images.length > 1) {
-          let currentImageIndex = 0;
-          const carouselImage = popup.querySelector("#carousel-image");
-          const indicators = popup.querySelectorAll(".indicator");
+        // 3D Carousel functionality (only if multiple images and artist should have images)
+        if (
+          artist.images.length > 1 &&
+          ![
+            "Chenn Hearthstone",
+            "Oded Ezer",
+            "Eitan Bartal",
+            "Eyal Yehowa Gruss",
+          ].includes(artist.name)
+        ) {
+          const carousel = popup.querySelector("#carousel");
+          const faces = popup.querySelectorAll(".carousel__face");
+          let currentRotation = 0;
+          const rotationStep = 360 / artist.images.length;
 
-          const updateCarousel = (index) => {
-            carouselImage.src = artist.images[index];
-            indicators.forEach((indicator, i) => {
-              indicator.style.background = i === index ? "#333" : "#ccc";
-            });
-            currentImageIndex = index;
+          // Drag functionality variables
+          let isDragging = false;
+          let startX = 0;
+          let startY = 0;
+          let startRotation = 0;
+          let dragSensitivity = 0.5; // Lower = more sensitive
+          let isAnimating = false;
+          let animationId = null;
+          let lastAnimationTime = 0;
+
+          // Get responsive scale factor based on screen size
+          const getScaleFactor = () => {
+            const screenWidth = window.innerWidth;
+            if (screenWidth <= 480) {
+              return 0.6; // Mobile
+            } else if (screenWidth <= 768) {
+              return 0.8; // Tablet
+            }
+            return 1; // Desktop
           };
 
-          popup
-            .querySelector("#carousel-prev")
-            .addEventListener("click", () => {
-              const newIndex =
-                currentImageIndex > 0
-                  ? currentImageIndex - 1
-                  : artist.images.length - 1;
-              updateCarousel(newIndex);
+          // Apply transform with scale and rotation
+          const applyTransform = (rotation) => {
+            const scaleFactor = getScaleFactor();
+            carousel.style.transform = `scale(${scaleFactor}) rotateY(${rotation}deg)`;
+          };
+
+          // JavaScript-based continuous rotation
+          function animateRotation() {
+            if (!isDragging && !isAnimating) {
+              const now = Date.now();
+              if (lastAnimationTime === 0) lastAnimationTime = now;
+              const deltaTime = now - lastAnimationTime;
+              lastAnimationTime = now;
+
+              // Rotate 360 degrees over 120 seconds (0.3 degrees per 100ms)
+              currentRotation += (deltaTime / 1000) * (360 / 120);
+              applyTransform(currentRotation);
+            }
+            animationId = requestAnimationFrame(animateRotation);
+          }
+
+          // Start the animation
+          animateRotation();
+
+          // Mouse events for desktop
+          carousel.addEventListener("mousedown", (e) => {
+            if (isAnimating) return;
+            isDragging = true;
+            startX = e.clientX;
+            startY = e.clientY;
+            startRotation = currentRotation;
+            carousel.style.cursor = "grabbing";
+            e.preventDefault();
+          });
+
+          document.addEventListener("mousemove", (e) => {
+            if (!isDragging) return;
+            e.preventDefault();
+
+            const deltaX = e.clientX - startX;
+            const rotationDelta =
+              (deltaX / carousel.offsetWidth) * 360 * dragSensitivity;
+            const newRotation = startRotation + rotationDelta;
+
+            applyTransform(newRotation);
+            currentRotation = newRotation;
+          });
+
+          document.addEventListener("mouseup", () => {
+            if (!isDragging) return;
+            isDragging = false;
+            carousel.style.cursor = "grab";
+            lastAnimationTime = Date.now(); // Reset animation timing
+          });
+
+          // Touch events for mobile
+          carousel.addEventListener("touchstart", (e) => {
+            if (isAnimating) return;
+            isDragging = true;
+            startX = e.touches[0].clientX;
+            startY = e.touches[0].clientY;
+            startRotation = currentRotation;
+            e.preventDefault();
+          });
+
+          document.addEventListener("touchmove", (e) => {
+            if (!isDragging) return;
+            e.preventDefault();
+
+            const deltaX = e.touches[0].clientX - startX;
+            const rotationDelta =
+              (deltaX / carousel.offsetWidth) * 360 * dragSensitivity;
+            const newRotation = startRotation + rotationDelta;
+
+            applyTransform(newRotation);
+            currentRotation = newRotation;
+          });
+
+          document.addEventListener("touchend", () => {
+            if (!isDragging) return;
+            isDragging = false;
+            lastAnimationTime = Date.now(); // Reset animation timing
+          });
+
+          // Add click handlers to each face for navigation
+          faces.forEach((face, index) => {
+            face.addEventListener("click", (e) => {
+              if (isDragging) return; // Prevent click if we were dragging
+
+              isAnimating = true;
+              carousel.style.animation = "none";
+
+              // Calculate the rotation needed to bring this face to the front
+              const targetRotation = -index * rotationStep;
+              const currentRotationNormalized =
+                ((currentRotation % 360) + 360) % 360;
+              const targetRotationNormalized =
+                ((targetRotation % 360) + 360) % 360;
+
+              // Calculate the shortest rotation path
+              let rotationDiff =
+                targetRotationNormalized - currentRotationNormalized;
+              if (rotationDiff > 180) rotationDiff -= 360;
+              if (rotationDiff < -180) rotationDiff += 360;
+
+              const newRotation = currentRotation + rotationDiff;
+
+              // Smooth transition to target rotation
+              carousel.style.transition =
+                "transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)";
+              applyTransform(newRotation);
+              currentRotation = newRotation;
+
+              // Resume animation after transition
+              setTimeout(() => {
+                carousel.style.transition = "none";
+                isAnimating = false;
+                lastAnimationTime = Date.now(); // Reset animation timing
+              }, 800);
+            });
+          });
+
+          // Add hover effects to faces
+          faces.forEach((face) => {
+            face.addEventListener("mouseenter", () => {
+              if (!isDragging) {
+                face.style.transform += " scale(1.05)";
+                face.style.transition = "transform 0.3s ease";
+              }
             });
 
-          popup
-            .querySelector("#carousel-next")
-            .addEventListener("click", () => {
-              const newIndex =
-                currentImageIndex < artist.images.length - 1
-                  ? currentImageIndex + 1
-                  : 0;
-              updateCarousel(newIndex);
-            });
-
-          indicators.forEach((indicator, index) => {
-            indicator.addEventListener("click", () => {
-              updateCarousel(index);
+            face.addEventListener("mouseleave", () => {
+              if (!isDragging) {
+                face.style.transform = face.style.transform.replace(
+                  " scale(1.05)",
+                  ""
+                );
+              }
             });
           });
         }
 
-        // Close popup handlers
-        const closePopup = () => {
-          overlay.remove();
-          // Remove ESC key listener when popup is closed
-          document.removeEventListener("keydown", handleEscKey);
-        };
-
-        // Handle ESC key press
-        const handleEscKey = (e) => {
-          if (e.key === "Escape") {
-            closePopup();
-          }
-        };
-
-        popup
-          .querySelector(".popup-close")
-          .addEventListener("click", closePopup);
-
         // Close when clicking outside the popup
         overlay.addEventListener("click", (e) => {
+          console.log(
+            "Overlay clicked, target:",
+            e.target,
+            "overlay:",
+            overlay
+          );
           if (e.target === overlay) {
-            closePopup();
+            console.log("Clicked outside popup, closing");
+            overlay.remove();
+            document.removeEventListener("keydown", handleEscKey);
           }
         });
-
-        // Add ESC key listener
-        document.addEventListener("keydown", handleEscKey);
       }
 
       // Function to show curation popup
@@ -1058,9 +1681,11 @@
         // Create popup content
         const popup = document.createElement("div");
         popup.className = "popup";
-        popup.style.background = "linear-gradient(rgba(0, 0, 0, 0.44), rgba(0, 0, 0, 0.44)), url('assets/Artists/popup_bkg.jpg')";
+        popup.style.background =
+          "linear-gradient(rgba(0, 0, 0, 0.44), rgba(0, 0, 0, 0.44)), url('assets/Artists/popup_bkg.jpg')";
         popup.style.backgroundSize = "cover";
         popup.style.backgroundPosition = "center";
+        popup.style.backgroundRepeat = "no-repeat";
 
         // Responsive popup sizing
         if (isMobile) {
@@ -1068,104 +1693,103 @@
           popup.style.maxHeight = "95vh";
           popup.style.padding = "20px";
         } else {
-          popup.style.maxWidth = "1200px";
-          popup.style.maxHeight = "900px";
+          popup.style.maxWidth = "900px";
+          popup.style.maxHeight = "800px";
           popup.style.padding = "50px";
         }
         popup.style.boxSizing = "border-box";
         popup.style.color = "#e6e6e6";
 
-        // Create a subtle grain overlay
-        const grainOverlay = document.createElement("div");
-        grainOverlay.style.position = "absolute";
-        grainOverlay.style.top = "0";
-        grainOverlay.style.left = "0";
-        grainOverlay.style.width = "100%";
-        grainOverlay.style.height = "100%";
-        grainOverlay.style.backgroundImage = 'url("assets/BGpopup_grain.png")';
-        grainOverlay.style.backgroundSize = "300px 300px";
-        grainOverlay.style.backgroundPosition = "center center";
-        grainOverlay.style.backgroundRepeat = "repeat";
-        grainOverlay.style.opacity = "0.15";
-        grainOverlay.style.pointerEvents = "none";
-        grainOverlay.style.zIndex = "1";
-
-        // Add grain overlay to popup
-        popup.appendChild(grainOverlay);
+        // Add random dot art elements (use fixed seed for curation popup)
+        popup.innerHTML = createRandomDotArt(999);
 
         popup.innerHTML += `
           <button class="popup-close">&times;</button>
-          <div style="position: relative; z-index: 2;">
+          <div style="position: relative; z-index: 999999;">
             <h2 style="font-size: 28px; font-weight: bold; color: #e6e6e6; margin-bottom: 25px; font-family: 'IBMPlexMono', monospace;">Adi Karelitz's Curation</h2>
-            <div style="text-align: center; margin-bottom: 30px; position: relative; display: inline-block;">
-              <img src="assets/Artists/Adi Karelitz/Adi Karelitz by Michal Chelbin.jpg" alt="Adi Karelitz by Michal Chelbin" style="max-width: 300px; max-height: 300px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);">
-              <div style="position: absolute; bottom: 10px; left: 10px; color: #e6e6e6; font-family: 'SourceCodePro', monospace; font-size: 11px; background: rgba(0, 0, 0, 0.8); padding: 4px 8px; border-radius: 3px; white-space: nowrap;">© Michal Chelbin</div>
-            </div>
-            
-            <!-- Gallery Carousel -->
-            <div style="margin-top: 40px; margin-bottom: 30px;">
-              <h3 style="font-size: 20px; font-weight: bold; color: #e6e6e6; margin-bottom: 20px; font-family: 'SourceCodePro', monospace; text-align: center;">Gallery</h3>
-              <div id="carousel-container" style="position: relative; width: 100%; height: min(60vh, 400px); display: flex; align-items: center; justify-content: center; perspective: 1000px;">
-                <div id="carousel" style="position: absolute; left: 50%; top: 50%; width: 500px; height: 320px; margin-left: -250px; margin-top: -160px; transform-style: preserve-3d; cursor: grab;">
-                  <!-- Gallery images will be inserted here -->
-                </div>
-              </div>
-            </div>
-            ${generateASCIIDivider()}
             <div style="color: #e6e6e6; font-family: 'SourceCodePro', monospace; font-size: 16px; line-height: 1.8;">
               <p style="margin-bottom: 20px;">
                 Memory_Almost_Full, held in Vitrina Gallery as an embassy of the international The Wrong Biennale, explores disruptions as a post-digital aesthetic in the age of the AI revolution. The advent of Artificial Intelligence has challenged our traditional perceptions of human interaction, creativity, and intelligence. With its pervasive use in both thought and creative processes, the line between physical reality and the digital realm is becoming increasingly blurred and more fluid than ever.
               </p>
-              ${generateASCIIDivider()}
               <p style="margin-bottom: 20px;">
                 The works adopt a range of mediums and technologies to foreground and linger on the ruptures and connections formed in the conceptual and aesthetic space that unfolds between the human and the technological. Many of them focus on the glitch as a visual and conceptual metaphor for the gaps and fractures that emerge in these interfaces. How do disruptions, malfunctions, errors, and bugs function as formative actions in a "perfect" digital world?
               </p>
-              ${generateASCIIDivider()}
               <p style="margin-bottom: 20px;">
                 In his 2017 book, <em>Glitch Art in Theory and Practice: Critical Failures and Post-Digital Aesthetics</em>, Michael Betancourt proposed a theoretical framework that sees the glitch not as a mere technical phenomenon but as a critical aesthetic related to capitalism. Betancourt argued that the glitch serves as a model for a general theory of critical media, exposing the breaking points in modern technological systems. It functions as a moment of revelation, i.e., a moment where the technological system exposes its own vulnerability and inherent imperfection.
               </p>
-              ${generateASCIIDivider()}
               <p style="margin-bottom: 0;">
                 The Wrong Biennale is an independent international art biennial; a multicultural and decentralized platform that embraces an open approach, allowing creatives to sidestep the elitist infrastructure of art fairs and present digital art to a global audience. Founded in 2013 by the Spanish artist and curator David Quiles Guilló, The Wrong Biennale is held both online in the digital sphere and in physical locations.
               </p>
             </div>
+            <!-- Bottom spacer to ensure proper scrolling -->
+            <div style="height: 100px; width: 100%;"></div>
           </div>
         `;
 
         overlay.appendChild(popup);
         document.body.appendChild(overlay);
-        
-        // Create gallery carousel after popup is added to DOM
-        setTimeout(() => {
-          createGalleryCarousel();
-        }, 100);
 
-        // Close popup handlers
-        const closePopup = () => {
-          overlay.remove();
-          document.removeEventListener("keydown", handleEscKey);
-        };
+        // Start dot art animation
+        const animationInterval = setInterval(animateDotArt, 2000);
 
-        // Handle ESC key press
+        // Store interval ID for cleanup
+        overlay.dataset.animationInterval = animationInterval;
+
+        // Define ESC handler before using it
         const handleEscKey = (e) => {
           if (e.key === "Escape") {
-            closePopup();
+            console.log("ESC key pressed, closing curation popup");
+            // Clear animation interval
+            if (overlay.dataset.animationInterval) {
+              clearInterval(overlay.dataset.animationInterval);
+            }
+            overlay.remove();
+            document.removeEventListener("keydown", handleEscKey);
           }
         };
 
-        popup
-          .querySelector(".popup-close")
-          .addEventListener("click", closePopup);
+        // Attach close button listener IMMEDIATELY after DOM insertion
+        const closeButton = popup.querySelector(".popup-close");
+        console.log(
+          "Immediately looking for curation close button:",
+          closeButton
+        );
+        if (closeButton) {
+          console.log(
+            "Found curation close button immediately, attaching listener"
+          );
+          closeButton.addEventListener("click", (e) => {
+            console.log("Curation close button clicked - immediate listener");
+            e.preventDefault();
+            e.stopPropagation();
+            // Clear animation interval
+            if (overlay.dataset.animationInterval) {
+              clearInterval(overlay.dataset.animationInterval);
+            }
+            overlay.remove();
+            document.removeEventListener("keydown", handleEscKey);
+          });
+        } else {
+          console.error("Curation close button not found immediately!");
+        }
+
+        // Add ESC key listener immediately
+        document.addEventListener("keydown", handleEscKey);
 
         // Close when clicking outside the popup
         overlay.addEventListener("click", (e) => {
+          console.log(
+            "Curation overlay clicked, target:",
+            e.target,
+            "overlay:",
+            overlay
+          );
           if (e.target === overlay) {
-            closePopup();
+            console.log("Clicked outside curation popup, closing");
+            overlay.remove();
+            document.removeEventListener("keydown", handleEscKey);
           }
         });
-
-        // Add ESC key listener
-        document.addEventListener("keydown", handleEscKey);
       }
 
       // Artist data for popups
@@ -1249,16 +1873,15 @@
           externalLink: "https://x.com/eyaler/status/1848106256860602530",
         },
 
-        'EyalGruss.png': {
-          name: 'Eyal Yehowa Gruss',
-          title: 'And the boy was happy',
-          medium: 'Code generated animation, 2025',
-          description: 'Gruss inadvertently developed an animation technique based on an image-to-image generator. Due to a glitchy feedback loop, the system brightened the images fed to it and the figures in them, and the model seemed to interpret the images as drawings on paper. This generated an image that evolves semantically and, with a little guidance, lends itself to storytelling.',
-          bio: 'Eyal Yehowa Gruss is an artist, programmer, poet, algorithm researcher, and computational creativity lecturer at HIT Holon Institute of Technology. He creates interactive installations, multimedia shows, constrained and algorithmic poetry, and code art.',
-          images: [
-            'assets/Artists/Eyal Yehowa Gruss/EyalGruss.png'
-          ],
-          videoLink: 'https://www.youtube.com/watch?v=M8qbfkifG84'
+        "EyalGruss.png": {
+          name: "Eyal Yehowa Gruss",
+          title: "And the boy was happy",
+          medium: "Code generated animation, 2025",
+          description:
+            "Gruss inadvertently developed an animation technique based on an image-to-image generator. Due to a glitchy feedback loop, the system brightened the images fed to it and the figures in them, and the model seemed to interpret the images as drawings on paper. This generated an image that evolves semantically and, with a little guidance, lends itself to storytelling.",
+          bio: "Eyal Yehowa Gruss is an artist, programmer, poet, algorithm researcher, and computational creativity lecturer at HIT Holon Institute of Technology. He creates interactive installations, multimedia shows, constrained and algorithmic poetry, and code art.",
+          images: ["assets/Artists/Eyal Yehowa Gruss/EyalGruss.png"],
+          videoLink: "https://www.youtube.com/watch?v=M8qbfkifG84",
         },
 
         "Gilad Fridman.jpg": {
@@ -1285,7 +1908,6 @@
             "assets/Artists/Haya Sheffer/Sheffer-80_6 - Haya Sheffer.jpg",
             "assets/Artists/Haya Sheffer/Screenshot_20250728_114622_WhatsApp.jpg",
           ],
-
         },
         "Naama Steinbock.jpg": {
           name: "Naama Steinbock",
@@ -1388,7 +2010,7 @@
           images: [
             "assets/Artists/Yuval Keshet/Yuval Keshet.JPG",
             "assets/Artists/Yuval Keshet/יובל_קשת_30_40.jpg",
-            "assets/Artists/Yuval Keshet/יובל_קשת_30_40A.jpg"
+            "assets/Artists/Yuval Keshet/יובל_קשת_30_40A.jpg",
           ],
         },
       };
@@ -1538,7 +2160,7 @@
 
             const material = new THREE.MeshBasicMaterial({
               map: framedTexture,
-        transparent: true,
+              transparent: true,
               opacity: 0.95,
               side: THREE.DoubleSide,
               alphaTest: 0.1, // Optimize transparency rendering
@@ -1696,56 +2318,178 @@
       let asciiElements = [];
       let asciiTime = 0;
       let asciiCanvas, asciiCtx;
-      
+
       // ASCII patterns
       const asciiPatterns = [
         // Owl
-        ['       o        o', '  ___   \\      /   ___', '.` __`-. \\/\\/\\/ .-\'__ \'.', '( /  \\  \\/(..)\/  /  \\ )', '\\ \\ O ) ( (oo) ) ( O / /', ' \\ \\_/ __>----<__ \\_/ /', '  ".   >_      _<   ."', '    >   /      \\   <', '   / /( \\      / )\\ \\', '  / `" _/ ____ \\_ "\' \\', '  \\_.-` A/  & \\A \'-._/'],
-        
+        [
+          "       o        o",
+          "  ___   \\      /   ___",
+          ".` __`-. \\/\\/\\/ .-'__ '.",
+          "( /  \\  \\/(..)\/  /  \\ )",
+          "\\ \\ O ) ( (oo) ) ( O / /",
+          " \\ \\_/ __>----<__ \\_/ /",
+          '  ".   >_      _<   ."',
+          "    >   /      \\   <",
+          "   / /( \\      / )\\ \\",
+          '  / `" _/ ____ \\_ "\' \\',
+          "  \\_.-` A/  & \\A '-._/",
+        ],
+
         // Decorative face
-        ['.==-.                   .-==.', ' \\()8`-._  `.   .\'  _.-\'8()/', ' (88"   ::.  \\./  .::   "88)', '  \\_.\'`-::::.(#).::::-\'`._/', '    `._... .q(_)p. ..._\'', '      ""-..-.\'|=|`-..-""', '      .""\' .\'|=|`. `"".', '    ,\':8(o)./|=|\\.(o)8:`.', '   (O :8 ::/ \\_/ \\:: 8: O)', '    \\O `::/       \\::\' O/', '     ""--\'         `--""'],
-        
+        [
+          ".==-.                   .-==.",
+          " \\()8`-._  `.   .'  _.-'8()/",
+          ' (88"   ::.  \\./  .::   "88)',
+          "  \\_.'`-::::.(#).::::-'`._/",
+          "    `._... .q(_)p. ..._'",
+          '      ""-..-.\'|=|`-..-""',
+          '      .""\' .\'|=|`. `"".',
+          "    ,':8(o)./|=|\\.(o)8:`.",
+          "   (O :8 ::/ \\_/ \\:: 8: O)",
+          "    \\O `::/       \\::' O/",
+          '     ""--\'         `--""',
+        ],
+
         // Simple face
-        ['    .----.   @   @', '   / .-"-.\`.  \\v/', '   | | \'\\ \\ \\_/ )', ' ,-\\ `-.\' /.\'  /', '\'---`----\'----\''],
-        
+        [
+          "    .----.   @   @",
+          '   / .-"-.\`.  \\v/',
+          "   | | '\\ \\ \\_/ )",
+          " ,-\\ `-.' /.'  /",
+          "'---`----'----'",
+        ],
+
         // Caterpillar
-        ['    \\_/-.--.--.--.--.--.', '    (")__)__)__)__)__)__)', '     ^ "" "" "" "" "" ""'],
-        
+        [
+          "    \\_/-.--.--.--.--.--.",
+          '    (")__)__)__)__)__)__)',
+          '     ^ "" "" "" "" "" ""',
+        ],
+
         // Simple stick figure
-        ['\\(")/', '-( )-', '/(_)\\'],
-        
+        ['\\(")/', "-( )-", "/(_)\\"],
+
         // Cat
-        ['    =/\\                 /\\=', '    / \\._   (\\_/)   _./\\', '   / .\'\'._\'--(o.o)--\'_.\'\'\\', '  /.\' _/ |`=/ " \\=`| \\_ `.\\', ' /` .\' \\;-,\'\\___/\',-;/ `. \'\\', '/.-\'      `\\(-V-)/`       `-.\\', '`            "   "'],
-        
+        [
+          "    =/\\                 /\\=",
+          "    / \\._   (\\_/)   _./\\",
+          "   / .''._'--(o.o)--'_.''\\",
+          "  /.' _/ |`=/ \" \\=`| \\_ `.\\",
+          " /` .' \\;-,'\\___/',-;/ `. '\\",
+          "/.-'      `\\(-V-)/`       `-.\\",
+          '`            "   "',
+        ],
+
         // Pig
-        ['             ___', '          .="   "=._.---.', '        ."         c  Y p', '       /   ,       `.  w_/', '       |   -.   /     /', ' _,..._|      )_-\\ \\_=.\\', '`-....- `------))) =- " '],
-        
+        [
+          "             ___",
+          '          .="   "=._.---.',
+          '        ."         c  Y p',
+          "       /   ,       `.  w_/",
+          "       |   -.   /     /",
+          " _,..._|      )_-\\ \\_=.\\",
+          '`-....- `------))) =- " ',
+        ],
+
         // Car
-        ['                                  .-.', '     (___________________________()6 `-,', '     (   ______________________   / "`', '     //\\\\                      //\\\\', '     "" ""                     "" ""'],
-        
+        [
+          "                                  .-.",
+          "     (___________________________()6 `-,",
+          '     (   ______________________   / "`',
+          "     //\\\\                      //\\\\",
+          '     "" ""                     "" ""',
+        ],
+
         // Building/Structure
-        ['   /|~|\\', '  / |=| \\', ' /  | |  \\', '|   | |   |', '|   | |   |', '|   | |   |', '|   |=|   |', '|  //A\\\\  |', '| /// \\\\\\ |', '|///   \\\\\\|', '`         `'],
-        
+        [
+          "   /|~|\\",
+          "  / |=| \\",
+          " /  | |  \\",
+          "|   | |   |",
+          "|   | |   |",
+          "|   | |   |",
+          "|   |=|   |",
+          "|  //A\\\\  |",
+          "| /// \\\\\\ |",
+          "|///   \\\\\\|",
+          "`         `",
+        ],
+
         // Rocket/Ship
-        ['               .', '                    / V\\', '                  / `  /', '                 <<   |', '                 /    |', '               /      |', '             /        |', '           /    \\  \\ /', '          (      ) | |', '  ________|   _/_  | |', '<__________\\______)\\__)'],
-        
+        [
+          "               .",
+          "                    / V\\",
+          "                  / `  /",
+          "                 <<   |",
+          "                 /    |",
+          "               /      |",
+          "             /        |",
+          "           /    \\  \\ /",
+          "          (      ) | |",
+          "  ________|   _/_  | |",
+          "<__________\\______)\\__)",
+        ],
+
         // Cat face
-        ['                  ,,__', '        ..  ..   / o._)                   .---.', '       /--\'/--\\  \\-\'||        .----.    .\'     \'.', '      /        \\_/ / |      .\'      \'..\'         \'-.', '    .\'\\  \\__\\  __.\'.\'     .\'          i-._', '      )\\ |  )\\ |      _.\'', '     // \\\\ // \\\\', '    ||_  \\\\|_  \\\\_', '    \'--\' \'--\'\' \'--\'\''],
-        
+        [
+          "                  ,,__",
+          "        ..  ..   / o._)                   .---.",
+          "       /--'/--\\  \\-'||        .----.    .'     '.",
+          "      /        \\_/ / |      .'      '..'         '-.",
+          "    .'\\  \\__\\  __.'.'     .'          i-._",
+          "      )\\ |  )\\ |      _.'",
+          "     // \\\\ // \\\\",
+          "    ||_  \\\\|_  \\\\_",
+          "    '--' '--'' '--''",
+        ],
+
         // Mouse
-        ['    |\\__/,|   (`\\', '  _.|o o  |_   ) )', '-(((---(((--------'],
-        
+        ["    |\\__/,|   (`\\", "  _.|o o  |_   ) )", "-(((---(((--------"],
+
         // Fish
-        ['  _      _      _', '>(.)__ <(.)__ =(.)__', ' (___/  (___/  (___/'],
-        
+        ["  _      _      _", ">(.)__ <(.)__ =(.)__", " (___/  (___/  (___/"],
+
         // Dragon
-        ['          ,  ,', '          \\\\ \\\\', '          ) \\\\ \\\\    _p_', '          )^\\\\)\\)\\)  /  *\\', '           \\_|| || / /^`-\'', '  __       -\\ \\\\--/ /', '<\'  \\\\___/   ___. )\'', '     `====\\ )___/\\\\', '          //     `"', '          \\\\    /  \\', '          `"'],
-        
+        [
+          "          ,  ,",
+          "          \\\\ \\\\",
+          "          ) \\\\ \\\\    _p_",
+          "          )^\\\\)\\)\\)  /  *\\",
+          "           \\_|| || / /^`-'",
+          "  __       -\\ \\\\--/ /",
+          "<'  \\\\___/   ___. )'",
+          "     `====\\ )___/\\\\",
+          '          //     `"',
+          "          \\\\    /  \\",
+          '          `"',
+        ],
+
         // Face
-        ['            ;,\'', '     _o_    ;:;\'', ' ,-.\'---`.__ ;', '((j`=====\',-\'', ' `-\\     /', '    `-=\''],
-        
+        [
+          "            ;,'",
+          "     _o_    ;:;'",
+          " ,-.'---`.__ ;",
+          "((j`=====',-'",
+          " `-\\     /",
+          "    `-='",
+        ],
+
         // Mail/Envelope
-        ['           _', '          |E]', '        .-|=====-.', '        | | mail |', '     ___|________|', '            ||', '            ||', '            ||   www', '     ,;,    ||   )_(,;;;,', '     <_>  \\ ||   \\|/ \\_/', '     \\|/  \\\\||  \\\\|   |//', '_jgs_\\|//_\\\\|///_\\V/_\\|//__']
+        [
+          "           _",
+          "          |E]",
+          "        .-|=====-.",
+          "        | | mail |",
+          "     ___|________|",
+          "            ||",
+          "            ||",
+          "            ||   www",
+          "     ,;,    ||   )_(,;;;,",
+          "     <_>  \\ ||   \\|/ \\_/",
+          "     \\|/  \\\\||  \\\\|   |//",
+          "_jgs_\\|//_\\\\|///_\\V/_\\|//__",
+        ],
       ];
 
       // Initialize ASCII elements system
@@ -1768,30 +2512,35 @@
         console.log("ASCII canvas added to DOM:", asciiCanvas);
         console.log("Canvas position:", asciiCanvas.style.position);
         console.log("Canvas z-index:", asciiCanvas.style.zIndex);
-        
-        asciiCtx = asciiCanvas.getContext('2d');
+
+        asciiCtx = asciiCanvas.getContext("2d");
         console.log("ASCII context created:", asciiCtx);
         resizeASCIICanvas();
-        console.log("ASCII canvas resized to:", asciiCanvas.width, "x", asciiCanvas.height);
-        
+        console.log(
+          "ASCII canvas resized to:",
+          asciiCanvas.width,
+          "x",
+          asciiCanvas.height
+        );
+
         // Test canvas context immediately
         console.log("Testing canvas context...");
-        asciiCtx.fillStyle = 'red';
+        asciiCtx.fillStyle = "red";
         asciiCtx.fillRect(0, 0, 100, 100);
         console.log("Drew test rectangle");
-        
+
         // Check if canvas has any content
         const imageData = asciiCtx.getImageData(0, 0, 10, 10);
         console.log("Canvas image data:", imageData.data.slice(0, 20));
-        
+
         // Create initial ASCII elements
         for (let i = 0; i < 3; i++) {
           createASCIIElement();
         }
-        
+
         // Add a test element in the center to verify visibility
         let testElement = {
-          pattern: ['TEST', 'ASCII'],
+          pattern: ["TEST", "ASCII"],
           x: window.innerWidth / 2,
           y: window.innerHeight / 2,
           vx: 0,
@@ -1802,48 +2551,74 @@
           alpha: 255,
           timeOffset: 0,
           life: 0,
-          maxLife: 1000
+          maxLife: 1000,
         };
         asciiElements.push(testElement);
-        
-        console.log("ASCII elements system initialized with", asciiElements.length, "elements");
-        
+
+        console.log(
+          "ASCII elements system initialized with",
+          asciiElements.length,
+          "elements"
+        );
+
         // Immediate test - draw something very obvious
-        console.log("Canvas dimensions:", asciiCanvas.width, "x", asciiCanvas.height);
+        console.log(
+          "Canvas dimensions:",
+          asciiCanvas.width,
+          "x",
+          asciiCanvas.height
+        );
         console.log("Context:", asciiCtx);
-        
+
         // Clear the canvas first
         asciiCtx.clearRect(0, 0, asciiCanvas.width, asciiCanvas.height);
-        
+
         // Draw a big red rectangle first
-        asciiCtx.fillStyle = 'rgba(255, 0, 0, 0.8)';
+        asciiCtx.fillStyle = "rgba(255, 0, 0, 0.8)";
         asciiCtx.fillRect(50, 50, 300, 100);
-        
+
         // Then draw text
-        asciiCtx.fillStyle = 'rgba(255, 255, 255, 1)'; // White text
-        asciiCtx.font = 'bold 32px Arial';
-        asciiCtx.textAlign = 'center';
-        asciiCtx.textBaseline = 'middle';
-        asciiCtx.fillText('CAN YOU SEE THIS?', asciiCanvas.width / 2, asciiCanvas.height / 2);
-        
+        asciiCtx.fillStyle = "rgba(255, 255, 255, 1)"; // White text
+        asciiCtx.font = "bold 32px Arial";
+        asciiCtx.textAlign = "center";
+        asciiCtx.textBaseline = "middle";
+        asciiCtx.fillText(
+          "CAN YOU SEE THIS?",
+          asciiCanvas.width / 2,
+          asciiCanvas.height / 2
+        );
+
         // Draw another rectangle in center
-        asciiCtx.fillStyle = 'rgba(0, 255, 0, 0.8)';
-        asciiCtx.fillRect(asciiCanvas.width / 2 - 100, asciiCanvas.height / 2 - 50, 200, 100);
-        
+        asciiCtx.fillStyle = "rgba(0, 255, 0, 0.8)";
+        asciiCtx.fillRect(
+          asciiCanvas.width / 2 - 100,
+          asciiCanvas.height / 2 - 50,
+          200,
+          100
+        );
+
         console.log("Drew immediate test text and rectangle");
-        
+
         // Test div overlay removed - clean interface
-        
+
         // Don't create initial ASCII elements - start clean
         console.log("ASCII elements system initialized - starting clean");
-        
+
         // Test if canvas is actually visible
         setTimeout(() => {
-          const canvas = document.getElementById('ascii-canvas');
+          const canvas = document.getElementById("ascii-canvas");
           if (canvas) {
             console.log("Canvas found in DOM:", canvas);
-            console.log("Canvas computed style:", window.getComputedStyle(canvas));
-            console.log("Canvas offset:", canvas.offsetWidth, "x", canvas.offsetHeight);
+            console.log(
+              "Canvas computed style:",
+              window.getComputedStyle(canvas)
+            );
+            console.log(
+              "Canvas offset:",
+              canvas.offsetWidth,
+              "x",
+              canvas.offsetHeight
+            );
           } else {
             console.log("ERROR: Canvas not found in DOM!");
           }
@@ -1856,7 +2631,8 @@
       }
 
       function createASCIIElement() {
-        let pattern = asciiPatterns[Math.floor(Math.random() * asciiPatterns.length)];
+        let pattern =
+          asciiPatterns[Math.floor(Math.random() * asciiPatterns.length)];
         let element = {
           pattern: pattern,
           x: window.innerWidth / 2 + Math.random() * 200 - 100,
@@ -1869,23 +2645,29 @@
           alpha: Math.random() * 100 + 155,
           timeOffset: Math.random() * 100,
           life: 0,
-          maxLife: Math.random() * 300 + 200
+          maxLife: Math.random() * 300 + 200,
         };
         asciiElements.push(element);
       }
 
       function updateASCIIElements() {
         asciiTime += 0.02;
-        
+
         // Check network position to determine if ASCII elements should appear
         let networkPosition = getNetworkPosition();
-        let shouldShowASCII = networkPosition.x < -0.1 && networkPosition.y < -0.1;
-        
+        let shouldShowASCII =
+          networkPosition.x < -0.1 && networkPosition.y < -0.1;
+
         // Debug: log position occasionally
         if (Math.random() < 0.001) {
-          console.log("Network position:", networkPosition, "Should show ASCII:", shouldShowASCII);
+          console.log(
+            "Network position:",
+            networkPosition,
+            "Should show ASCII:",
+            shouldShowASCII
+          );
         }
-        
+
         if (shouldShowASCII && asciiElements.length < 8) {
           // Create new ASCII elements from center to right up
           if (Math.random() < 0.1) {
@@ -1893,76 +2675,85 @@
             console.log("Created ASCII element! Total:", asciiElements.length);
           }
         }
-        
+
         // Also create elements occasionally regardless of position for testing
         if (asciiElements.length < 3 && Math.random() < 0.01) {
           createASCIIElement();
-          console.log("Created test ASCII element! Total:", asciiElements.length);
+          console.log(
+            "Created test ASCII element! Total:",
+            asciiElements.length
+          );
         }
-        
+
         // Update existing elements
         for (let i = asciiElements.length - 1; i >= 0; i--) {
           let element = asciiElements[i];
           element.life++;
-          
+
           // No rotation
-          
+
           // Remove old elements
           if (element.life > element.maxLife) {
             asciiElements.splice(i, 1);
             continue;
           }
-          
+
           // Update position
           element.x += element.vx;
           element.y += element.vy;
-          
+
           // Add gentle floating motion
           let breathX = Math.sin(asciiTime + element.timeOffset) * 2;
           let breathY = Math.cos(asciiTime + element.timeOffset * 0.7) * 1;
-          
+
           element.x += breathX;
           element.y += breathY;
-          
+
           // No rotation
-          
+
           // Fade out over time
-          element.alpha = Math.max(0, 255 - (element.life / element.maxLife) * 100);
+          element.alpha = Math.max(
+            0,
+            255 - (element.life / element.maxLife) * 100
+          );
         }
       }
 
       function drawASCIIElements() {
         asciiCtx.clearRect(0, 0, asciiCanvas.width, asciiCanvas.height);
-        
+
         // Debug: log drawing occasionally
         if (asciiElements.length > 0 && Math.random() < 0.01) {
           console.log("Drawing", asciiElements.length, "ASCII elements");
         }
-        
+
         for (let element of asciiElements) {
           asciiCtx.save();
           asciiCtx.translate(element.x, element.y);
           // No rotation
           asciiCtx.scale(element.scale, element.scale);
-          
+
           // Draw each line of the ASCII pattern
           for (let y = 0; y < element.pattern.length; y++) {
             let line = element.pattern[y];
-            let lineX = -line.length * 8 / 2;
-            let lineY = -element.pattern.length * 10 / 2 + y * 10;
-            
+            let lineX = (-line.length * 8) / 2;
+            let lineY = (-element.pattern.length * 10) / 2 + y * 10;
+
             // Add gentle floating motion to each line
             let lineFloatX = Math.sin(asciiTime + y * 0.1) * 1;
             let lineFloatY = Math.cos(asciiTime + y * 0.1) * 0.5;
-            
+
             asciiCtx.save();
             asciiCtx.translate(lineX + lineFloatX, lineY + lineFloatY);
-            
+
             // Draw the line in sharp green
-            asciiCtx.fillStyle = `rgba(0, 255, 0, ${Math.max(0.9, element.alpha / 255)})`;
-            asciiCtx.font = 'bold 14px monospace';
-            asciiCtx.textAlign = 'left';
-            asciiCtx.textBaseline = 'top';
+            asciiCtx.fillStyle = `rgba(0, 255, 0, ${Math.max(
+              0.9,
+              element.alpha / 255
+            )})`;
+            asciiCtx.font = "bold 14px monospace";
+            asciiCtx.textAlign = "left";
+            asciiCtx.textBaseline = "top";
             asciiCtx.fillText(line, 0, 0);
             asciiCtx.restore();
           }
@@ -1975,7 +2766,7 @@
         let position = {
           x: (camera.position.x - 0) / 50, // Normalize to -1 to 1
           y: (camera.position.y - 0) / 50,
-          z: (camera.position.z - 25) / 25
+          z: (camera.position.z - 25) / 25,
         };
         return position;
       }
@@ -1983,7 +2774,7 @@
       // Create ASCII elements as HTML divs (working solution!)
       function createHTMLASCIIElements() {
         console.log("Creating HTML ASCII elements...");
-        
+
         // Create initial ASCII elements
         for (let i = 0; i < 3; i++) {
           createHTMLASCIIElement();
@@ -2007,10 +2798,10 @@
         asciiDiv.style.lineHeight = '1.2';
         asciiDiv.style.textAlign = 'left';
         asciiDiv.style.transform = `scale(${Math.random() * 0.5 + 0.8})`;
-        asciiDiv.style.opacity = '0.9';
-        asciiDiv.style.transition = 'all 0.1s ease-out';
-        asciiDiv.textContent = pattern.join('\n');
-        
+        asciiDiv.style.opacity = "0.9";
+        asciiDiv.style.transition = "all 0.1s ease-out";
+        asciiDiv.textContent = pattern.join("\n");
+
         // Add gentle breathing animation properties
         asciiDiv.vx = 0; // No initial velocity
         asciiDiv.vy = 0;
@@ -2018,14 +2809,14 @@
         asciiDiv.timeOffset = Math.random() * Math.PI * 2;
         asciiDiv.life = 0;
         asciiDiv.maxLife = Math.random() * 300 + 200;
-        
+
         // Add very subtle breathing properties
         asciiDiv.floatAmplitude = Math.random() * 3 + 2; // 2-5px very gentle floating
         asciiDiv.floatSpeed = Math.random() * 0.002 + 0.001; // Extremely slow breathing
         asciiDiv.floatPhase = Math.random() * Math.PI * 2;
         asciiDiv.driftX = 0; // No drift, just gentle breathing
         asciiDiv.driftY = 0;
-        
+
         document.body.appendChild(asciiDiv);
         console.log("Created HTML ASCII element with pattern:", pattern[0]);
         return asciiDiv;
@@ -2038,52 +2829,55 @@
 
       function updateHTMLASCIIElements() {
         asciiTime += 0.01;
-        
+
         // Get current camera position
         let currentPosition = {
           x: camera.position.x,
           y: camera.position.y,
-          z: camera.position.z
+          z: camera.position.z,
         };
-        
+
         // Calculate movement
         let movement = {
           x: currentPosition.x - previousCameraPosition.x,
           y: currentPosition.y - previousCameraPosition.y,
-          z: currentPosition.z - previousCameraPosition.z
+          z: currentPosition.z - previousCameraPosition.z,
         };
-        
+
         // Check if there's significant movement (dragging)
-        let currentlyDragging = Math.abs(movement.x) > 0.5 || Math.abs(movement.y) > 0.5 || Math.abs(movement.z) > 0.5;
-        
+        let currentlyDragging =
+          Math.abs(movement.x) > 0.5 ||
+          Math.abs(movement.y) > 0.5 ||
+          Math.abs(movement.z) > 0.5;
+
         // Detect drag start
         if (currentlyDragging && !isDragging) {
           isDragging = true;
           dragStartTime = Date.now();
           createAnimatedASCIIElement();
         }
-        
+
         // Detect drag end
         if (!currentlyDragging && isDragging) {
           isDragging = false;
         }
-        
+
         // Update previous position
         previousCameraPosition = { ...currentPosition };
-        
+
         // Update existing elements
-        const elements = document.querySelectorAll('.ascii-element');
+        const elements = document.querySelectorAll(".ascii-element");
         for (let i = elements.length - 1; i >= 0; i--) {
           let element = elements[i];
           element.life++;
-          
+
           // No rotation
-          
+
           // Remove elements after 5 seconds (300 frames at 60fps)
           if (element.life > 300) {
             // Fade out before removing
-            element.style.transition = 'opacity 0.5s ease-out';
-            element.style.opacity = '0';
+            element.style.transition = "opacity 0.5s ease-out";
+            element.style.opacity = "0";
             setTimeout(() => {
               if (element.parentNode) {
                 element.remove();
@@ -2091,29 +2885,36 @@
             }, 500);
             continue;
           }
-          
+
           // Update animation for elements that are still animating
           if (element.isAnimating) {
-            let progress = Math.min(1, (Date.now() - element.startTime) / element.animationDuration);
-            
+            let progress = Math.min(
+              1,
+              (Date.now() - element.startTime) / element.animationDuration
+            );
+
             // Ease out animation
             let easedProgress = 1 - Math.pow(1 - progress, 3);
-            
+
             // Calculate position from center to target
-            let currentX = element.startX + (element.targetX - element.startX) * easedProgress;
-            let currentY = element.startY + (element.targetY - element.startY) * easedProgress;
-            
+            let currentX =
+              element.startX +
+              (element.targetX - element.startX) * easedProgress;
+            let currentY =
+              element.startY +
+              (element.targetY - element.startY) * easedProgress;
+
             // Calculate scale from 0 to 1
             let currentScale = easedProgress;
-            
+
             // Calculate opacity from 0 to 1
             let currentOpacity = easedProgress;
-            
-            element.style.left = currentX + 'px';
-            element.style.top = currentY + 'px';
+
+            element.style.left = currentX + "px";
+            element.style.top = currentY + "px";
             element.style.transform = `scale(${currentScale})`;
             element.style.opacity = currentOpacity;
-            
+
             // Mark as finished animating
             if (progress >= 1) {
               element.isAnimating = false;
@@ -2121,23 +2922,23 @@
           } else {
             // Organic breathing animation - focus on scale changes to feel alive
             let time = asciiTime * element.floatSpeed + element.floatPhase;
-            
+
             // Keep position static - no movement, just breathing
             let currentLeft = parseFloat(element.style.left);
             let currentTop = parseFloat(element.style.top);
-            element.style.left = currentLeft + 'px';
-            element.style.top = currentTop + 'px';
-            
+            element.style.left = currentLeft + "px";
+            element.style.top = currentTop + "px";
+
             // Continuous gentle breathing through scale changes
             let baseScale = 0.8;
             let breathScale = Math.sin(time) * 0.03; // Very subtle scale breathing
             let scale = baseScale + breathScale;
-            
+
             // Apply breathing scale only (no rotation)
             element.style.transform = `scale(${scale})`;
-            
+
             // Keep opacity stable - focus on scale breathing
-            element.style.opacity = '0.7';
+            element.style.opacity = "0.7";
           }
         }
       }
@@ -2162,19 +2963,19 @@
         // Start from center of screen
         let centerX = window.innerWidth / 2;
         let centerY = window.innerHeight / 2;
-        
+
         // Choose random empty space as target
         let targetX = Math.random() * window.innerWidth;
         let targetY = Math.random() * window.innerHeight;
-        
+
         // Set initial position (center)
-        asciiDiv.style.left = centerX + 'px';
-        asciiDiv.style.top = centerY + 'px';
-        
+        asciiDiv.style.left = centerX + "px";
+        asciiDiv.style.top = centerY + "px";
+
         // Set initial scale and opacity (0)
-        asciiDiv.style.transform = 'scale(0)';
-        asciiDiv.style.opacity = '0';
-        
+        asciiDiv.style.transform = "scale(0)";
+        asciiDiv.style.opacity = "0";
+
         // Animation properties
         asciiDiv.isAnimating = true;
         asciiDiv.startTime = Date.now();
@@ -2183,7 +2984,7 @@
         asciiDiv.startY = centerY;
         asciiDiv.targetX = targetX;
         asciiDiv.targetY = targetY;
-        
+
         // Add gentle breathing properties for after animation
         asciiDiv.vx = 0; // No velocity, just gentle breathing
         asciiDiv.vy = 0;
@@ -2191,16 +2992,18 @@
         asciiDiv.timeOffset = Math.random() * Math.PI * 2;
         asciiDiv.life = 0;
         asciiDiv.maxLife = 300; // 5 seconds at 60fps
-        
+
         // Add very subtle breathing properties
         asciiDiv.floatAmplitude = Math.random() * 3 + 2; // 2-5px very gentle floating
         asciiDiv.floatSpeed = Math.random() * 0.002 + 0.001; // Extremely slow breathing
         asciiDiv.floatPhase = Math.random() * Math.PI * 2;
         asciiDiv.driftX = 0; // No drift, just gentle breathing
         asciiDiv.driftY = 0;
-        
+
         document.body.appendChild(asciiDiv);
-        console.log("Created animated ASCII element from center to empty space");
+        console.log(
+          "Created animated ASCII element from center to empty space"
+        );
       }
 
       // Optimized animation loop
@@ -2232,7 +3035,7 @@
 
         controls.update();
         renderer.render(scene, camera);
-        
+
         // Update HTML ASCII elements
         updateHTMLASCIIElements();
       }
@@ -2242,7 +3045,7 @@
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
         renderer.setSize(window.innerWidth, window.innerHeight);
-        
+
         // Resize ASCII canvas
         if (asciiCanvas) {
           resizeASCIICanvas();
@@ -2296,39 +3099,89 @@
         });
       }
 
-            // Gallery functionality
-            const galleryImages = [
-              { src: 'assets/Artists/Gallery/20250918_153711.jpg', credit: '© Dafna Sartiel' },
-              { src: 'assets/Artists/Gallery/Dafna_Sartiel_1.jpg', credit: '© Dafna Sartiel' },
-              { src: 'assets/Artists/Gallery/Dafna_Sartiel_2.jpg', credit: '© Dafna Sartiel' },
-              { src: 'assets/Artists/Gallery/Dafna_Sartiel_3.jpg', credit: '© Dafna Sartiel' },
-              { src: 'assets/Artists/Gallery/Dafna_Sartiel_4.jpg', credit: '© Dafna Sartiel' },
-              { src: 'assets/Artists/Gallery/Dafna_Sartiel_5.jpg', credit: '© Dafna Sartiel' },
-              { src: 'assets/Artists/Gallery/Dafna_Sartiel_6.jpg', credit: '© Dafna Sartiel' },
-              { src: 'assets/Artists/Gallery/Dafna_Sartiel_7.jpg', credit: '© Dafna Sartiel' },
-              { src: 'assets/Artists/Gallery/Dafna_Sartiel_8.jpg', credit: '© Dafna Sartiel' },
-              { src: 'assets/Artists/Gallery/Dafna_Sartiel_9.jpg', credit: '© Dafna Sartiel' },
-              { src: 'assets/Artists/Gallery/Dafna_Sartiel_10.jpg', credit: '© Dafna Sartiel' },
-              { src: 'assets/Artists/Gallery/Dafna_Sartiel_11.jpg', credit: '© Dafna Sartiel' },
-              { src: 'assets/Artists/Gallery/Dafna_Sartiel_12.jpg', credit: '© Dafna Sartiel' },
-              { src: 'assets/Artists/Gallery/Tamar Lev-On_1.jpg', credit: '© Tamar Lev-On' },
-              { src: 'assets/Artists/Gallery/Tamar Lev-On_2.jpg', credit: '© Tamar Lev-On' },
-              { src: 'assets/Artists/Gallery/Adi Karelitz.jpg', credit: '© Adi Karelitz' },
-              { src: 'assets/Artists/Gallery/Anat Sacks.jpg', credit: '© Dafna Sartiel' }
-            ];
-
+      // Gallery functionality
+      const galleryImages = [
+        {
+          src: "assets/Artists/Gallery/20250918_153711.jpg",
+          credit: "© Dafna Sartiel",
+        },
+        {
+          src: "assets/Artists/Gallery/Dafna_Sartiel_1.jpg",
+          credit: "© Dafna Sartiel",
+        },
+        {
+          src: "assets/Artists/Gallery/Dafna_Sartiel_2.jpg",
+          credit: "© Dafna Sartiel",
+        },
+        {
+          src: "assets/Artists/Gallery/Dafna_Sartiel_3.jpg",
+          credit: "© Dafna Sartiel",
+        },
+        {
+          src: "assets/Artists/Gallery/Dafna_Sartiel_4.jpg",
+          credit: "© Dafna Sartiel",
+        },
+        {
+          src: "assets/Artists/Gallery/Dafna_Sartiel_5.jpg",
+          credit: "© Dafna Sartiel",
+        },
+        {
+          src: "assets/Artists/Gallery/Dafna_Sartiel_6.jpg",
+          credit: "© Dafna Sartiel",
+        },
+        {
+          src: "assets/Artists/Gallery/Dafna_Sartiel_7.jpg",
+          credit: "© Dafna Sartiel",
+        },
+        {
+          src: "assets/Artists/Gallery/Dafna_Sartiel_8.jpg",
+          credit: "© Dafna Sartiel",
+        },
+        {
+          src: "assets/Artists/Gallery/Dafna_Sartiel_9.jpg",
+          credit: "© Dafna Sartiel",
+        },
+        {
+          src: "assets/Artists/Gallery/Dafna_Sartiel_10.jpg",
+          credit: "© Dafna Sartiel",
+        },
+        {
+          src: "assets/Artists/Gallery/Dafna_Sartiel_11.jpg",
+          credit: "© Dafna Sartiel",
+        },
+        {
+          src: "assets/Artists/Gallery/Dafna_Sartiel_12.jpg",
+          credit: "© Dafna Sartiel",
+        },
+        {
+          src: "assets/Artists/Gallery/Tamar Lev-On_1.jpg",
+          credit: "© Tamar Lev-On",
+        },
+        {
+          src: "assets/Artists/Gallery/Tamar Lev-On_2.jpg",
+          credit: "© Tamar Lev-On",
+        },
+        {
+          src: "assets/Artists/Gallery/Adi Karelitz.jpg",
+          credit: "© Adi Karelitz",
+        },
+        {
+          src: "assets/Artists/Gallery/Anat Sacks.jpg",
+          credit: "© Dafna Sartiel",
+        },
+      ];
 
       // Create gallery carousel in curation popup
       function createGalleryCarousel() {
-        const carousel = document.getElementById('carousel');
+        const carousel = document.getElementById("carousel");
         if (!carousel) return;
-        
-        carousel.innerHTML = '';
-        
+
+        carousel.innerHTML = "";
+
         galleryImages.forEach((image, index) => {
           const angle = (360 / galleryImages.length) * index;
-          const face = document.createElement('div');
-          face.className = 'gallery-carousel__face';
+          const face = document.createElement("div");
+          face.className = "gallery-carousel__face";
           face.style.cssText = `
             position: absolute;
             width: 220px;
@@ -2343,9 +3196,9 @@
             transform: rotateY(${angle}deg) translateZ(450px);
             cursor: pointer;
           `;
-          
+
           // Add credit overlay
-          const credit = document.createElement('div');
+          const credit = document.createElement("div");
           credit.style.cssText = `
             position: absolute;
             bottom: 5px;
@@ -2360,10 +3213,10 @@
           `;
           credit.textContent = image.credit;
           face.appendChild(credit);
-          
+
           carousel.appendChild(face);
         });
-        
+
         // Add carousel interaction
         let currentRotation = 0;
         const rotationStep = 360 / galleryImages.length;
@@ -2390,49 +3243,52 @@
         animateRotation();
 
         // Mouse events
-        carousel.addEventListener('mousedown', (e) => {
+        carousel.addEventListener("mousedown", (e) => {
           if (isAnimating) return;
           isDragging = true;
           startX = e.clientX;
           startRotation = currentRotation;
-          carousel.style.cursor = 'grabbing';
+          carousel.style.cursor = "grabbing";
           e.preventDefault();
         });
 
-        document.addEventListener('mousemove', (e) => {
+        document.addEventListener("mousemove", (e) => {
           if (!isDragging) return;
           e.preventDefault();
           const deltaX = e.clientX - startX;
-          const rotationDelta = (deltaX / carousel.offsetWidth) * 360 * dragSensitivity;
+          const rotationDelta =
+            (deltaX / carousel.offsetWidth) * 360 * dragSensitivity;
           const newRotation = startRotation + rotationDelta;
           carousel.style.transform = `rotateY(${newRotation}deg)`;
           currentRotation = newRotation;
         });
 
-        document.addEventListener('mouseup', () => {
+        document.addEventListener("mouseup", () => {
           if (!isDragging) return;
           isDragging = false;
-          carousel.style.cursor = 'grab';
+          carousel.style.cursor = "grab";
           lastAnimationTime = Date.now();
         });
 
         // Face click events
-        const faces = carousel.querySelectorAll('.gallery-carousel__face');
+        const faces = carousel.querySelectorAll(".gallery-carousel__face");
         faces.forEach((face, index) => {
-          face.addEventListener('click', (e) => {
+          face.addEventListener("click", (e) => {
             if (isDragging) return;
             isAnimating = true;
             const targetRotation = -index * rotationStep;
-            const currentRotationNormalized = ((currentRotation % 360) + 360) % 360;
+            const currentRotationNormalized =
+              ((currentRotation % 360) + 360) % 360;
             let rotationDiff = targetRotation - currentRotationNormalized;
             if (rotationDiff > 180) rotationDiff -= 360;
             if (rotationDiff < -180) rotationDiff += 360;
             const newRotation = currentRotation + rotationDiff;
-            carousel.style.transition = 'transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+            carousel.style.transition =
+              "transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)";
             carousel.style.transform = `rotateY(${newRotation}deg)`;
             currentRotation = newRotation;
             setTimeout(() => {
-              carousel.style.transition = 'none';
+              carousel.style.transition = "none";
               isAnimating = false;
               lastAnimationTime = Date.now();
             }, 800);
@@ -2442,8 +3298,9 @@
 
       // Change the floating image periodically
       function changeFloatingImage() {
-        const randomImage = galleryImages[Math.floor(Math.random() * galleryImages.length)];
-        const img = galleryToggle.querySelector('img');
+        const randomImage =
+          galleryImages[Math.floor(Math.random() * galleryImages.length)];
+        const img = galleryToggle.querySelector("img");
         if (img) {
           img.src = randomImage.src;
         }

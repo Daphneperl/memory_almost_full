@@ -94,6 +94,15 @@
           height: 35px;
           font-size: 20px;
         }
+
+        /* Tablet carousel responsive styles */
+        #carousel-container {
+          height: min(55vh, 350px) !important;
+          margin-bottom: 50px !important;
+          padding-bottom: 30px !important;
+        }
+
+        /* Carousel scaling handled by JavaScript */
       }
 
       @media (max-width: 480px) {
@@ -123,6 +132,15 @@
         .popup p {
           font-size: 13px;
         }
+
+        /* Mobile carousel responsive styles */
+        #carousel-container {
+          height: min(50vh, 300px) !important;
+          margin-bottom: 40px !important;
+          padding-bottom: 20px !important;
+        }
+
+        /* Carousel scaling handled by JavaScript */
       }
 
       @media (min-width: 1200px) {
@@ -212,14 +230,14 @@
         background-repeat: no-repeat;
         border: 1px solid #00ff00;
         border-style: dashed;
-        border-radius: 8px;
+        border-radius: 0px;
         padding: 50px;
         width: 90vw;
         height: 90vh;
         max-width: none;
         max-height: none;
         overflow-y: auto;
-        z-index: 1000;
+        z-index: 999999;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
         font-family: "SourceCodePro", monospace;
         animation: popupScaleIn 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
@@ -232,7 +250,7 @@
         width: 100%;
         height: 100%;
         background: rgba(0, 0, 0, 0.5);
-        z-index: 9999;
+        z-index: 999999;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -298,7 +316,7 @@
         font-size: 18px;
         cursor: pointer;
         color: #00ff00;
-        z-index: 10001;
+        z-index: 999999;
         width: 40px;
         height: 40px;
         display: flex;
@@ -307,6 +325,10 @@
         transition: all 0.2s ease;
         font-weight: bold;
         padding: 15px;
+        pointer-events: auto;
+        user-select: none;
+        outline: none;
+        -webkit-tap-highlight-color: transparent;
       }
 
       .popup-close:hover {
@@ -314,6 +336,12 @@
         color: #00ff00;
         transform: scale(1.1);
         opacity: 0.7;
+      }
+
+      .popup-close:active {
+        background: rgba(0, 255, 0, 0.2);
+        color: #ffffff;
+        transform: scale(0.95);
       }
 
       #copyright {
@@ -344,6 +372,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
     <script src="ascii-elements.js"></script>
+    <script src="dot-art-elements.js"></script>
     <script>
       // Scene setup
       const scene = new THREE.Scene();
@@ -589,6 +618,125 @@
         `;
       }
 
+      // Function to create random dot art elements for popups
+      function createRandomDotArt(seed = null) {
+        const availablePatterns = getAllDotArt();
+        const selectedPatterns = [];
+
+        // Use seed for deterministic randomness if provided
+        let randomIndex = seed
+          ? seed % availablePatterns.length
+          : Math.floor(Math.random() * availablePatterns.length);
+
+        // Select 2 unique patterns with more randomization
+        while (selectedPatterns.length < 2) {
+          // Use more random selection instead of sequential
+          randomIndex = Math.floor(Math.random() * availablePatterns.length);
+          const pattern = availablePatterns[randomIndex];
+          if (!selectedPatterns.includes(pattern)) {
+            selectedPatterns.push(pattern);
+          }
+        }
+
+        // 3 possible positions for each dot art
+        const positionSets = [
+          [
+            { top: "5%", left: "5%" },
+            { bottom: "5%", right: "5%" },
+            { top: "50%", left: "50%", transform: "translate(-50%, -50%)" },
+          ],
+          [
+            { top: "10%", right: "10%" },
+            { bottom: "10%", left: "10%" },
+            { top: "30%", left: "80%" },
+          ],
+          [
+            { top: "20%", left: "80%" },
+            { bottom: "20%", right: "20%" },
+            { top: "80%", left: "20%" },
+          ],
+        ];
+
+        // Select random position set
+        const selectedPositionSet =
+          positionSets[Math.floor(Math.random() * positionSets.length)];
+
+        return selectedPatterns
+          .map((patternName, index) => {
+            const pattern = getDotArt(patternName);
+            const position = selectedPositionSet[index];
+
+            return `
+            <div class="dot-art-${index}" style="
+              position: absolute;
+              ${position.top ? `top: ${position.top};` : ""}
+              ${position.left ? `left: ${position.left};` : ""}
+              ${position.bottom ? `bottom: ${position.bottom};` : ""}
+              ${position.right ? `right: ${position.right};` : ""}
+              ${position.transform ? `transform: ${position.transform};` : ""}
+              z-index: -1;
+              color: #00ff00;
+              opacity: 0.25;
+              font-family: 'SourceCodePro', 'IBMPlexMono', monospace;
+              font-size: 24px;
+              line-height: 1;
+              white-space: pre;
+              pointer-events: none;
+              user-select: none;
+            ">${pattern}</div>
+          `;
+          })
+          .join("");
+      }
+
+      // Function to animate dot art positions
+      function animateDotArt() {
+        const dotArtElements = document.querySelectorAll('[class^="dot-art-"]');
+        if (dotArtElements.length === 0) return;
+
+        // 3 possible positions for each dot art
+        const positionSets = [
+          [
+            { top: "5%", left: "5%" },
+            { bottom: "5%", right: "5%" },
+            { top: "50%", left: "50%", transform: "translate(-50%, -50%)" },
+          ],
+          [
+            { top: "10%", right: "10%" },
+            { bottom: "10%", left: "10%" },
+            { top: "30%", left: "80%" },
+          ],
+          [
+            { top: "20%", left: "80%" },
+            { bottom: "20%", right: "20%" },
+            { top: "80%", left: "20%" },
+          ],
+        ];
+
+        // Select random position set
+        const selectedPositionSet =
+          positionSets[Math.floor(Math.random() * positionSets.length)];
+
+        // Only change one element at a time - alternate between elements
+        const currentTime = Date.now();
+        const elementIndex = Math.floor(
+          (currentTime / 2000) % dotArtElements.length
+        );
+        const element = dotArtElements[elementIndex];
+
+        if (element) {
+          // Use random position from any of the 3 position sets for more variety
+          const randomPositionSet =
+            positionSets[Math.floor(Math.random() * positionSets.length)];
+          const position = randomPositionSet[elementIndex];
+          element.style.top = position.top || "auto";
+          element.style.left = position.left || "auto";
+          element.style.bottom = position.bottom || "auto";
+          element.style.right = position.right || "auto";
+          element.style.transform = position.transform || "none";
+        }
+      }
+
       // Global function for showing artist popups
       function showArtistPopup(artist) {
         console.log("showArtistPopup called with:", artist);
@@ -626,28 +774,14 @@
         }
         popup.style.boxSizing = "border-box";
 
-        // Create a subtle grain overlay
-        const grainOverlay = document.createElement("div");
-        grainOverlay.style.position = "absolute";
-        grainOverlay.style.top = "0";
-        grainOverlay.style.left = "0";
-        grainOverlay.style.width = "100%";
-        grainOverlay.style.height = "100%";
-        grainOverlay.style.backgroundImage = 'url("assets/BGpopup_grain.png")';
-        grainOverlay.style.backgroundSize = "300px 300px";
-        grainOverlay.style.backgroundPosition = "center center";
-        grainOverlay.style.backgroundRepeat = "repeat";
-        grainOverlay.style.opacity = "0.15";
-        grainOverlay.style.pointerEvents = "none";
-        grainOverlay.style.zIndex = "1";
         popup.style.color = "#e6e6e6";
 
-        // Add grain overlay to popup
-        popup.appendChild(grainOverlay);
+        // Add random dot art elements (use artist name as seed for consistency)
+        popup.innerHTML = createRandomDotArt(artist.name.length);
 
-        popup.innerHTML = `
+        popup.innerHTML += `
           <button class="popup-close">&times;</button>
-          <div style="position: relative; z-index: 2;">
+          <div style="position: relative; z-index: 999999;">
             <h2 style="font-size: 28px; font-weight: bold; color: #e6e6e6; margin-bottom: 35px; font-family: 'Source Code Variable', monospace;">${
               artist.name
             }</h2>
@@ -690,7 +824,7 @@
                             "player.vimeo.com/video/"
                           ) + "?autoplay=0&title=0&byline=0&portrait=0"
                     }" 
-                    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; border-radius: 8px;"
+                    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; border-radius: 0px;"
                     allowfullscreen>
                   </iframe>
                 </div>
@@ -717,7 +851,7 @@
               ? `
             <div style="margin: 40px 0;">
               <h4 style="color: #e6e6e6; font-size: 18px; margin-bottom: 20px; font-family: 'Source Code Variable', monospace;">Social Media Post:</h4>
-              <div id="twitter-embed-container" style="text-align: center; padding: 20px; background: #333; border-radius: 8px; min-height: 200px;">
+              <div id="twitter-embed-container" style="text-align: center; padding: 20px; background: #333; border-radius: 0px; min-height: 200px;">
                 <p style="color: #e6e6e6; font-family: 'Source Code Variable', monospace;">Loading tweet...</p>
               </div>
             </div>
@@ -734,23 +868,17 @@
               "Eyal Yehowa Gruss",
             ].includes(artist.name)
               ? `
-          <div style="margin-top: 80px;">
+          <div style="margin-top: 120px;">
             ${
               artist.images.length > 1
                 ? `
-            <div id="carousel-container" style="position: relative; width: 100%; height: min(60vh, 400px); display: flex; align-items: ${
+            <div id="carousel-container" style="position: relative; width: 100%; height: min(50vh, 400px); display: flex; align-items: ${
               ["Yuval Keshet", "Shaul Tzemach", "Ofir Liberman"].includes(
                 artist.name
               )
                 ? "flex-end"
                 : "center"
-            }; justify-content: center; perspective: 1000px; ${
-                    ["Yuval Keshet", "Shaul Tzemach", "Ofir Liberman"].includes(
-                      artist.name
-                    )
-                      ? "padding-bottom: 20px;"
-                      : ""
-                  }">
+            }; justify-content: center; perspective: 1000px; margin-bottom: 60px; padding-bottom: 40px;">
               <div id="carousel" style="position: relative; width: ${
                 artist.images.length === 3 &&
                 ["Yuval Keshet", "Shaul Tzemach", "Ofir Liberman"].includes(
@@ -799,7 +927,7 @@
                     const topOffset = isThreeImages ? "0px" : "10px";
                     const leftOffset = isThreeImages ? "0px" : "10px";
                     return `
-                       <div class="carousel__face" style="position: absolute; width: ${faceWidth}; height: ${faceHeight}; top: ${topOffset}; left: ${leftOffset}; background-image: url('${image}'); background-size: contain; background-position: center; background-repeat: no-repeat; display: flex; align-items: center; justify-content: center; transform: rotateY(${angle}deg) translateZ(${
+                       <div class="carousel__face" style="position: absolute; width: ${faceWidth}; height: ${faceHeight}; top: ${topOffset}; left: ${leftOffset}; background-image: url('${image}'); background-size: contain; background-position: center; background-repeat: no-repeat; display: flex; align-items: center; justify-content: center;                       transform: rotateY(${angle}deg) translateZ(${
                       isThreeImages &&
                       [
                         "Yuval Keshet",
@@ -820,8 +948,8 @@
             </div>
             `
                 : `
-            <div style="position: relative; width: 100%; height: min(60vh, 400px); display: flex; align-items: center; justify-content: center;">
-              <img src="${artist.images[0]}" style="max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 4px;" />
+            <div style="position: relative; width: 100%; height: min(50vh, 400px); display: flex; align-items: center; justify-content: center; margin-bottom: 60px; padding-bottom: 40px;">
+              <img src="${artist.images[0]}" style="max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 0px;" />
             </div>
             `
             }
@@ -829,12 +957,56 @@
           `
               : ""
           }
+          <!-- Bottom spacer to ensure proper scrolling -->
+          <div style="height: 100px; width: 100%;"></div>
           </div>
         `;
 
         overlay.appendChild(popup);
         document.body.appendChild(overlay);
         console.log("Popup added to DOM");
+
+        // Start dot art animation
+        const animationInterval = setInterval(animateDotArt, 2000);
+
+        // Store interval ID for cleanup
+        overlay.dataset.animationInterval = animationInterval;
+
+        // Define ESC handler before using it
+        const handleEscKey = (e) => {
+          if (e.key === "Escape") {
+            console.log("ESC key pressed, closing popup");
+            // Clear animation interval
+            if (overlay.dataset.animationInterval) {
+              clearInterval(overlay.dataset.animationInterval);
+            }
+            overlay.remove();
+            document.removeEventListener("keydown", handleEscKey);
+          }
+        };
+
+        // Attach close button listener IMMEDIATELY after DOM insertion
+        const closeButton = popup.querySelector(".popup-close");
+        console.log("Immediately looking for close button:", closeButton);
+        if (closeButton) {
+          console.log("Found close button immediately, attaching listener");
+          closeButton.addEventListener("click", (e) => {
+            console.log("Close button clicked - immediate listener");
+            e.preventDefault();
+            e.stopPropagation();
+            // Clear animation interval
+            if (overlay.dataset.animationInterval) {
+              clearInterval(overlay.dataset.animationInterval);
+            }
+            overlay.remove();
+            document.removeEventListener("keydown", handleEscKey);
+          });
+        } else {
+          console.error("Close button not found immediately!");
+        }
+
+        // Add ESC key listener immediately
+        document.addEventListener("keydown", handleEscKey);
 
         // Show Twitter post as a clean, styled card
         if (
@@ -852,11 +1024,11 @@
 
             // Create a beautiful, Twitter-style card that always works
             embedContainer.innerHTML = `
-              <div style="background: #ffffff; border: 1px solid #e1e8ed; border-radius: 16px; padding: 0; max-width: 500px; margin: 0 auto; box-shadow: 0 4px 12px rgba(0,0,0,0.15); overflow: hidden;">
+              <div style="background: #ffffff; border: 1px solid #e1e8ed; border-radius: 0px; padding: 0; max-width: 500px; margin: 0 auto; box-shadow: 0 4px 12px rgba(0,0,0,0.15); overflow: hidden;">
                 <!-- Twitter-style header -->
                 <div style="padding: 16px; border-bottom: 1px solid #e1e8ed; background: #f8f9fa;">
                   <div style="display: flex; align-items: center; gap: 12px;">
-                    <div style="width: 48px; height: 48px; background: linear-gradient(135deg, #1DA1F2, #0d8bd9); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 18px;">
+                    <div style="width: 48px; height: 48px; background: linear-gradient(135deg, #1DA1F2, #0d8bd9); border-radius: 0px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 18px;">
                       EG
                     </div>
                     <div>
@@ -877,7 +1049,7 @@
                   </div>
                   
                   <!-- Tweet image preview -->
-                  <div style="border-radius: 12px; overflow: hidden; margin: 12px 0; background: #f8f9fa; border: 1px solid #e1e8ed;">
+                  <div style="border-radius: 0px; overflow: hidden; margin: 12px 0; background: #f8f9fa; border: 1px solid #e1e8ed;">
                     <div style="padding: 20px; text-align: center; color: #657786; font-size: 14px;">
                       📸 Image attached to tweet
                     </div>
@@ -904,7 +1076,7 @@
                 
                 <!-- View on X button -->
                 <div style="padding: 16px; background: #f8f9fa; border-top: 1px solid #e1e8ed; text-align: center;">
-                  <a href="${artist.externalLink}" target="_blank" style="display: inline-block; padding: 10px 20px; background: #1DA1F2; color: white; text-decoration: none; border-radius: 20px; font-size: 14px; font-weight: 600; transition: background 0.2s;">
+                  <a href="${artist.externalLink}" target="_blank" style="display: inline-block; padding: 10px 20px; background: #1DA1F2; color: white; text-decoration: none; border-radius: 0px; font-size: 14px; font-weight: 600; transition: background 0.2s;">
                     View Full Tweet on X ↗
                   </a>
                 </div>
@@ -944,6 +1116,23 @@
           let animationId = null;
           let lastAnimationTime = 0;
 
+          // Get responsive scale factor based on screen size
+          const getScaleFactor = () => {
+            const screenWidth = window.innerWidth;
+            if (screenWidth <= 480) {
+              return 0.6; // Mobile
+            } else if (screenWidth <= 768) {
+              return 0.8; // Tablet
+            }
+            return 1; // Desktop
+          };
+
+          // Apply transform with scale and rotation
+          const applyTransform = (rotation) => {
+            const scaleFactor = getScaleFactor();
+            carousel.style.transform = `scale(${scaleFactor}) rotateY(${rotation}deg)`;
+          };
+
           // JavaScript-based continuous rotation
           function animateRotation() {
             if (!isDragging && !isAnimating) {
@@ -954,7 +1143,7 @@
 
               // Rotate 360 degrees over 120 seconds (0.3 degrees per 100ms)
               currentRotation += (deltaTime / 1000) * (360 / 120);
-              carousel.style.transform = `rotateY(${currentRotation}deg)`;
+              applyTransform(currentRotation);
             }
             animationId = requestAnimationFrame(animateRotation);
           }
@@ -982,7 +1171,7 @@
               (deltaX / carousel.offsetWidth) * 360 * dragSensitivity;
             const newRotation = startRotation + rotationDelta;
 
-            carousel.style.transform = `rotateY(${newRotation}deg)`;
+            applyTransform(newRotation);
             currentRotation = newRotation;
           });
 
@@ -1012,7 +1201,7 @@
               (deltaX / carousel.offsetWidth) * 360 * dragSensitivity;
             const newRotation = startRotation + rotationDelta;
 
-            carousel.style.transform = `rotateY(${newRotation}deg)`;
+            applyTransform(newRotation);
             currentRotation = newRotation;
           });
 
@@ -1048,7 +1237,7 @@
               // Smooth transition to target rotation
               carousel.style.transition =
                 "transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)";
-              carousel.style.transform = `rotateY(${newRotation}deg)`;
+              applyTransform(newRotation);
               currentRotation = newRotation;
 
               // Resume animation after transition
@@ -1080,37 +1269,20 @@
           });
         }
 
-        // Close popup handlers
-        const closePopup = () => {
-          // Cancel animation if it exists
-          if (animationId) {
-            cancelAnimationFrame(animationId);
-          }
-          overlay.remove();
-          // Remove ESC key listener when popup is closed
-          document.removeEventListener("keydown", handleEscKey);
-        };
-
-        // Handle ESC key press
-        const handleEscKey = (e) => {
-          if (e.key === "Escape") {
-            closePopup();
-          }
-        };
-
-        popup
-          .querySelector(".popup-close")
-          .addEventListener("click", closePopup);
-
         // Close when clicking outside the popup
         overlay.addEventListener("click", (e) => {
+          console.log(
+            "Overlay clicked, target:",
+            e.target,
+            "overlay:",
+            overlay
+          );
           if (e.target === overlay) {
-            closePopup();
+            console.log("Clicked outside popup, closing");
+            overlay.remove();
+            document.removeEventListener("keydown", handleEscKey);
           }
         });
-
-        // Add ESC key listener
-        document.addEventListener("keydown", handleEscKey);
       }
 
       // Function to show curation popup
@@ -1149,27 +1321,12 @@
         popup.style.boxSizing = "border-box";
         popup.style.color = "#e6e6e6";
 
-        // Create a subtle grain overlay
-        const grainOverlay = document.createElement("div");
-        grainOverlay.style.position = "absolute";
-        grainOverlay.style.top = "0";
-        grainOverlay.style.left = "0";
-        grainOverlay.style.width = "100%";
-        grainOverlay.style.height = "100%";
-        grainOverlay.style.backgroundImage = 'url("assets/BGpopup_grain.png")';
-        grainOverlay.style.backgroundSize = "300px 300px";
-        grainOverlay.style.backgroundPosition = "center center";
-        grainOverlay.style.backgroundRepeat = "repeat";
-        grainOverlay.style.opacity = "0.15";
-        grainOverlay.style.pointerEvents = "none";
-        grainOverlay.style.zIndex = "1";
-
-        // Add grain overlay to popup
-        popup.appendChild(grainOverlay);
+        // Add random dot art elements (use fixed seed for curation popup)
+        popup.innerHTML = createRandomDotArt(999);
 
         popup.innerHTML += `
           <button class="popup-close">&times;</button>
-          <div style="position: relative; z-index: 2;">
+          <div style="position: relative; z-index: 999999;">
             <h2 style="font-size: 28px; font-weight: bold; color: #e6e6e6; margin-bottom: 25px; font-family: 'IBMPlexMono', monospace;">Adi Karelitz's Curation</h2>
             <div style="color: #e6e6e6; font-family: 'SourceCodePro', monospace; font-size: 16px; line-height: 1.8;">
               <p style="margin-bottom: 20px;">
@@ -1185,38 +1342,75 @@
                 The Wrong Biennale is an independent international art biennial; a multicultural and decentralized platform that embraces an open approach, allowing creatives to sidestep the elitist infrastructure of art fairs and present digital art to a global audience. Founded in 2013 by the Spanish artist and curator David Quiles Guilló, The Wrong Biennale is held both online in the digital sphere and in physical locations.
               </p>
             </div>
+            <!-- Bottom spacer to ensure proper scrolling -->
+            <div style="height: 100px; width: 100%;"></div>
           </div>
         `;
 
         overlay.appendChild(popup);
         document.body.appendChild(overlay);
 
-        // Close popup handlers
-        const closePopup = () => {
-          overlay.remove();
-          document.removeEventListener("keydown", handleEscKey);
-        };
+        // Start dot art animation
+        const animationInterval = setInterval(animateDotArt, 2000);
 
-        // Handle ESC key press
+        // Store interval ID for cleanup
+        overlay.dataset.animationInterval = animationInterval;
+
+        // Define ESC handler before using it
         const handleEscKey = (e) => {
           if (e.key === "Escape") {
-            closePopup();
+            console.log("ESC key pressed, closing curation popup");
+            // Clear animation interval
+            if (overlay.dataset.animationInterval) {
+              clearInterval(overlay.dataset.animationInterval);
+            }
+            overlay.remove();
+            document.removeEventListener("keydown", handleEscKey);
           }
         };
 
-        popup
-          .querySelector(".popup-close")
-          .addEventListener("click", closePopup);
+        // Attach close button listener IMMEDIATELY after DOM insertion
+        const closeButton = popup.querySelector(".popup-close");
+        console.log(
+          "Immediately looking for curation close button:",
+          closeButton
+        );
+        if (closeButton) {
+          console.log(
+            "Found curation close button immediately, attaching listener"
+          );
+          closeButton.addEventListener("click", (e) => {
+            console.log("Curation close button clicked - immediate listener");
+            e.preventDefault();
+            e.stopPropagation();
+            // Clear animation interval
+            if (overlay.dataset.animationInterval) {
+              clearInterval(overlay.dataset.animationInterval);
+            }
+            overlay.remove();
+            document.removeEventListener("keydown", handleEscKey);
+          });
+        } else {
+          console.error("Curation close button not found immediately!");
+        }
+
+        // Add ESC key listener immediately
+        document.addEventListener("keydown", handleEscKey);
 
         // Close when clicking outside the popup
         overlay.addEventListener("click", (e) => {
+          console.log(
+            "Curation overlay clicked, target:",
+            e.target,
+            "overlay:",
+            overlay
+          );
           if (e.target === overlay) {
-            closePopup();
+            console.log("Clicked outside curation popup, closing");
+            overlay.remove();
+            document.removeEventListener("keydown", handleEscKey);
           }
         });
-
-        // Add ESC key listener
-        document.addEventListener("keydown", handleEscKey);
       }
 
       // Artist data for popups
@@ -2529,6 +2723,42 @@
           document.body.style.backgroundSize = "cover, cover, 200px 200px";
         });
       }
+
+      // Global popup close handlers as backup
+      document.addEventListener("click", function (e) {
+        // Check if clicked element is a close button
+        if (e.target.classList.contains("popup-close")) {
+          console.log("Global close button click detected");
+          e.preventDefault();
+          e.stopPropagation();
+          const overlay = e.target.closest(".popup-overlay");
+          if (overlay) {
+            console.log("Removing popup via global handler");
+            overlay.remove();
+          }
+        }
+        // Check if clicked outside popup
+        else if (e.target.classList.contains("popup-overlay")) {
+          console.log("Global outside click detected");
+          const overlay = e.target;
+          if (overlay) {
+            console.log("Removing popup via global outside click");
+            overlay.remove();
+          }
+        }
+      });
+
+      // Global ESC key handler as backup
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape") {
+          console.log("Global ESC key detected");
+          const overlay = document.querySelector(".popup-overlay");
+          if (overlay) {
+            console.log("Removing popup via global ESC handler");
+            overlay.remove();
+          }
+        }
+      });
     </script>
   </body>
 </html>
