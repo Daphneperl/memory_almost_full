@@ -162,9 +162,9 @@
       }
 
       #title {
-        height: clamp(80px, 15vh, 240px);
+        height: clamp(50px, 10vh, 140px);
         width: auto;
-        max-width: clamp(400px, 80vw, 1000px);
+        max-width: clamp(250px, 60vw, 700px);
         object-fit: contain;
         position: fixed;
         top: 20px;
@@ -174,19 +174,34 @@
 
       @media (max-width: 768px) {
         #title {
-          height: clamp(60px, 12vh, 160px);
-          max-width: clamp(300px, 70vw, 700px);
+          height: clamp(35px, 7vh, 90px);
+          max-width: clamp(180px, 45vw, 450px);
           top: 15px;
           left: clamp(5px, 1vw, 8px);
+        }
+        #copyright {
+          bottom: 15px;
+          left: 15px;
+          font-size: clamp(9px, 2.2vw, 12px);
         }
       }
 
       @media (max-width: 480px) {
         #title {
-          height: clamp(50px, 10vh, 120px);
-          max-width: clamp(240px, 60vw, 500px);
+          height: clamp(30px, 6vh, 70px);
+          max-width: clamp(140px, 40vw, 350px);
           top: 10px;
           left: clamp(3px, 0.5vw, 5px);
+        }
+        #copyright {
+          top: 50%;
+          left: 10px;
+          font-size: clamp(8px, 2vw, 10px);
+          writing-mode: vertical-rl;
+          text-orientation: mixed;
+          transform: translateY(-50%);
+          white-space: nowrap;
+          position: fixed;
         }
       }
 
@@ -539,6 +554,13 @@
         z-index: 101;
         align-items: center;
       }
+      
+      .logos .logo:first-child {
+        position: fixed;
+        bottom: clamp(10px, 3vh, 20px);
+        left: clamp(10px, 3vw, 20px);
+        right: auto;
+      }
 
       .logo {
         height: clamp(40px, 8vw, 80px);
@@ -715,11 +737,7 @@
       Curation: Adi Karelitz
     </div>
     <div class="logos">
-      <img
-        src="assets/logos/hit_gallery_logo.png"
-        alt="HIT Gallery Logo"
-        class="logo"
-      />
+      <img src="assets/logos/HIT_VITRINA_LOGO.png" alt="HIT Vitrina Logo" class="logo" />
       <img src="assets/artists/LOGO-WHITE.001.png" alt="Logo" class="logo" />
     </div>
     <div id="copyright">
@@ -1830,7 +1848,7 @@
             'A speculatively bioengineered engineered organism developed through the integration of advanced synthetic biology and AI algorithms. The "animal/organism" was specifically designed for the efficient and sustainable production of high-quality protein for human consumption.',
           bio: "Eitan Bartal is an artist, designer, and senior lecturer at HIT Holon Institute of Technology. His works explore the urban space as an arena where sociopolitical power dynamics are reenacted while critically examining formative mass culture imagery and symbols.",
           images: ["assets/Artists/Eitan Bartal/EitanBartal_placeholder.png"],
-          videoLink: "https://www.youtube.com/shorts/PSR8BFQ6reg",
+          videoLink: "https://www.youtube.com/embed/j0R8LhyhehU?si=XwJqXulCFf8yI_aM",
         },
         "Eyal Datz_placeholder.png": {
           name: "Eyal Datz",
@@ -2476,19 +2494,19 @@
 
       // Initialize ASCII elements system
       function initASCIIElements() {
-        asciiCanvas = document.createElement("canvas");
-        asciiCanvas.id = "ascii-canvas";
-        asciiCanvas.style.position = "fixed";
-        asciiCanvas.style.top = "0px";
-        asciiCanvas.style.left = "0px";
-        asciiCanvas.style.width = "100vw";
-        asciiCanvas.style.height = "100vh";
-        asciiCanvas.style.pointerEvents = "none";
-        asciiCanvas.style.zIndex = "99999";
-        asciiCanvas.style.backgroundColor = "rgba(255, 0, 0, 0.3)"; // More visible red tint
-        asciiCanvas.style.border = "10px solid yellow";
-        asciiCanvas.style.boxSizing = "border-box";
-
+        asciiCanvas = document.createElement('canvas');
+        asciiCanvas.id = 'ascii-canvas';
+        asciiCanvas.style.position = 'fixed';
+        asciiCanvas.style.top = '0px';
+        asciiCanvas.style.left = '0px';
+        asciiCanvas.style.width = '100vw';
+        asciiCanvas.style.height = '100vh';
+        asciiCanvas.style.pointerEvents = 'none';
+        asciiCanvas.style.zIndex = '5';
+        asciiCanvas.style.backgroundColor = 'rgba(255, 0, 0, 0.3)'; // More visible red tint
+        asciiCanvas.style.border = '10px solid yellow';
+        asciiCanvas.style.boxSizing = 'border-box';
+        
         // Try to add it as the last child of body (on top of everything)
         document.body.appendChild(asciiCanvas);
         console.log("ASCII canvas added to DOM:", asciiCanvas);
@@ -2764,22 +2782,21 @@
       }
 
       function createHTMLASCIIElement() {
-        let pattern =
-          asciiPatterns[Math.floor(Math.random() * asciiPatterns.length)];
-        let asciiDiv = document.createElement("div");
-        asciiDiv.className = "ascii-element";
-        asciiDiv.style.position = "fixed";
-        asciiDiv.style.left = Math.random() * window.innerWidth + "px";
-        asciiDiv.style.top = Math.random() * window.innerHeight + "px";
-        asciiDiv.style.color = "lime";
-        asciiDiv.style.fontFamily = "monospace";
-        asciiDiv.style.fontSize = "12px";
-        asciiDiv.style.fontWeight = "bold";
-        asciiDiv.style.zIndex = "999999";
-        asciiDiv.style.pointerEvents = "none";
-        asciiDiv.style.whiteSpace = "pre";
-        asciiDiv.style.lineHeight = "1.2";
-        asciiDiv.style.textAlign = "left";
+        let pattern = asciiPatterns[Math.floor(Math.random() * asciiPatterns.length)];
+        let asciiDiv = document.createElement('div');
+        asciiDiv.className = 'ascii-element';
+        asciiDiv.style.position = 'fixed';
+        asciiDiv.style.left = Math.random() * window.innerWidth + 'px';
+        asciiDiv.style.top = Math.random() * window.innerHeight + 'px';
+        asciiDiv.style.color = 'lime';
+        asciiDiv.style.fontFamily = 'monospace';
+        asciiDiv.style.fontSize = '12px';
+        asciiDiv.style.fontWeight = 'bold';
+        asciiDiv.style.zIndex = '5';
+        asciiDiv.style.pointerEvents = 'none';
+        asciiDiv.style.whiteSpace = 'pre';
+        asciiDiv.style.lineHeight = '1.2';
+        asciiDiv.style.textAlign = 'left';
         asciiDiv.style.transform = `scale(${Math.random() * 0.5 + 0.8})`;
         asciiDiv.style.opacity = "0.9";
         asciiDiv.style.transition = "all 0.1s ease-out";
@@ -2928,22 +2945,21 @@
 
       function createAnimatedASCIIElement() {
         // Create ASCII element that animates from center to empty space
-        let pattern =
-          asciiPatterns[Math.floor(Math.random() * asciiPatterns.length)];
-        let asciiDiv = document.createElement("div");
-        asciiDiv.className = "ascii-element";
-        asciiDiv.style.position = "fixed";
-        asciiDiv.style.color = "lime";
-        asciiDiv.style.fontFamily = "monospace";
-        asciiDiv.style.fontSize = "12px";
-        asciiDiv.style.fontWeight = "bold";
-        asciiDiv.style.zIndex = "999999";
-        asciiDiv.style.pointerEvents = "none";
-        asciiDiv.style.whiteSpace = "pre";
-        asciiDiv.style.lineHeight = "1.2";
-        asciiDiv.style.textAlign = "left";
-        asciiDiv.textContent = pattern.join("\n");
-
+        let pattern = asciiPatterns[Math.floor(Math.random() * asciiPatterns.length)];
+        let asciiDiv = document.createElement('div');
+        asciiDiv.className = 'ascii-element';
+        asciiDiv.style.position = 'fixed';
+        asciiDiv.style.color = 'lime';
+        asciiDiv.style.fontFamily = 'monospace';
+        asciiDiv.style.fontSize = '12px';
+        asciiDiv.style.fontWeight = 'bold';
+        asciiDiv.style.zIndex = '5';
+        asciiDiv.style.pointerEvents = 'none';
+        asciiDiv.style.whiteSpace = 'pre';
+        asciiDiv.style.lineHeight = '1.2';
+        asciiDiv.style.textAlign = 'left';
+        asciiDiv.textContent = pattern.join('\n');
+        
         // Start from center of screen
         let centerX = window.innerWidth / 2;
         let centerY = window.innerHeight / 2;
