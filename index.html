@@ -144,9 +144,9 @@
       }
 
       #title {
-        height: clamp(40px, 8vh, 120px);
+        height: clamp(50px, 10vh, 140px);
         width: auto;
-        max-width: clamp(200px, 50vw, 600px);
+        max-width: clamp(250px, 60vw, 700px);
         object-fit: contain;
         position: fixed;
         top: 20px;
@@ -156,19 +156,34 @@
       
       @media (max-width: 768px) {
         #title {
-          height: clamp(30px, 6vh, 80px);
-          max-width: clamp(150px, 40vw, 400px);
+          height: clamp(35px, 7vh, 90px);
+          max-width: clamp(180px, 45vw, 450px);
           top: 15px;
           left: clamp(5px, 1vw, 8px);
+        }
+        #copyright {
+          bottom: 15px;
+          left: 15px;
+          font-size: clamp(9px, 2.2vw, 12px);
         }
       }
       
       @media (max-width: 480px) {
         #title {
-          height: clamp(25px, 5vh, 60px);
-          max-width: clamp(120px, 35vw, 300px);
+          height: clamp(30px, 6vh, 70px);
+          max-width: clamp(140px, 40vw, 350px);
           top: 10px;
           left: clamp(3px, 0.5vw, 5px);
+        }
+        #copyright {
+          top: 50%;
+          left: 10px;
+          font-size: clamp(8px, 2vw, 10px);
+          writing-mode: vertical-rl;
+          text-orientation: mixed;
+          transform: translateY(-50%);
+          white-space: nowrap;
+          position: fixed;
         }
       }
 
@@ -265,6 +280,13 @@
         gap: clamp(8px, 2vw, 15px);
         z-index: 101;
         align-items: center;
+      }
+      
+      .logos .logo:first-child {
+        position: fixed;
+        bottom: clamp(10px, 3vh, 20px);
+        left: clamp(10px, 3vw, 20px);
+        right: auto;
       }
 
       .logo {
@@ -435,6 +457,7 @@
       Curation: Adi Karelitz
     </div>
     <div class="logos">
+      <img src="assets/logos/HIT_VITRINA_LOGO.png" alt="HIT Vitrina Logo" class="logo" />
       <img src="assets/artists/LOGO-WHITE.001.png" alt="Logo" class="logo" />
     </div>
     <div id="copyright">
@@ -1201,7 +1224,7 @@
             'A speculatively bioengineered engineered organism developed through the integration of advanced synthetic biology and AI algorithms. The "animal/organism" was specifically designed for the efficient and sustainable production of high-quality protein for human consumption.',
           bio: "Eitan Bartal is an artist, designer, and senior lecturer at HIT Holon Institute of Technology. His works explore the urban space as an arena where sociopolitical power dynamics are reenacted while critically examining formative mass culture imagery and symbols.",
           images: ["assets/Artists/Eitan Bartal/EitanBartal_placeholder.png"],
-          videoLink: "https://www.youtube.com/shorts/PSR8BFQ6reg",
+          videoLink: "https://www.youtube.com/embed/j0R8LhyhehU?si=XwJqXulCFf8yI_aM",
         },
         "Eyal Datz_placeholder.png": {
           name: "Eyal Datz",
@@ -1735,7 +1758,7 @@
         asciiCanvas.style.width = '100vw';
         asciiCanvas.style.height = '100vh';
         asciiCanvas.style.pointerEvents = 'none';
-        asciiCanvas.style.zIndex = '99999';
+        asciiCanvas.style.zIndex = '5';
         asciiCanvas.style.backgroundColor = 'rgba(255, 0, 0, 0.3)'; // More visible red tint
         asciiCanvas.style.border = '10px solid yellow';
         asciiCanvas.style.boxSizing = 'border-box';
@@ -1978,7 +2001,7 @@
         asciiDiv.style.fontFamily = 'monospace';
         asciiDiv.style.fontSize = '12px';
         asciiDiv.style.fontWeight = 'bold';
-        asciiDiv.style.zIndex = '999999';
+        asciiDiv.style.zIndex = '5';
         asciiDiv.style.pointerEvents = 'none';
         asciiDiv.style.whiteSpace = 'pre';
         asciiDiv.style.lineHeight = '1.2';
@@ -2129,7 +2152,7 @@
         asciiDiv.style.fontFamily = 'monospace';
         asciiDiv.style.fontSize = '12px';
         asciiDiv.style.fontWeight = 'bold';
-        asciiDiv.style.zIndex = '999999';
+        asciiDiv.style.zIndex = '5';
         asciiDiv.style.pointerEvents = 'none';
         asciiDiv.style.whiteSpace = 'pre';
         asciiDiv.style.lineHeight = '1.2';
