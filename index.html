@@ -195,13 +195,15 @@
         }
         #copyright {
           top: 50%;
-          left: 10px;
+          left: 0px;
           font-size: clamp(8px, 2vw, 10px);
           writing-mode: vertical-rl;
           text-orientation: mixed;
           transform: translateY(-50%);
           white-space: nowrap;
           position: fixed;
+          z-index: 1001;
+          color: #ffffff;
         }
       }
 
@@ -693,7 +695,7 @@
       #copyright {
         position: fixed;
         bottom: 20px;
-        left: 20px;
+        left: 5px;
         color: #ffffff;
         font-size: 12px;
         font-family: "SourceCodePro", monospace;
@@ -1016,7 +1018,7 @@
         // 3 possible positions for each dot art
         const positionSets = [
           [
-            { top: "5%", left: "5%" },
+            { top: "5%", left: "10%" },
             { bottom: "5%", right: "5%" },
             { top: "50%", left: "50%", transform: "translate(-50%, -50%)" },
           ],
@@ -2208,19 +2210,20 @@
 
       // Function to create connections between images (optimized)
       function createConnections() {
-        // Reduce number of connections for better performance - more aggressive on mobile
+        // Ensure every image has at least one connection
         const maxConnections = isMobile
-          ? Math.min(imagePlanes.length * 0.3, 10)
-          : Math.min(imagePlanes.length * 0.5, 20); // Limit total connections
+          ? Math.min(imagePlanes.length * 0.5, 15)
+          : Math.min(imagePlanes.length * 0.8, 30); // Increase connections for better coverage
         let connectionCount = 0;
+        const connectedImages = new Set(); // Track which images have connections
 
         for (
           let i = 0;
           i < imagePlanes.length && connectionCount < maxConnections;
           i++
         ) {
-          // Each image connects to 1-2 other images (reduced from 1-3)
-          const numConnections = Math.floor(Math.random() * 2) + 1;
+          // Each image connects to 1-3 other images
+          const numConnections = Math.floor(Math.random() * 3) + 1;
           const connectedIndices = new Set();
 
           // Ensure we don't connect to the same image
@@ -2241,6 +2244,10 @@
 
             const startPos = imagePlanes[i].position;
             const endPos = imagePlanes[targetIndex].position;
+            
+            // Mark both images as connected
+            connectedImages.add(i);
+            connectedImages.add(targetIndex);
 
             // Create thick dashed line by using multiple parallel lines
             const direction = new THREE.Vector3().subVectors(endPos, startPos);
@@ -2285,7 +2292,119 @@
             connectionCount++;
           });
         }
+        
+        // Ensure any unconnected images get at least one connection
+        // Get list of unconnected images
+        const unconnectedImages = [];
+        for (let i = 0; i < imagePlanes.length; i++) {
+          if (!connectedImages.has(i)) {
+            unconnectedImages.push(i);
+          }
+        }
+        
+        // Connect each unconnected image
+        for (let i = 0; i < unconnectedImages.length; i++) {
+          const unconnectedIndex = unconnectedImages[i];
+          
+          // Find a random connected image to connect to
+          const connectedImageList = Array.from(connectedImages);
+          if (connectedImageList.length > 0) {
+            const randomConnectedIndex = connectedImageList[Math.floor(Math.random() * connectedImageList.length)];
+            
+            const startPos = imagePlanes[unconnectedIndex].position;
+            const endPos = imagePlanes[randomConnectedIndex].position;
+            
+            // Mark both images as connected
+            connectedImages.add(unconnectedIndex);
+            connectedImages.add(randomConnectedIndex);
+            
+            // Create thick dashed line by using multiple parallel lines
+            const direction = new THREE.Vector3().subVectors(endPos, startPos);
+            const length = direction.length();
+            direction.normalize();
+
+            // Create perpendicular vector for thickness
+            const perpendicular = new THREE.Vector3(0, 1, 0);
+            const cross = new THREE.Vector3()
+              .crossVectors(direction, perpendicular)
+              .normalize();
+
+            // Create 3 parallel lines for thickness
+            for (let j = -1; j <= 1; j++) {
+              const offset = cross.clone().multiplyScalar(j * 0.03);
+              const offsetStart = startPos.clone().add(offset);
+              const offsetEnd = endPos.clone().add(offset);
+
+              const points = [offsetStart, offsetEnd];
+
+              const geometry = new THREE.BufferGeometry().setFromPoints(points);
+
+              // Create line material with thick green dashed appearance
+              const material = new THREE.LineDashedMaterial({
+                color: 0x00ff00,
+                dashSize: 0.25,
+                gapSize: 0.05,
+                depthTest: true,
+                depthWrite: false,
+              });
+
+              const line = new THREE.Line(geometry, material);
+              line.renderOrder = -10; // Render far behind other objects
+              line.frustumCulled = true;
+
+              // Compute line distances for dashed material
+              line.computeLineDistances();
+
+              connectionLines.push(line);
+              scene.add(line);
+            }
+            connectionCount++;
+          }
+        }
+        
+        // Final check - ensure all images are connected
+        if (connectedImages.size < imagePlanes.length) {
+          console.log('Warning: Some images are still not connected!');
+        }
       }
+
+      // ASCII Donut Background Element - Full Screen
+      let donutAngle = 0;
+      let donutAngle2 = 0;
+      const donutCanvas = document.createElement('canvas');
+      const donutCtx = donutCanvas.getContext('2d');
+      
+      // Set canvas to full screen size
+      donutCanvas.width = window.innerWidth;
+      donutCanvas.height = window.innerHeight;
+      
+      donutCanvas.style.position = 'fixed';
+      donutCanvas.style.top = '0';
+      donutCanvas.style.left = '0';
+      donutCanvas.style.width = '100vw';
+      donutCanvas.style.height = '100vh';
+      donutCanvas.style.zIndex = '5'; // Above the network
+      donutCanvas.style.pointerEvents = 'none';
+      donutCanvas.style.opacity = '0.8'; // More visible
+      donutCanvas.style.background = 'transparent';
+      document.body.appendChild(donutCanvas);
+      
+      const donutWidth = Math.floor(donutCanvas.width / 8);
+      const donutHeight = Math.floor(donutCanvas.height / 16);
+      const donutBuffer = [];
+      const donutZBuffer = [];
+      
+      // Initialize buffers
+      for (let i = 0; i < donutWidth * donutHeight; i++) {
+        donutBuffer.push(' ');
+        donutZBuffer.push(0);
+      }
+      
+      // Handle window resize
+      window.addEventListener('resize', () => {
+        donutCanvas.width = window.innerWidth;
+        donutCanvas.height = window.innerHeight;
+      });
 
       // Camera position - adjust for mobile
       camera.position.z = isMobile ? 20 : 25;
@@ -3020,6 +3139,86 @@
         // Constant slow rotation around Y-axis - reduce on mobile
         if (!isMobile) {
           scene.rotation.y += rotationSpeed;
+        }
+
+        // ASCII Donut animation - very slow background animation
+        donutAngle += 0.01; // Much slower than the ASCII experiments version
+        donutAngle2 += 0.005;
+        
+        // Clear donut canvas with transparent background
+        donutCtx.clearRect(0, 0, donutCanvas.width, donutCanvas.height);
+        
+        const cosA = Math.cos(donutAngle);
+        const sinA = Math.sin(donutAngle);
+        const cosA2 = Math.cos(donutAngle2);
+        const sinA2 = Math.sin(donutAngle2);
+        
+        // Clear buffers
+        for (let i = 0; i < donutWidth * donutHeight; i++) {
+          donutBuffer[i] = ' ';
+          donutZBuffer[i] = 0;
+        }
+        
+        // Scale factor for full screen - make donut larger
+        const scale = Math.min(donutWidth, donutHeight) / 10; // Even larger scale to fill entire screen
+        
+        // Generate donut
+        for (let j = 0; j < 6.28; j += 0.1) {
+          const cosJ = Math.cos(j);
+          const sinJ = Math.sin(j);
+          
+          for (let i = 0; i < 6.28; i += 0.05) {
+            const cosI = Math.cos(i);
+            const sinI = Math.sin(i);
+            
+            const x = cosI + 2;
+            const y = sinI;
+            const z = j;
+            
+            // 3D rotation
+            const nx = x * cosA - y * sinA;
+            const ny = x * sinA + y * cosA;
+            const nz = z;
+            
+            const nz2 = nz * cosA2 - ny * sinA2;
+            const ny2 = nz * sinA2 + ny * cosA2;
+            const nx2 = nx;
+            
+            // Perspective projection with full screen scaling
+            const ooz = 1 / (nz2 + 5);
+            // Offset to ensure full screen coverage - start from left edge
+            const xp = Math.floor(scale * 30 * ooz * nx2); // Start from left edge, no center offset
+            const yp = Math.floor(donutHeight / 2 + scale * 20 * ooz * ny2); // Keep vertical centered
+            
+            // Calculate lighting
+            const l = cosI * cosJ * cosA - sinJ * sinA;
+            
+            if (xp >= 0 && xp < donutWidth && yp >= 0 && yp < donutHeight) {
+              const idx = yp * donutWidth + xp;
+              if (ooz > donutZBuffer[idx]) {
+                donutZBuffer[idx] = ooz;
+                const lum = Math.floor(8 * l);
+                const char = lum > 0 ? '.,-~:;=!*#$@'[Math.min(lum, 11)] : ' ';
+                donutBuffer[idx] = char;
+              }
+            }
+          }
+        }
+        
+        // Draw donut with larger font for full screen
+        const fontSize = Math.max(16, Math.min(donutWidth, donutHeight) / 15); // Much larger font
+        donutCtx.font = `${fontSize}px Courier New`;
+        donutCtx.fillStyle = '#00ff41'; // Bright green like the network strings
+        donutCtx.textAlign = 'left';
+        donutCtx.textBaseline = 'top';
+        
+        for (let y = 0; y < donutHeight; y++) {
+          for (let x = 0; x < donutWidth; x++) {
+            const char = donutBuffer[y * donutWidth + x];
+            if (char !== ' ') {
+              donutCtx.fillText(char, x * fontSize * 0.6, y * fontSize);
+            }
+          }
         }
 
         // Optimized billboard behavior with frustum culling
