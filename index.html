@@ -49,6 +49,46 @@
         background-blend-mode: normal, multiply, multiply;
         background-size: cover, cover, 200px 200px;
         position: relative;
+        cursor: none; /* Hide default cursor */
+      }
+      
+      /* Custom green cursor */
+      .custom-cursor {
+        position: fixed;
+        pointer-events: none;
+        z-index: 2147483647;
+        font-family: 'Courier New', monospace;
+        font-size: 50px;
+        font-weight: bold;
+        color: #00ff41;
+        text-shadow: 0 0 15px #00ff41;
+        transform: translate(-50%, -50%);
+        user-select: none;
+        display: block !important;
+        opacity: 1 !important;
+      }
+      
+      /* Ensure cursor stays custom in popups */
+      .popup, .popup * {
+        cursor: none !important;
+      }
+      
+      /* Make sure cursor appears above all popups */
+      .popup {
+        z-index: 1000;
+      }
+      
+      .popup .popup-content {
+        z-index: 1001;
+      }
+      
+      .popup-overlay {
+        z-index: 1000;
+      }
+      
+      /* Allow default cursor on video elements */
+      iframe, video, embed, object {
+        cursor: auto;
       }
 
       /* Responsive Design */
@@ -723,6 +763,9 @@
     </style>
   </head>
   <body>
+    <!-- Custom cursor -->
+    <div class="custom-cursor" id="custom-cursor">*</div>
+    
     <img id="title" src="assets/logos/logo02.png" alt="Memory Almost Full" />
     <div id="curation-link" onclick="showCurationPopup()">
       Curation: Adi Karelitz
@@ -2431,6 +2474,73 @@
         donutCanvas.width = window.innerWidth;
         donutCanvas.height = window.innerHeight;
       });
+      
+      // Custom cursor functionality
+      const customCursor = document.getElementById('custom-cursor');
+      let mouseX = 0;
+      let mouseY = 0;
+      
+      // Track mouse movement
+      document.addEventListener('mousemove', (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+        customCursor.style.left = mouseX + 'px';
+        customCursor.style.top = mouseY + 'px';
+        
+        // Check if mouse is over any iframe or video - more comprehensive check
+        const elementBelow = document.elementFromPoint(e.clientX, e.clientY);
+        const isOverVideo = elementBelow && (
+          elementBelow.tagName === 'IFRAME' || 
+          elementBelow.tagName === 'VIDEO' ||
+          elementBelow.closest('iframe') ||
+          elementBelow.closest('video') ||
+          (elementBelow.src && (elementBelow.src.includes('youtube') || elementBelow.src.includes('vimeo'))) ||
+          elementBelow.classList.contains('vimeo') ||
+          elementBelow.classList.contains('youtube')
+        );
+        
+        // Also check for popup videos with buffer zone
+        const popupVideos = document.querySelectorAll('.popup iframe, .popup video');
+        let isNearPopupVideo = false;
+        
+        popupVideos.forEach(video => {
+          const rect = video.getBoundingClientRect();
+          const buffer = 30; // 30px buffer zone around popup videos
+          
+          if (mouseX >= rect.left - buffer && 
+              mouseX <= rect.right + buffer && 
+              mouseY >= rect.top - buffer && 
+              mouseY <= rect.bottom + buffer) {
+            isNearPopupVideo = true;
+          }
+        });
+        
+        if (isOverVideo || isNearPopupVideo) {
+          customCursor.style.display = 'none';
+          customCursor.style.opacity = '0';
+        } else {
+          customCursor.style.display = 'block';
+          customCursor.style.opacity = '1';
+        }
+      });
+      
+      // Hide cursor when mouse leaves window
+      document.addEventListener('mouseleave', () => {
+        customCursor.style.opacity = '0';
+      });
+      
+      // Show cursor when mouse enters window
+      document.addEventListener('mouseenter', () => {
+        customCursor.style.opacity = '1';
+        customCursor.style.display = 'block';
+      });
+      
+      // Ensure cursor is always visible and on top
+      customCursor.style.display = 'block';
+      customCursor.style.opacity = '1';
+      customCursor.style.zIndex = '2147483647';
+      
+      // Simple cursor management - no aggressive overrides
 
       // Camera position - adjust for mobile (further zoom out on mobile)
       camera.position.z = isMobile ? 25 : 25;
