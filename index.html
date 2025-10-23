@@ -179,11 +179,6 @@
           top: 15px;
           left: clamp(5px, 1vw, 8px);
         }
-        #copyright {
-          bottom: 15px;
-          left: 15px;
-          font-size: clamp(9px, 2.2vw, 12px);
-        }
       }
 
       @media (max-width: 480px) {
@@ -192,18 +187,6 @@
           max-width: clamp(140px, 40vw, 350px);
           top: 10px;
           left: clamp(3px, 0.5vw, 5px);
-        }
-        #copyright {
-          top: 50%;
-          left: 0px;
-          font-size: clamp(8px, 2vw, 10px);
-          writing-mode: vertical-rl;
-          text-orientation: mixed;
-          transform: translateY(-50%);
-          white-space: nowrap;
-          position: fixed;
-          z-index: 1001;
-          color: #ffffff;
         }
       }
 
@@ -556,7 +539,7 @@
         z-index: 101;
         align-items: center;
       }
-      
+
       .logos .logo:first-child {
         position: fixed;
         bottom: clamp(10px, 3vh, 20px);
@@ -594,6 +577,7 @@
         max-width: none;
         max-height: none;
         overflow-y: auto;
+        overflow-x: hidden;
         z-index: 999999;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
         font-family: "SourceCodePro", monospace;
@@ -694,12 +678,17 @@
 
       #copyright {
         position: fixed;
-        bottom: 20px;
-        left: 5px;
+        top: 50%;
+        left: 0px;
+        font-size: clamp(8px, 1.5vw, 16px);
+        writing-mode: vertical-lr;
+        text-orientation: mixed;
+        transform: translateY(-50%);
+        white-space: nowrap;
+        position: fixed;
+        z-index: 1001;
         color: #ffffff;
-        font-size: 12px;
         font-family: "SourceCodePro", monospace;
-        z-index: 1000;
         opacity: 0.7;
         line-height: 1.4;
       }
@@ -739,8 +728,12 @@
       Curation: Adi Karelitz
     </div>
     <div class="logos">
-      <img src="assets/logos/HIT_VITRINA_LOGO.png" alt="HIT Vitrina Logo" class="logo" />
-      <img src="assets/artists/LOGO-WHITE.001.png" alt="Logo" class="logo" />
+      <img
+        src="assets/logos/HIT_VITRINA_LOGO.png"
+        alt="HIT Vitrina Logo"
+        class="logo"
+      />
+      <img src="assets/Artists/LOGO-WHITE.001.png" alt="Logo" class="logo" />
     </div>
     <div id="copyright">
       © 2025 Designed & Built by Daphne Perlman & Amit Cohen
@@ -1707,9 +1700,21 @@
 
         popup.innerHTML += `
           <button class="popup-close">&times;</button>
-          <div style="position: relative; z-index: 999999;">
-            <h2 style="font-size: 28px; font-weight: bold; color: #e6e6e6; margin-bottom: 25px; font-family: 'IBMPlexMono', monospace;">Adi Karelitz's Curation</h2>
-            <div style="color: #e6e6e6; font-family: 'SourceCodePro', monospace; font-size: 16px; line-height: 1.8;">
+          <div style="position: relative; z-index: 2;">
+            <h2 style="font-size: 36px; font-weight: 900; color: #e6e6e6; margin-bottom: 25px; font-family: 'IBMPlexMono', monospace;">Adi Karelitz's Curation</h2>
+            <div style="color: #e6e6e6; font-family: 'SourceCodePro', monospace; font-size: 16px; line-height: 1.8; margin-bottom: 40px; position: relative; text-align: justify;">
+              <!-- Desktop: Image embedded with text wrapping -->
+              <div class="desktop-image" style="float: right; margin: 0 0 20px 40px; position: relative; display: inline-block; max-width: 350px;">
+                <img src="assets/Artists/Adi Karelitz/Adi Karelitz by Michal Chelbin.jpg" alt="Adi Karelitz by Michal Chelbin" style="width: 100%; max-width: 350px; max-height: 400px; border-radius: 0px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);">
+                <div style="position: absolute; bottom: 10px; left: 10px; color: #e6e6e6; font-family: 'SourceCodePro', monospace; font-size: 11px; background: rgba(0, 0, 0, 0.8); padding: 4px 8px; border-radius: 3px; white-space: nowrap;">© Michal Chelbin</div>
+              </div>
+              
+              <!-- Mobile: Centered and smaller image -->
+              <div class="mobile-image" style="display: none; text-align: center; margin: 20px 0; position: relative; max-width: 250px; margin-left: auto; margin-right: auto;">
+                <img src="assets/Artists/Adi Karelitz/Adi Karelitz by Michal Chelbin.jpg" alt="Adi Karelitz by Michal Chelbin" style="width: 100%; max-width: 250px; max-height: 300px; border-radius: 0px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);">
+                <div style="position: absolute; bottom: 10px; left: 10px; color: #e6e6e6; font-family: 'SourceCodePro', monospace; font-size: 11px; background: rgba(0, 0, 0, 0.8); padding: 4px 8px; border-radius: 3px; white-space: nowrap;">© Michal Chelbin</div>
+              </div>
+              
               <p style="margin-bottom: 20px;">
                 Memory_Almost_Full, held in Vitrina Gallery as an embassy of the international The Wrong Biennale, explores disruptions as a post-digital aesthetic in the age of the AI revolution. The advent of Artificial Intelligence has challenged our traditional perceptions of human interaction, creativity, and intelligence. With its pervasive use in both thought and creative processes, the line between physical reality and the digital realm is becoming increasingly blurred and more fluid than ever.
               </p>
@@ -1722,6 +1727,18 @@
               <p style="margin-bottom: 0;">
                 The Wrong Biennale is an independent international art biennial; a multicultural and decentralized platform that embraces an open approach, allowing creatives to sidestep the elitist infrastructure of art fairs and present digital art to a global audience. Founded in 2013 by the Spanish artist and curator David Quiles Guilló, The Wrong Biennale is held both online in the digital sphere and in physical locations.
               </p>
+              
+              <!-- Clear float to prevent layout issues -->
+              <div style="clear: both;"></div>
+            </div>
+            
+            <!-- Gallery Carousel -->
+            <div style="margin-top: 40px; margin-bottom: 30px;">
+              <div id="carousel-container" style="position: relative; width: 100%; height: min(70vh, 500px); display: flex; align-items: center; justify-content: center; perspective: 1200px;">
+                <div id="carousel" style="position: relative; width: 600px; height: 400px; transform-style: preserve-3d; cursor: grab; transform-origin: center center;">
+                  <!-- Gallery images will be inserted here -->
+                </div>
+              </div>
             </div>
             <!-- Bottom spacer to ensure proper scrolling -->
             <div style="height: 100px; width: 100%;"></div>
@@ -1730,6 +1747,11 @@
 
         overlay.appendChild(popup);
         document.body.appendChild(overlay);
+
+        // Create gallery carousel after popup is added to DOM
+        setTimeout(() => {
+          createGalleryCarousel();
+        }, 100);
 
         // Start dot art animation
         const animationInterval = setInterval(animateDotArt, 2000);
@@ -1850,7 +1872,8 @@
             'A speculatively bioengineered engineered organism developed through the integration of advanced synthetic biology and AI algorithms. The "animal/organism" was specifically designed for the efficient and sustainable production of high-quality protein for human consumption.',
           bio: "Eitan Bartal is an artist, designer, and senior lecturer at HIT Holon Institute of Technology. His works explore the urban space as an arena where sociopolitical power dynamics are reenacted while critically examining formative mass culture imagery and symbols.",
           images: ["assets/Artists/Eitan Bartal/EitanBartal_placeholder.png"],
-          videoLink: "https://www.youtube.com/embed/j0R8LhyhehU?si=XwJqXulCFf8yI_aM",
+          videoLink:
+            "https://www.youtube.com/embed/j0R8LhyhehU?si=XwJqXulCFf8yI_aM",
         },
         "Eyal Datz_placeholder.png": {
           name: "Eyal Datz",
@@ -2244,7 +2267,7 @@
 
             const startPos = imagePlanes[i].position;
             const endPos = imagePlanes[targetIndex].position;
-            
+
             // Mark both images as connected
             connectedImages.add(i);
             connectedImages.add(targetIndex);
@@ -2292,7 +2315,7 @@
             connectionCount++;
           });
         }
-        
+
         // Ensure any unconnected images get at least one connection
         // Get list of unconnected images
         const unconnectedImages = [];
@@ -2301,23 +2324,26 @@
             unconnectedImages.push(i);
           }
         }
-        
+
         // Connect each unconnected image
         for (let i = 0; i < unconnectedImages.length; i++) {
           const unconnectedIndex = unconnectedImages[i];
-          
+
           // Find a random connected image to connect to
           const connectedImageList = Array.from(connectedImages);
           if (connectedImageList.length > 0) {
-            const randomConnectedIndex = connectedImageList[Math.floor(Math.random() * connectedImageList.length)];
-            
+            const randomConnectedIndex =
+              connectedImageList[
+                Math.floor(Math.random() * connectedImageList.length)
+              ];
+
             const startPos = imagePlanes[unconnectedIndex].position;
             const endPos = imagePlanes[randomConnectedIndex].position;
-            
+
             // Mark both images as connected
             connectedImages.add(unconnectedIndex);
             connectedImages.add(randomConnectedIndex);
-            
+
             // Create thick dashed line by using multiple parallel lines
             const direction = new THREE.Vector3().subVectors(endPos, startPos);
             const length = direction.length();
@@ -2361,53 +2387,53 @@
             connectionCount++;
           }
         }
-        
+
         // Final check - ensure all images are connected
         if (connectedImages.size < imagePlanes.length) {
-          console.log('Warning: Some images are still not connected!');
+          console.log("Warning: Some images are still not connected!");
         }
       }
 
       // ASCII Donut Background Element - Full Screen
       let donutAngle = 0;
       let donutAngle2 = 0;
-      const donutCanvas = document.createElement('canvas');
-      const donutCtx = donutCanvas.getContext('2d');
-      
+      const donutCanvas = document.createElement("canvas");
+      const donutCtx = donutCanvas.getContext("2d");
+
       // Set canvas to full screen size
       donutCanvas.width = window.innerWidth;
       donutCanvas.height = window.innerHeight;
-      
-      donutCanvas.style.position = 'fixed';
-      donutCanvas.style.top = '0';
-      donutCanvas.style.left = '0';
-      donutCanvas.style.width = '100vw';
-      donutCanvas.style.height = '100vh';
-      donutCanvas.style.zIndex = '5'; // Above the network
-      donutCanvas.style.pointerEvents = 'none';
-      donutCanvas.style.opacity = '0.8'; // More visible
-      donutCanvas.style.background = 'transparent';
+
+      donutCanvas.style.position = "fixed";
+      donutCanvas.style.top = "0";
+      donutCanvas.style.left = "0";
+      donutCanvas.style.width = "100vw";
+      donutCanvas.style.height = "100vh";
+      donutCanvas.style.zIndex = "5"; // Above the network
+      donutCanvas.style.pointerEvents = "none";
+      donutCanvas.style.opacity = "0.8"; // More visible
+      donutCanvas.style.background = "transparent";
       document.body.appendChild(donutCanvas);
-      
+
       const donutWidth = Math.floor(donutCanvas.width / 8);
       const donutHeight = Math.floor(donutCanvas.height / 16);
       const donutBuffer = [];
       const donutZBuffer = [];
-      
+
       // Initialize buffers
       for (let i = 0; i < donutWidth * donutHeight; i++) {
-        donutBuffer.push(' ');
+        donutBuffer.push(" ");
         donutZBuffer.push(0);
       }
-      
+
       // Handle window resize
-      window.addEventListener('resize', () => {
+      window.addEventListener("resize", () => {
         donutCanvas.width = window.innerWidth;
         donutCanvas.height = window.innerHeight;
       });
 
-      // Camera position - adjust for mobile
-      camera.position.z = isMobile ? 20 : 25;
+      // Camera position - adjust for mobile (further zoom out on mobile)
+      camera.position.z = isMobile ? 25 : 25;
 
       // Simplified orbit controls with mobile optimizations
       const controls = new THREE.OrbitControls(camera, renderer.domElement);
@@ -2613,19 +2639,19 @@
 
       // Initialize ASCII elements system
       function initASCIIElements() {
-        asciiCanvas = document.createElement('canvas');
-        asciiCanvas.id = 'ascii-canvas';
-        asciiCanvas.style.position = 'fixed';
-        asciiCanvas.style.top = '0px';
-        asciiCanvas.style.left = '0px';
-        asciiCanvas.style.width = '100vw';
-        asciiCanvas.style.height = '100vh';
-        asciiCanvas.style.pointerEvents = 'none';
-        asciiCanvas.style.zIndex = '5';
-        asciiCanvas.style.backgroundColor = 'rgba(255, 0, 0, 0.3)'; // More visible red tint
-        asciiCanvas.style.border = '10px solid yellow';
-        asciiCanvas.style.boxSizing = 'border-box';
-        
+        asciiCanvas = document.createElement("canvas");
+        asciiCanvas.id = "ascii-canvas";
+        asciiCanvas.style.position = "fixed";
+        asciiCanvas.style.top = "0px";
+        asciiCanvas.style.left = "0px";
+        asciiCanvas.style.width = "100vw";
+        asciiCanvas.style.height = "100vh";
+        asciiCanvas.style.pointerEvents = "none";
+        asciiCanvas.style.zIndex = "5";
+        asciiCanvas.style.backgroundColor = "rgba(255, 0, 0, 0.3)"; // More visible red tint
+        asciiCanvas.style.border = "10px solid yellow";
+        asciiCanvas.style.boxSizing = "border-box";
+
         // Try to add it as the last child of body (on top of everything)
         document.body.appendChild(asciiCanvas);
         console.log("ASCII canvas added to DOM:", asciiCanvas);
@@ -2787,16 +2813,24 @@
           );
         }
 
-        if (shouldShowASCII && asciiElements.length < 8) {
+        // Reduced ASCII element limits for all screen sizes
+        const maxASCIIElements = isMobile ? 1 : 3; // Reduced from 8 to 3 for desktop
+        const asciiCreationProbability = isMobile ? 0.02 : 0.05; // Reduced from 0.1 to 0.05 for desktop
+        const testCreationProbability = isMobile ? 0.002 : 0.005; // Reduced from 0.01 to 0.005 for desktop
+
+        if (shouldShowASCII && asciiElements.length < maxASCIIElements) {
           // Create new ASCII elements from center to right up
-          if (Math.random() < 0.1) {
+          if (Math.random() < asciiCreationProbability) {
             createASCIIElement();
             console.log("Created ASCII element! Total:", asciiElements.length);
           }
         }
 
         // Also create elements occasionally regardless of position for testing
-        if (asciiElements.length < 3 && Math.random() < 0.01) {
+        if (
+          asciiElements.length < (isMobile ? 1 : 3) &&
+          Math.random() < testCreationProbability
+        ) {
           createASCIIElement();
           console.log(
             "Created test ASCII element! Total:",
@@ -2894,28 +2928,63 @@
       function createHTMLASCIIElements() {
         console.log("Creating HTML ASCII elements...");
 
-        // Create initial ASCII elements
-        for (let i = 0; i < 3; i++) {
+        // Create initial ASCII elements (reduced for all devices)
+        const initialElements = isMobile ? 1 : 2; // Reduced from 3 to 1-2
+        for (let i = 0; i < initialElements; i++) {
           createHTMLASCIIElement();
         }
       }
 
       function createHTMLASCIIElement() {
-        let pattern = asciiPatterns[Math.floor(Math.random() * asciiPatterns.length)];
-        let asciiDiv = document.createElement('div');
-        asciiDiv.className = 'ascii-element';
-        asciiDiv.style.position = 'fixed';
-        asciiDiv.style.left = Math.random() * window.innerWidth + 'px';
-        asciiDiv.style.top = Math.random() * window.innerHeight + 'px';
-        asciiDiv.style.color = 'lime';
-        asciiDiv.style.fontFamily = 'monospace';
-        asciiDiv.style.fontSize = '12px';
-        asciiDiv.style.fontWeight = 'bold';
-        asciiDiv.style.zIndex = '5';
-        asciiDiv.style.pointerEvents = 'none';
-        asciiDiv.style.whiteSpace = 'pre';
-        asciiDiv.style.lineHeight = '1.2';
-        asciiDiv.style.textAlign = 'left';
+        // Check ASCII element limits for all screen sizes
+        const existingElements = document.querySelectorAll(".ascii-element");
+        const maxElements = isMobile ? 1 : 3; // Reduced limits for all devices
+
+        if (existingElements.length >= maxElements) {
+          console.log(
+            `${
+              isMobile ? "Mobile" : "Desktop"
+            }: ASCII element limit reached (${maxElements}), not creating new element`
+          );
+          return null;
+        }
+
+        let pattern =
+          asciiPatterns[Math.floor(Math.random() * asciiPatterns.length)];
+        let asciiDiv = document.createElement("div");
+        asciiDiv.className = "ascii-element";
+        asciiDiv.style.position = "fixed";
+        // Constrain positioning to visible screen bounds, especially on mobile
+        let leftBound, rightBound, topBound, bottomBound;
+
+        if (isMobile) {
+          // Mobile: leave margins for UI elements (title, logos, etc.)
+          leftBound = 20; // Leave space for title
+          rightBound = window.innerWidth - 20; // Leave space for curation link
+          topBound = 80; // Leave space for title
+          bottomBound = window.innerHeight - 80; // Leave space for logos
+        } else {
+          // Desktop: smaller margins
+          leftBound = 10;
+          rightBound = window.innerWidth - 10;
+          topBound = 50;
+          bottomBound = window.innerHeight - 50;
+        }
+
+        const randomX = leftBound + Math.random() * (rightBound - leftBound);
+        const randomY = topBound + Math.random() * (bottomBound - topBound);
+
+        asciiDiv.style.left = randomX + "px";
+        asciiDiv.style.top = randomY + "px";
+        asciiDiv.style.color = "lime";
+        asciiDiv.style.fontFamily = "monospace";
+        asciiDiv.style.fontSize = "12px";
+        asciiDiv.style.fontWeight = "bold";
+        asciiDiv.style.zIndex = "5";
+        asciiDiv.style.pointerEvents = "none";
+        asciiDiv.style.whiteSpace = "pre";
+        asciiDiv.style.lineHeight = "1.2";
+        asciiDiv.style.textAlign = "left";
         asciiDiv.style.transform = `scale(${Math.random() * 0.5 + 0.8})`;
         asciiDiv.style.opacity = "0.9";
         asciiDiv.style.transition = "all 0.1s ease-out";
@@ -2969,11 +3038,16 @@
           Math.abs(movement.y) > 0.5 ||
           Math.abs(movement.z) > 0.5;
 
-        // Detect drag start
+        // Detect drag start - limit ASCII creation on mobile
         if (currentlyDragging && !isDragging) {
           isDragging = true;
           dragStartTime = Date.now();
-          createAnimatedASCIIElement();
+
+          // Only create ASCII elements on mobile if none exist, or limit to 1
+          const existingElements = document.querySelectorAll(".ascii-element");
+          if (!isMobile || existingElements.length === 0) {
+            createAnimatedASCIIElement();
+          }
         }
 
         // Detect drag end
@@ -3063,29 +3137,59 @@
       }
 
       function createAnimatedASCIIElement() {
+        // Check ASCII element limits for all screen sizes
+        const existingElements = document.querySelectorAll(".ascii-element");
+        const maxElements = isMobile ? 1 : 3; // Reduced limits for all devices
+
+        if (existingElements.length >= maxElements) {
+          console.log(
+            `${
+              isMobile ? "Mobile" : "Desktop"
+            }: ASCII element limit reached (${maxElements}), not creating animated element`
+          );
+          return null;
+        }
+
         // Create ASCII element that animates from center to empty space
-        let pattern = asciiPatterns[Math.floor(Math.random() * asciiPatterns.length)];
-        let asciiDiv = document.createElement('div');
-        asciiDiv.className = 'ascii-element';
-        asciiDiv.style.position = 'fixed';
-        asciiDiv.style.color = 'lime';
-        asciiDiv.style.fontFamily = 'monospace';
-        asciiDiv.style.fontSize = '12px';
-        asciiDiv.style.fontWeight = 'bold';
-        asciiDiv.style.zIndex = '5';
-        asciiDiv.style.pointerEvents = 'none';
-        asciiDiv.style.whiteSpace = 'pre';
-        asciiDiv.style.lineHeight = '1.2';
-        asciiDiv.style.textAlign = 'left';
-        asciiDiv.textContent = pattern.join('\n');
-        
+        let pattern =
+          asciiPatterns[Math.floor(Math.random() * asciiPatterns.length)];
+        let asciiDiv = document.createElement("div");
+        asciiDiv.className = "ascii-element";
+        asciiDiv.style.position = "fixed";
+        asciiDiv.style.color = "lime";
+        asciiDiv.style.fontFamily = "monospace";
+        asciiDiv.style.fontSize = "12px";
+        asciiDiv.style.fontWeight = "bold";
+        asciiDiv.style.zIndex = "5";
+        asciiDiv.style.pointerEvents = "none";
+        asciiDiv.style.whiteSpace = "pre";
+        asciiDiv.style.lineHeight = "1.2";
+        asciiDiv.style.textAlign = "left";
+        asciiDiv.textContent = pattern.join("\n");
+
         // Start from center of screen
         let centerX = window.innerWidth / 2;
         let centerY = window.innerHeight / 2;
 
-        // Choose random empty space as target
-        let targetX = Math.random() * window.innerWidth;
-        let targetY = Math.random() * window.innerHeight;
+        // Choose random empty space as target, constrained to visible bounds
+        let leftBound, rightBound, topBound, bottomBound;
+
+        if (isMobile) {
+          // Mobile: leave margins for UI elements
+          leftBound = 20;
+          rightBound = window.innerWidth - 20;
+          topBound = 80;
+          bottomBound = window.innerHeight - 80;
+        } else {
+          // Desktop: smaller margins
+          leftBound = 10;
+          rightBound = window.innerWidth - 10;
+          topBound = 50;
+          bottomBound = window.innerHeight - 50;
+        }
+
+        let targetX = leftBound + Math.random() * (rightBound - leftBound);
+        let targetY = topBound + Math.random() * (bottomBound - topBound);
 
         // Set initial position (center)
         asciiDiv.style.left = centerX + "px";
@@ -3144,78 +3248,78 @@
         // ASCII Donut animation - very slow background animation
         donutAngle += 0.01; // Much slower than the ASCII experiments version
         donutAngle2 += 0.005;
-        
+
         // Clear donut canvas with transparent background
         donutCtx.clearRect(0, 0, donutCanvas.width, donutCanvas.height);
-        
+
         const cosA = Math.cos(donutAngle);
         const sinA = Math.sin(donutAngle);
         const cosA2 = Math.cos(donutAngle2);
         const sinA2 = Math.sin(donutAngle2);
-        
+
         // Clear buffers
         for (let i = 0; i < donutWidth * donutHeight; i++) {
-          donutBuffer[i] = ' ';
+          donutBuffer[i] = " ";
           donutZBuffer[i] = 0;
         }
-        
+
         // Scale factor for full screen - make donut larger
         const scale = Math.min(donutWidth, donutHeight) / 10; // Even larger scale to fill entire screen
-        
+
         // Generate donut
         for (let j = 0; j < 6.28; j += 0.1) {
           const cosJ = Math.cos(j);
           const sinJ = Math.sin(j);
-          
+
           for (let i = 0; i < 6.28; i += 0.05) {
             const cosI = Math.cos(i);
             const sinI = Math.sin(i);
-            
+
             const x = cosI + 2;
             const y = sinI;
             const z = j;
-            
+
             // 3D rotation
             const nx = x * cosA - y * sinA;
             const ny = x * sinA + y * cosA;
             const nz = z;
-            
+
             const nz2 = nz * cosA2 - ny * sinA2;
             const ny2 = nz * sinA2 + ny * cosA2;
             const nx2 = nx;
-            
+
             // Perspective projection with full screen scaling
             const ooz = 1 / (nz2 + 5);
             // Offset to ensure full screen coverage - start from left edge
             const xp = Math.floor(scale * 30 * ooz * nx2); // Start from left edge, no center offset
             const yp = Math.floor(donutHeight / 2 + scale * 20 * ooz * ny2); // Keep vertical centered
-            
+
             // Calculate lighting
             const l = cosI * cosJ * cosA - sinJ * sinA;
-            
+
             if (xp >= 0 && xp < donutWidth && yp >= 0 && yp < donutHeight) {
               const idx = yp * donutWidth + xp;
               if (ooz > donutZBuffer[idx]) {
                 donutZBuffer[idx] = ooz;
                 const lum = Math.floor(8 * l);
-                const char = lum > 0 ? '.,-~:;=!*#$@'[Math.min(lum, 11)] : ' ';
+                const char = lum > 0 ? ".,-~:;=!*#$@"[Math.min(lum, 11)] : " ";
                 donutBuffer[idx] = char;
               }
             }
           }
         }
-        
+
         // Draw donut with larger font for full screen
         const fontSize = Math.max(16, Math.min(donutWidth, donutHeight) / 15); // Much larger font
         donutCtx.font = `${fontSize}px Courier New`;
-        donutCtx.fillStyle = '#00ff41'; // Bright green like the network strings
-        donutCtx.textAlign = 'left';
-        donutCtx.textBaseline = 'top';
-        
+        donutCtx.fillStyle = "#00ff41"; // Bright green like the network strings
+        donutCtx.textAlign = "left";
+        donutCtx.textBaseline = "top";
+
         for (let y = 0; y < donutHeight; y++) {
           for (let x = 0; x < donutWidth; x++) {
             const char = donutBuffer[y * donutWidth + x];
-            if (char !== ' ') {
+            if (char !== " ") {
               donutCtx.fillText(char, x * fontSize * 0.6, y * fontSize);
             }
           }
@@ -3377,14 +3481,23 @@
 
         carousel.innerHTML = "";
 
-        galleryImages.forEach((image, index) => {
-          const angle = (360 / galleryImages.length) * index;
+        // Limit the number of visible images to prevent overcrowding
+        const maxVisibleImages = 10;
+        const visibleImages = galleryImages.slice(0, maxVisibleImages);
+
+        visibleImages.forEach((image, index) => {
+          // Use a slightly smaller angle step for tighter spacing
+          const angle = (360 / maxVisibleImages) * index;
           const face = document.createElement("div");
           face.className = "gallery-carousel__face";
           face.style.cssText = `
             position: absolute;
-            width: 220px;
-            height: 150px;
+            width: 280px;
+            height: 180px;
+            left: 50%;
+            top: 50%;
+            margin-left: -140px;
+            margin-top: -90px;
             background-image: url('${image.src}');
             background-size: contain;
             background-position: center;
@@ -3392,7 +3505,7 @@
             display: flex;
             align-items: flex-end;
             justify-content: flex-start;
-            transform: rotateY(${angle}deg) translateZ(450px);
+            transform: rotateY(${angle}deg) translateZ(600px);
             cursor: pointer;
           `;
 
@@ -3400,15 +3513,17 @@
           const credit = document.createElement("div");
           credit.style.cssText = `
             position: absolute;
-            bottom: 5px;
-            left: 5px;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
             color: #e6e6e6;
             font-family: 'SourceCodePro', monospace;
-            font-size: 8px;
+            font-size: 6px;
             background: rgba(0, 0, 0, 0.8);
             padding: 2px 4px;
             border-radius: 2px;
             white-space: nowrap;
+            text-align: center;
           `;
           credit.textContent = image.credit;
           face.appendChild(credit);
