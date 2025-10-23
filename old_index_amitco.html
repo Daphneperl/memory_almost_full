@@ -1,0 +1,2943 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <title>memory_almost_full</title>
+    <style>
+      @font-face {
+        font-family: "SourceCodePro";
+        src: url("assets/SourceCodePro-VariableFont_wght.ttf")
+          format("truetype");
+      }
+      @font-face {
+        font-family: "IBMPlexMono";
+        src: url("assets/IBMPlexMono-Light.ttf") format("truetype");
+      }
+      body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        font-family: Arial, sans-serif;
+        background: radial-gradient(
+            circle at 50% 50%,
+            rgba(70, 70, 70, 0.35) 0%,
+            rgba(50, 50, 50, 0.2) 40%,
+            rgba(30, 30, 30, 0.1) 70%,
+            rgba(15, 15, 15, 0) 100%
+          ),
+          radial-gradient(
+            ellipse at 50% 50%,
+            #c0c0c0 0%,
+            #a8a8a8 20%,
+            #808080 40%,
+            #585858 60%,
+            #303030 80%,
+            #181818 95%,
+            #080808 100%
+          ),
+          url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="1.8" numOctaves="7" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter><rect width="600" height="600" filter="url(%23noise)" opacity="0.95"/></svg>');
+        background-blend-mode: normal, multiply, multiply;
+        background-size: cover, cover, 200px 200px;
+        position: relative;
+      }
+
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        body {
+          overflow-x: hidden;
+        }
+
+        #curation-link {
+          font-size: clamp(8px, 2.5vw, 16px);
+          right: clamp(5px, 1.5vw, 10px);
+          top: clamp(12px, 2.5vh, 22px);
+          max-width: 35vw;
+        }
+
+        .logos {
+          bottom: clamp(8px, 2vh, 20px);
+          right: clamp(8px, 2vw, 20px);
+          gap: clamp(6px, 1.5vw, 15px);
+        }
+
+        .popup {
+          width: 95vw;
+          height: 95vh;
+          padding: 20px;
+          max-width: none;
+          max-height: none;
+        }
+
+        .popup h2 {
+          font-size: 20px;
+        }
+
+        .popup p {
+          font-size: 14px;
+          line-height: 1.3;
+        }
+
+        .popup-close {
+          top: 10px;
+          right: 15px;
+          width: 35px;
+          height: 35px;
+          font-size: 20px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        #curation-link {
+          font-size: clamp(7px, 2vw, 14px);
+          right: clamp(3px, 1vw, 8px);
+          top: clamp(10px, 2vh, 17px);
+          max-width: 30vw;
+        }
+
+        .logos {
+          bottom: clamp(6px, 1.5vh, 12px);
+          right: clamp(6px, 1.5vw, 12px);
+          gap: clamp(4px, 1vw, 8px);
+        }
+
+        .popup {
+          width: 98vw;
+          height: 98vh;
+          padding: 15px;
+        }
+
+        .popup h2 {
+          font-size: 18px;
+        }
+
+        .popup p {
+          font-size: 13px;
+        }
+      }
+
+      @media (min-width: 1200px) {
+        .popup {
+          max-width: 1200px;
+          max-height: 800px;
+        }
+      }
+      canvas {
+        display: block;
+        opacity: 0;
+        transition: opacity 2s ease-in;
+        position: relative;
+        z-index: 10;
+      }
+
+      canvas.fade-in {
+        opacity: 1;
+      }
+
+      #title {
+        height: clamp(40px, 8vh, 120px);
+        width: auto;
+        max-width: clamp(200px, 50vw, 600px);
+        object-fit: contain;
+        position: fixed;
+        top: 20px;
+        left: clamp(8px, 2vw, 10px);
+        z-index: 101;
+      }
+
+      @media (max-width: 768px) {
+        #title {
+          height: clamp(30px, 6vh, 80px);
+          max-width: clamp(150px, 40vw, 400px);
+          top: 15px;
+          left: clamp(5px, 1vw, 8px);
+        }
+      }
+
+      @media (max-width: 480px) {
+        #title {
+          height: clamp(25px, 5vh, 60px);
+          max-width: clamp(120px, 35vw, 300px);
+          top: 10px;
+          left: clamp(3px, 0.5vw, 5px);
+        }
+      }
+
+      /* ASCII Element Animation */
+      .ascii-element {
+        animation: cray 6s infinite steps(50);
+        display: inline-block;
+      }
+
+      @keyframes cray {
+        0% {
+          font-weight: 100;
+          font-style: normal;
+          text-decoration: none;
+          text-transform: none;
+        }
+        2% {
+          font-weight: 200;
+          font-style: italic;
+          text-decoration: none;
+          text-transform: none;
+        }
+        4% {
+          font-weight: 300;
+          font-style: normal;
+          text-decoration: line-through;
+          text-transform: uppercase;
+        }
+        6% {
+          font-weight: 400;
+          font-style: normal;
+          text-decoration: underline;
+          text-transform: lowercase;
+        }
+        8% {
+          font-weight: 500;
+          font-style: normal;
+          text-decoration: none;
+          text-transform: capitalize;
+        }
+        10% {
+          font-weight: 600;
+          font-style: italic;
+          text-decoration: none;
+          text-transform: none;
+        }
+        12% {
+          font-weight: 700;
+          font-style: normal;
+          text-decoration: line-through;
+          text-transform: uppercase;
+        }
+        14% {
+          font-weight: 100;
+          font-style: normal;
+          text-decoration: underline;
+          text-transform: lowercase;
+        }
+        16% {
+          font-weight: 200;
+          font-style: italic;
+          text-decoration: none;
+          text-transform: capitalize;
+        }
+        18% {
+          font-weight: 300;
+          font-style: normal;
+          text-decoration: none;
+          text-transform: none;
+        }
+        20% {
+          font-weight: 400;
+          font-style: normal;
+          text-decoration: line-through;
+          text-transform: uppercase;
+        }
+        22% {
+          font-weight: 500;
+          font-style: italic;
+          text-decoration: underline;
+          text-transform: lowercase;
+        }
+        24% {
+          font-weight: 600;
+          font-style: normal;
+          text-decoration: none;
+          text-transform: capitalize;
+        }
+        26% {
+          font-weight: 700;
+          font-style: normal;
+          text-decoration: line-through;
+          text-transform: none;
+        }
+        28% {
+          font-weight: 100;
+          font-style: italic;
+          text-decoration: underline;
+          text-transform: uppercase;
+        }
+        30% {
+          font-weight: 200;
+          font-style: normal;
+          text-decoration: none;
+          text-transform: lowercase;
+        }
+        32% {
+          font-weight: 300;
+          font-style: normal;
+          text-decoration: line-through;
+          text-transform: capitalize;
+        }
+        34% {
+          font-weight: 400;
+          font-style: italic;
+          text-decoration: underline;
+          text-transform: none;
+        }
+        36% {
+          font-weight: 500;
+          font-style: normal;
+          text-decoration: none;
+          text-transform: uppercase;
+        }
+        38% {
+          font-weight: 600;
+          font-style: normal;
+          text-decoration: line-through;
+          text-transform: lowercase;
+        }
+        40% {
+          font-weight: 700;
+          font-style: italic;
+          text-decoration: underline;
+          text-transform: capitalize;
+        }
+        42% {
+          font-weight: 100;
+          font-style: normal;
+          text-decoration: none;
+          text-transform: none;
+        }
+        44% {
+          font-weight: 200;
+          font-style: normal;
+          text-decoration: line-through;
+          text-transform: uppercase;
+        }
+        46% {
+          font-weight: 300;
+          font-style: italic;
+          text-decoration: underline;
+          text-transform: lowercase;
+        }
+        48% {
+          font-weight: 400;
+          font-style: normal;
+          text-decoration: none;
+          text-transform: capitalize;
+        }
+        50% {
+          font-weight: 500;
+          font-style: normal;
+          text-decoration: line-through;
+          text-transform: none;
+        }
+        52% {
+          font-weight: 600;
+          font-style: italic;
+          text-decoration: underline;
+          text-transform: uppercase;
+        }
+        54% {
+          font-weight: 700;
+          font-style: normal;
+          text-decoration: none;
+          text-transform: lowercase;
+        }
+        56% {
+          font-weight: 100;
+          font-style: normal;
+          text-decoration: line-through;
+          text-transform: capitalize;
+        }
+        58% {
+          font-weight: 200;
+          font-style: italic;
+          text-decoration: underline;
+          text-transform: none;
+        }
+        60% {
+          font-weight: 300;
+          font-style: normal;
+          text-decoration: none;
+          text-transform: uppercase;
+        }
+        62% {
+          font-weight: 400;
+          font-style: normal;
+          text-decoration: line-through;
+          text-transform: lowercase;
+        }
+        64% {
+          font-weight: 500;
+          font-style: italic;
+          text-decoration: underline;
+          text-transform: capitalize;
+        }
+        66% {
+          font-weight: 600;
+          font-style: normal;
+          text-decoration: none;
+          text-transform: none;
+        }
+        68% {
+          font-weight: 700;
+          font-style: normal;
+          text-decoration: line-through;
+          text-transform: uppercase;
+        }
+        70% {
+          font-weight: 100;
+          font-style: italic;
+          text-decoration: underline;
+          text-transform: lowercase;
+        }
+        72% {
+          font-weight: 200;
+          font-style: normal;
+          text-decoration: none;
+          text-transform: capitalize;
+        }
+        74% {
+          font-weight: 300;
+          font-style: normal;
+          text-decoration: line-through;
+          text-transform: none;
+        }
+        76% {
+          font-weight: 400;
+          font-style: italic;
+          text-decoration: underline;
+          text-transform: uppercase;
+        }
+        78% {
+          font-weight: 500;
+          font-style: normal;
+          text-decoration: none;
+          text-transform: lowercase;
+        }
+        80% {
+          font-weight: 600;
+          font-style: normal;
+          text-decoration: line-through;
+          text-transform: capitalize;
+        }
+        82% {
+          font-weight: 700;
+          font-style: italic;
+          text-decoration: underline;
+          text-transform: none;
+        }
+        84% {
+          font-weight: 100;
+          font-style: normal;
+          text-decoration: none;
+          text-transform: uppercase;
+        }
+        86% {
+          font-weight: 200;
+          font-style: normal;
+          text-decoration: line-through;
+          text-transform: lowercase;
+        }
+        88% {
+          font-weight: 300;
+          font-style: italic;
+          text-decoration: underline;
+          text-transform: capitalize;
+        }
+        90% {
+          font-weight: 400;
+          font-style: normal;
+          text-decoration: none;
+          text-transform: none;
+        }
+        92% {
+          font-weight: 500;
+          font-style: normal;
+          text-decoration: line-through;
+          text-transform: uppercase;
+        }
+        94% {
+          font-weight: 600;
+          font-style: italic;
+          text-decoration: underline;
+          text-transform: lowercase;
+        }
+        96% {
+          font-weight: 700;
+          font-style: normal;
+          text-decoration: none;
+          text-transform: capitalize;
+        }
+        98% {
+          font-weight: 100;
+          font-style: normal;
+          text-decoration: line-through;
+          text-transform: none;
+        }
+        100% {
+          font-weight: 200;
+          font-style: italic;
+          text-decoration: underline;
+          text-transform: uppercase;
+        }
+      }
+
+      #curation-link {
+        color: rgb(255, 255, 255);
+        font-size: clamp(10px, 3vw, 20px);
+        font-weight: regular;
+        font-family: "IBMPlexMono", monospace;
+        text-align: right;
+        letter-spacing: clamp(0.3px, 0.1vw, 1px);
+        transform: scaleY(1.2) translateY(-1px);
+        transform-origin: center right;
+        margin: 0;
+        position: fixed;
+        top: clamp(18px, 3.5vh, 28px);
+        right: clamp(15px, 4vw, 30px);
+        z-index: 101;
+        cursor: pointer;
+        text-decoration: underline;
+        transition: opacity 0.3s ease;
+        max-width: 40vw;
+        word-wrap: break-word;
+      }
+
+      #curation-link:hover {
+        opacity: 0.7;
+      }
+
+      .logos {
+        position: fixed;
+        bottom: clamp(10px, 3vh, 20px);
+        right: clamp(10px, 3vw, 20px);
+        display: flex;
+        gap: clamp(8px, 2vw, 15px);
+        z-index: 101;
+        align-items: center;
+      }
+
+      .logo {
+        height: clamp(60px, 12vw, 120px);
+        width: auto;
+        opacity: 0.9;
+        transition: opacity 0.3s ease;
+      }
+
+      .logo:hover {
+        opacity: 1;
+      }
+
+      .popup {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: #000000;
+        background-image: radial-gradient(
+            circle at 20% 50%,
+            rgba(255, 255, 255, 0.005) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            circle at 80% 20%,
+            rgba(255, 255, 255, 0.005) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            circle at 40% 80%,
+            rgba(255, 255, 255, 0.005) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            circle at 0% 100%,
+            rgba(255, 255, 255, 0.005) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            circle at 100% 0%,
+            rgba(255, 255, 255, 0.005) 0%,
+            transparent 50%
+          );
+        background-size: 200px 200px, 300px 300px, 150px 150px, 250px 250px,
+          180px 180px;
+        border: 1px solid #00ff00;
+        border-style: dashed;
+        border-radius: 8px;
+        padding: 50px;
+        width: 90vw;
+        height: 90vh;
+        max-width: none;
+        max-height: none;
+        overflow-y: auto;
+        z-index: 1000;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        font-family: "SourceCodePro", monospace;
+        animation: popupScaleIn 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      }
+
+      .popup-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 9999;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+        box-sizing: border-box;
+        animation: fadeIn 0.5s ease-out;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      @keyframes popupScaleIn {
+        from {
+          transform: translate(-50%, -50%) scale(0.85);
+          opacity: 0;
+        }
+        to {
+          transform: translate(-50%, -50%) scale(1);
+          opacity: 1;
+        }
+      }
+
+      .popup h2 {
+        margin: 0 0 15px 0;
+        color: #ffffff;
+        font-size: 18px;
+        font-weight: bold;
+      }
+
+      .popup p {
+        margin: 10px 0;
+        line-height: 1.4;
+        color: #e6e6e6;
+      }
+
+      .popup img {
+        max-width: 100%;
+        height: auto;
+        margin: 10px 0;
+        border: 1px solid #ddd;
+      }
+
+      .popup-close {
+        position: fixed;
+        top: 20px;
+        right: 25px;
+        background: rgba(255, 255, 255, 0.8);
+        border: none;
+        font-size: 18px;
+        cursor: pointer;
+        color: black;
+        z-index: 10001;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        transition: all 0.2s ease;
+        font-weight: bold;
+        padding: 15px;
+      }
+
+      .popup-close:hover {
+        background: rgba(255, 255, 255, 1);
+        transform: scale(1.1);
+      }
+
+      #copyright {
+        position: fixed;
+        bottom: 20px;
+        left: 20px;
+        color: #ffffff;
+        font-size: 12px;
+        font-family: "SourceCodePro", monospace;
+        z-index: 1000;
+        opacity: 0.7;
+        line-height: 1.4;
+      }
+
+      @keyframes floatAcross {
+        0% {
+          top: 20px;
+          left: -100px;
+          transform: rotate(0deg);
+        }
+        25% {
+          top: 50vh;
+          left: 50vw;
+          transform: rotate(90deg);
+        }
+        50% {
+          top: 80vh;
+          left: 100vw;
+          transform: rotate(180deg);
+        }
+        75% {
+          top: 30vh;
+          left: 50vw;
+          transform: rotate(270deg);
+        }
+        100% {
+          top: 20px;
+          left: -100px;
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <img id="title" src="assets/logos/logo02.png" alt="Memory Almost Full" />
+    <div id="curation-link" onclick="showCurationPopup()">
+      Curation: Adi Karelitz
+    </div>
+    <div class="logos">
+      <img src="assets/artists/LOGO-WHITE.001.png" alt="Logo" class="logo" />
+    </div>
+    <div id="copyright">
+      © 2025 Designed & Built by Daphne Perlman & Amit Cohen
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="ascii-elements.js"></script>
+    <script>
+      // Scene setup
+      const scene = new THREE.Scene();
+
+      // Detect mobile device
+      const isMobile =
+        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+          navigator.userAgent
+        ) || window.innerWidth <= 768;
+
+      // Adjust camera FOV for mobile
+      const cameraFOV = isMobile ? 60 : 75;
+      const camera = new THREE.PerspectiveCamera(
+        cameraFOV,
+        window.innerWidth / window.innerHeight,
+        0.1,
+        1000
+      );
+
+      const renderer = new THREE.WebGLRenderer({
+        antialias: !isMobile, // Disable antialiasing on mobile for better performance
+        powerPreference: isMobile ? "low-power" : "high-performance", // Use low-power mode on mobile
+        alpha: true, // Enable transparency
+      });
+      renderer.shadowMap.enabled = false; // Disable shadows for better performance
+
+      // Adjust pixel ratio for mobile
+      const pixelRatio = isMobile
+        ? Math.min(window.devicePixelRatio, 1.5)
+        : Math.min(window.devicePixelRatio, 2);
+      renderer.setPixelRatio(pixelRatio);
+
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setClearColor(0x000000, 0); // Transparent background
+      document.body.appendChild(renderer.domElement);
+
+      // Add double-click handler to Three.js canvas (desktop)
+      if (!isMobile) {
+        renderer.domElement.addEventListener("dblclick", onImageClick);
+      } else {
+        // Add double-tap support for mobile devices
+        let lastTapTime = 0;
+        let lastTapX = 0;
+        let lastTapY = 0;
+        let touchStartTime = 0;
+        let touchStartX = 0;
+        let touchStartY = 0;
+        const doubleTapDelay = 400; // Maximum time between taps (ms)
+        const tapMovementThreshold = 30; // Maximum movement for a valid tap (pixels)
+
+        renderer.domElement.addEventListener("touchstart", (event) => {
+          touchStartTime = Date.now();
+          touchStartX = event.touches[0].clientX;
+          touchStartY = event.touches[0].clientY;
+        });
+
+        renderer.domElement.addEventListener("touchend", (event) => {
+          const touchEndTime = Date.now();
+          const touchDuration = touchEndTime - touchStartTime;
+          const touchEndX = event.changedTouches[0].clientX;
+          const touchEndY = event.changedTouches[0].clientY;
+          const touchDistance = Math.sqrt(
+            Math.pow(touchEndX - touchStartX, 2) +
+              Math.pow(touchEndY - touchStartY, 2)
+          );
+
+          // Check if this was a quick tap (not a drag)
+          if (touchDuration < 300 && touchDistance < tapMovementThreshold) {
+            const currentTime = touchEndTime;
+            const timeSinceLastTap = currentTime - lastTapTime;
+
+            // Check if this is close to the last tap position
+            const distanceFromLastTap = Math.sqrt(
+              Math.pow(touchEndX - lastTapX, 2) +
+                Math.pow(touchEndY - lastTapY, 2)
+            );
+
+            // If double-tap detected (within time window and position threshold)
+            if (
+              timeSinceLastTap < doubleTapDelay &&
+              timeSinceLastTap > 0 &&
+              distanceFromLastTap < tapMovementThreshold
+            ) {
+              console.log("Double-tap detected!");
+              event.preventDefault();
+              event.stopPropagation();
+
+              // Create a synthetic event with proper coordinates
+              const syntheticEvent = {
+                clientX: touchEndX,
+                clientY: touchEndY,
+                type: "doubletap",
+              };
+              onImageClick(syntheticEvent);
+
+              // Reset to prevent triple-tap triggering
+              lastTapTime = 0;
+            } else {
+              // First tap or too far from last tap
+              console.log("First tap detected, waiting for second tap...");
+              lastTapTime = currentTime;
+              lastTapX = touchEndX;
+              lastTapY = touchEndY;
+            }
+          }
+        });
+      }
+
+      // ASCII frame elements removed
+
+      // Lighting with shadows
+      const ambientLight = new THREE.AmbientLight(0x404040, 0.6);
+      scene.add(ambientLight);
+
+      const directionalLight = new THREE.DirectionalLight(0xffffff, 0.4);
+      directionalLight.position.set(5, 5, 5);
+      directionalLight.castShadow = true;
+      directionalLight.shadow.mapSize.width = 1024;
+      directionalLight.shadow.mapSize.height = 1024;
+      scene.add(directionalLight);
+
+      // Artist images as billboard planes
+      const artistImages = [
+        {
+          name: "Anat Saacks",
+          path: "assets/Artists/Anat Saacks/Anat Saacks.jpg",
+        },
+        {
+          name: "Chenn Hearthstone",
+          path: "assets/Artists/Chenn Hearthstone/Chenn Hearthstone_placeholder.png",
+        },
+        {
+          name: "Dafna Sartiel",
+          path: "assets/Artists/Dafna Sartiel/Dafna_Sartiel.jpg",
+        },
+        {
+          name: "Eitan Bartal",
+          path: "assets/Artists/Eitan Bartal/EitanBartal_placeholder.png",
+        },
+        {
+          name: "Eyal Datz",
+          path: "assets/Artists/Eyal Datz/Eyal Datz_placeholder.png",
+        },
+        {
+          name: "Eyal Yehowa Gruss",
+          path: "assets/Artists/Eyal Yehowa Gruss/EyalGruss.png",
+        },
+        {
+          name: "Gilad Friedman",
+          path: "assets/Artists/Gilad Friedman/Gilad Fridman.jpg",
+        },
+        {
+          name: "Haya Sheffer",
+          path: "assets/Artists/Haya Sheffer/Haya Sheffer.jpg",
+        },
+        {
+          name: "Naama Steinbock",
+          path: "assets/Artists/Naama Steinbock/Naama Steinbock.jpg",
+        },
+        {
+          name: "Oded Ezer",
+          path: "assets/Artists/Oded Ezer/Oded Ezer_placeholder.png",
+        },
+        {
+          name: "Ofir Liberman",
+          path: "assets/Artists/Ofir Liberman/ofir_liberman.jpg",
+        },
+        {
+          name: "Rony Ginosar",
+          path: "assets/Artists/Rony Ginosar/Rony Ginosar.jpg",
+        },
+        {
+          name: "Shaul Tzemach",
+          path: "assets/Artists/Shaul Tzemach/fbm_b134006708485641932.png",
+        },
+        {
+          name: "Yoav Ruda",
+          path: "assets/Artists/Yoav Ruda/Yoav Ruda_placeholder.png",
+        },
+        {
+          name: "Yonatan Ben-Simhon and Mattan Tenne",
+          path: "assets/Artists/Yonatan Ben-Simhon and Mattan Tenne/yonatan ben-simhon.jpeg",
+        },
+        {
+          name: "Yuval Keshet",
+          path: "assets/Artists/Yuval Keshet/Yuval Keshet.JPG",
+        },
+      ];
+
+      const imagePlanes = [];
+      const textureLoader = new THREE.TextureLoader();
+      const connectionLines = [];
+
+      // Raycaster for click detection
+      const raycaster = new THREE.Raycaster();
+      const mouse = new THREE.Vector2();
+
+      // Function to check if an image should be clickable
+      function isClickableImage(imagePath) {
+        const isClickable =
+          imagePath.includes("Anat Saacks.jpg") ||
+          imagePath.includes("Chenn Hearthstone") ||
+          imagePath.includes("Dafna_Sartiel.jpg") ||
+          imagePath.includes("EitanBartal_placeholder.png") ||
+          imagePath.includes("Eyal Datz_placeholder.png") ||
+          imagePath.includes("EyalGruss.png") ||
+          imagePath.includes("Gilad Fridman.jpg") ||
+          imagePath.includes("Haya Sheffer.jpg") ||
+          imagePath.includes("Naama Steinbock.jpg") ||
+          imagePath.includes("Oded Ezer_placeholder.png") ||
+          imagePath.includes("ofir_liberman.jpg") ||
+          imagePath.includes("Rony Ginosar.jpg") ||
+          imagePath.includes("fbm_b134006708485641932.png") ||
+          imagePath.includes("Yoav Ruda_placeholder.png") ||
+          imagePath.includes("yonatan ben-simhon.jpeg") ||
+          imagePath.includes("Yuval Keshet.JPG");
+        console.log("Checking if clickable:", imagePath, "->", isClickable);
+
+        return isClickable;
+      }
+
+      // Function to generate random ASCII divider line for popups
+      function generateASCIIDivider() {
+        const patterns = generateRandomPatterns();
+        const allPatterns = [
+          ...patterns.dotClusters,
+          ...patterns.linePatterns,
+          ...patterns.mixedPatterns,
+          ...patterns.bracketPatterns,
+          ...patterns.slashPatterns,
+          ...patterns.plusPatterns,
+        ];
+
+        // Pick a random pattern
+        const randomPattern =
+          allPatterns[Math.floor(Math.random() * allPatterns.length)];
+
+        // Create the divider HTML
+        return `
+          <div style="text-align: center; margin: 20px 0; font-family: 'SourceCodePro', 'IBMPlexMono', monospace; font-size: 14px; color: #e6e6e6; opacity: 0.8; letter-spacing: 2px;">
+            ${randomPattern}
+          </div>
+        `;
+      }
+
+      // Global function for showing artist popups
+      function showArtistPopup(artist) {
+        console.log("showArtistPopup called with:", artist);
+
+        // Remove existing popup
+        const existingPopup = document.querySelector(".popup-overlay");
+        if (existingPopup) {
+          console.log("Removing existing popup");
+          existingPopup.remove();
+        }
+
+        // Create popup overlay
+        const overlay = document.createElement("div");
+        overlay.className = "popup-overlay";
+        console.log("Created overlay element");
+
+        // Create popup content with carousel
+        const popup = document.createElement("div");
+        popup.className = "popup";
+        popup.style.background = "#1d1e19";
+
+        // Responsive popup sizing
+        if (isMobile) {
+          popup.style.maxWidth = "95vw";
+          popup.style.maxHeight = "95vh";
+          popup.style.padding = "20px";
+        } else {
+          popup.style.maxWidth = "1200px";
+          popup.style.maxHeight = "800px";
+          popup.style.padding = "50px";
+        }
+        popup.style.boxSizing = "border-box";
+
+        // Create a subtle grain overlay
+        const grainOverlay = document.createElement("div");
+        grainOverlay.style.position = "absolute";
+        grainOverlay.style.top = "0";
+        grainOverlay.style.left = "0";
+        grainOverlay.style.width = "100%";
+        grainOverlay.style.height = "100%";
+        grainOverlay.style.backgroundImage = 'url("assets/BGpopup_grain.png")';
+        grainOverlay.style.backgroundSize = "300px 300px";
+        grainOverlay.style.backgroundPosition = "center center";
+        grainOverlay.style.backgroundRepeat = "repeat";
+        grainOverlay.style.opacity = "0.15";
+        grainOverlay.style.pointerEvents = "none";
+        grainOverlay.style.zIndex = "1";
+        popup.style.color = "#e6e6e6";
+
+        // Add grain overlay to popup
+        popup.appendChild(grainOverlay);
+
+        popup.innerHTML = `
+          <button class="popup-close">&times;</button>
+          <div style="position: relative; z-index: 2;">
+            <h2 style="font-size: 28px; font-weight: bold; color: #e6e6e6; margin-bottom: 15px; font-family: 'Source Code Variable', monospace;">${
+              artist.name
+            }</h2>
+            <h3 style="color: #e6e6e6; font-size: 20px; margin-bottom: 15px; font-family: 'Source Code Variable', monospace; font-style: italic;">${
+              artist.title
+            }</h3>
+            <p style="color: #e6e6e6; font-family: 'Source Code Variable', monospace; font-size: 18px;">${
+              artist.medium
+            }</p>
+            ${generateASCIIDivider()}
+            <p style="color: #e6e6e6; font-family: 'Source Code Variable', monospace;">${
+              artist.description
+            }</p>
+            ${generateASCIIDivider()}
+            <p style="color: #e6e6e6; font-family: 'Source Code Variable', monospace;">${
+              artist.bio
+            }</p>
+          </div>
+          
+          ${
+            artist.videoLink
+              ? `
+            ${generateASCIIDivider()}
+            <div style="margin: 20px 0;">
+              <h4 style="color: #e6e6e6; font-size: 18px; margin-bottom: 10px; font-family: 'Source Code Variable', monospace;">Video:</h4>
+              ${
+                artist.videoLink.includes("vimeo.com/842264728")
+                  ? `
+                <div style="padding:56.25% 0 0 0;position:relative;">
+                  <iframe src="https://player.vimeo.com/video/842264728?h=97e8e466d8&badge=0&autopause=0&player_id=0&app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" referrerpolicy="strict-origin-when-cross-origin" style="position:absolute;top:0;left:0;width:100%;height:100%;" title="Every light has its shadow"></iframe>
+                </div>
+              `
+                  : `
+                <div style="position: relative; width: 100%; height: 0; padding-bottom: 56.25%; margin: 10px 0; max-width: 100%;">
+                  <iframe 
+                    src="${
+                      artist.videoLink.includes("youtube.com")
+                        ? artist.videoLink
+                            .replace("watch?v=", "embed/")
+                            .replace("shorts/", "embed/")
+                        : artist.videoLink.replace(
+                            "vimeo.com/",
+                            "player.vimeo.com/video/"
+                          ) + "?autoplay=0&title=0&byline=0&portrait=0"
+                    }" 
+                    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; border-radius: 8px;"
+                    allowfullscreen>
+                  </iframe>
+                </div>
+              `
+              }
+              <p style="text-align: center; margin-top: 10px;">
+                <a href="${
+                  artist.videoLink
+                }" target="_blank" style="color: #e6e6e6; text-decoration: none; font-size: 14px; font-family: 'Source Code Variable', monospace;">
+                  Open in ${
+                    artist.videoLink.includes("youtube.com")
+                      ? "YouTube"
+                      : "Vimeo"
+                  } ↗
+                </a>
+              </p>
+            </div>
+          `
+              : ""
+          }
+          
+          ${
+            artist.externalLink
+              ? `
+            ${generateASCIIDivider()}
+            <div style="margin: 20px 0;">
+              <h4 style="color: #e6e6e6; font-size: 18px; margin-bottom: 10px; font-family: 'Source Code Variable', monospace;">Social Media Post:</h4>
+              <div id="twitter-embed-container" style="text-align: center; padding: 20px; background: #333; border-radius: 8px; min-height: 200px;">
+                <p style="color: #e6e6e6; font-family: 'Source Code Variable', monospace;">Loading tweet...</p>
+              </div>
+            </div>
+          `
+              : ""
+          }
+          
+          ${generateASCIIDivider()}
+          <div style="margin-top: 20px;">
+            <div id="carousel-container" style="position: relative; width: 100%; height: min(60vh, 400px); overflow: hidden; border-radius: 4px; background: #1d1e19; display: flex; align-items: center; justify-content: center;">
+              <img id="carousel-image" src="${
+                artist.images[0]
+              }" style="max-width: 100%; max-height: 100%; object-fit: contain;" />
+              ${
+                artist.images.length > 1
+                  ? `
+                <button id="carousel-prev" style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.8); color: black; border: none; padding: 15px; cursor: pointer; border-radius: 50%; font-size: 18px; font-weight: bold;">&lt;</button>
+                <button id="carousel-next" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.8); color: black; border: none; padding: 15px; cursor: pointer; border-radius: 50%; font-size: 18px; font-weight: bold;">&gt;</button>
+              `
+                  : ""
+              }
+            </div>
+            ${
+              artist.images.length > 1
+                ? `
+              <div id="carousel-indicators" style="display: flex; gap: 8px; justify-content: center; margin-top: 15px;">
+                ${artist.images
+                  .map(
+                    (_, index) =>
+                      '<div class="indicator" style="width: 12px; height: 12px; border-radius: 50%; background: ' +
+                      (index === 0 ? "#fff" : "#666") +
+                      '; cursor: pointer; transition: background 0.3s;"></div>'
+                  )
+                  .join("")}
+              </div>
+            `
+                : ""
+            }
+          </div>
+          </div>
+        `;
+
+        overlay.appendChild(popup);
+        document.body.appendChild(overlay);
+        console.log("Popup added to DOM");
+
+        // Show Twitter post as a clean, styled card
+        if (
+          artist.externalLink &&
+          (artist.externalLink.includes("twitter.com") ||
+            artist.externalLink.includes("x.com"))
+        ) {
+          console.log("Processing Twitter link:", artist.externalLink);
+          const embedContainer = popup.querySelector(
+            "#twitter-embed-container"
+          );
+          console.log("Found embed container:", embedContainer);
+          if (embedContainer) {
+            console.log("Setting Twitter content...");
+
+            // Create a beautiful, Twitter-style card that always works
+            embedContainer.innerHTML = `
+              <div style="background: #ffffff; border: 1px solid #e1e8ed; border-radius: 16px; padding: 0; max-width: 500px; margin: 0 auto; box-shadow: 0 4px 12px rgba(0,0,0,0.15); overflow: hidden;">
+                <!-- Twitter-style header -->
+                <div style="padding: 16px; border-bottom: 1px solid #e1e8ed; background: #f8f9fa;">
+                  <div style="display: flex; align-items: center; gap: 12px;">
+                    <div style="width: 48px; height: 48px; background: linear-gradient(135deg, #1DA1F2, #0d8bd9); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 18px;">
+                      EG
+                    </div>
+                    <div>
+                      <div style="font-weight: 700; color: #14171a; font-size: 16px;">Eyal Gruss</div>
+                      <div style="color: #657786; font-size: 14px;">@eyaler</div>
+                    </div>
+                    <div style="margin-left: auto;">
+                      <div style="color: #657786; font-size: 14px;">Oct 20, 2024</div>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Tweet content -->
+                <div style="padding: 16px;">
+                  <div style="color: #14171a; line-height: 1.4; font-size: 16px; margin-bottom: 12px;">
+                    You can of course also just upload an image. And why not have the option to use the output as the new input? While working on that I stumbled upon a very satisfying glitch where a wrong normalization caused images to get brighter and turn into what I call Whitewash cartoonization 
+                    <a href="https://t.co/X4yh4Vy3cY" style="color: #1DA1F2; text-decoration: none;">pic.twitter.com/X4yh4Vy3cY</a>
+                  </div>
+                  
+                  <!-- Tweet image preview -->
+                  <div style="border-radius: 12px; overflow: hidden; margin: 12px 0; background: #f8f9fa; border: 1px solid #e1e8ed;">
+                    <div style="padding: 20px; text-align: center; color: #657786; font-size: 14px;">
+                      📸 Image attached to tweet
+                    </div>
+                  </div>
+                  
+                  <!-- Twitter-style actions -->
+                  <div style="display: flex; justify-content: space-between; padding: 12px 0; border-top: 1px solid #e1e8ed; margin-top: 12px;">
+                    <div style="display: flex; gap: 24px;">
+                      <div style="display: flex; align-items: center; gap: 8px; color: #657786; font-size: 14px;">
+                        <span style="font-size: 18px;">💬</span>
+                        <span>Reply</span>
+                      </div>
+                      <div style="display: flex; align-items: center; gap: 8px; color: #657786; font-size: 14px;">
+                        <span style="font-size: 18px;">🔄</span>
+                        <span>Retweet</span>
+                      </div>
+                      <div style="display: flex; align-items: center; gap: 8px; color: #657786; font-size: 14px;">
+                        <span style="font-size: 18px;">❤️</span>
+                        <span>Like</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- View on X button -->
+                <div style="padding: 16px; background: #f8f9fa; border-top: 1px solid #e1e8ed; text-align: center;">
+                  <a href="${artist.externalLink}" target="_blank" style="display: inline-block; padding: 10px 20px; background: #1DA1F2; color: white; text-decoration: none; border-radius: 20px; font-size: 14px; font-weight: 600; transition: background 0.2s;">
+                    View Full Tweet on X ↗
+                  </a>
+                </div>
+              </div>
+            `;
+
+            console.log("Twitter content set successfully");
+          } else {
+            console.log("No embed container found!");
+          }
+        } else {
+          console.log("No Twitter link found for artist:", artist);
+        }
+
+        // Carousel functionality (only if multiple images)
+        if (artist.images.length > 1) {
+          let currentImageIndex = 0;
+          const carouselImage = popup.querySelector("#carousel-image");
+          const indicators = popup.querySelectorAll(".indicator");
+
+          const updateCarousel = (index) => {
+            carouselImage.src = artist.images[index];
+            indicators.forEach((indicator, i) => {
+              indicator.style.background = i === index ? "#333" : "#ccc";
+            });
+            currentImageIndex = index;
+          };
+
+          popup
+            .querySelector("#carousel-prev")
+            .addEventListener("click", () => {
+              const newIndex =
+                currentImageIndex > 0
+                  ? currentImageIndex - 1
+                  : artist.images.length - 1;
+              updateCarousel(newIndex);
+            });
+
+          popup
+            .querySelector("#carousel-next")
+            .addEventListener("click", () => {
+              const newIndex =
+                currentImageIndex < artist.images.length - 1
+                  ? currentImageIndex + 1
+                  : 0;
+              updateCarousel(newIndex);
+            });
+
+          indicators.forEach((indicator, index) => {
+            indicator.addEventListener("click", () => {
+              updateCarousel(index);
+            });
+          });
+        }
+
+        // Close popup handlers
+        const closePopup = () => {
+          overlay.remove();
+          // Remove ESC key listener when popup is closed
+          document.removeEventListener("keydown", handleEscKey);
+        };
+
+        // Handle ESC key press
+        const handleEscKey = (e) => {
+          if (e.key === "Escape") {
+            closePopup();
+          }
+        };
+
+        popup
+          .querySelector(".popup-close")
+          .addEventListener("click", closePopup);
+
+        // Close when clicking outside the popup
+        overlay.addEventListener("click", (e) => {
+          if (e.target === overlay) {
+            closePopup();
+          }
+        });
+
+        // Add ESC key listener
+        document.addEventListener("keydown", handleEscKey);
+      }
+
+      // Function to show curation popup
+      function showCurationPopup() {
+        console.log("showCurationPopup called");
+
+        // Remove existing popup
+        const existingPopup = document.querySelector(".popup-overlay");
+        if (existingPopup) {
+          existingPopup.remove();
+        }
+
+        // Create popup overlay
+        const overlay = document.createElement("div");
+        overlay.className = "popup-overlay";
+
+        // Create popup content
+        const popup = document.createElement("div");
+        popup.className = "popup";
+        popup.style.background =
+          "linear-gradient(rgba(0, 0, 0, 0.44), rgba(0, 0, 0, 0.44)), url('assets/Artists/popup_bkg.jpg')";
+        popup.style.backgroundSize = "cover";
+        popup.style.backgroundPosition = "center";
+
+        // Responsive popup sizing
+        if (isMobile) {
+          popup.style.maxWidth = "95vw";
+          popup.style.maxHeight = "95vh";
+          popup.style.padding = "20px";
+        } else {
+          popup.style.maxWidth = "1200px";
+          popup.style.maxHeight = "900px";
+          popup.style.padding = "50px";
+        }
+        popup.style.boxSizing = "border-box";
+        popup.style.color = "#e6e6e6";
+
+        // Create a subtle grain overlay
+        const grainOverlay = document.createElement("div");
+        grainOverlay.style.position = "absolute";
+        grainOverlay.style.top = "0";
+        grainOverlay.style.left = "0";
+        grainOverlay.style.width = "100%";
+        grainOverlay.style.height = "100%";
+        grainOverlay.style.backgroundImage = 'url("assets/BGpopup_grain.png")';
+        grainOverlay.style.backgroundSize = "300px 300px";
+        grainOverlay.style.backgroundPosition = "center center";
+        grainOverlay.style.backgroundRepeat = "repeat";
+        grainOverlay.style.opacity = "0.15";
+        grainOverlay.style.pointerEvents = "none";
+        grainOverlay.style.zIndex = "1";
+
+        // Add grain overlay to popup
+        popup.appendChild(grainOverlay);
+
+        popup.innerHTML += `
+          <button class="popup-close">&times;</button>
+          <div style="position: relative; z-index: 2;">
+            <h2 style="font-size: 28px; font-weight: bold; color: #e6e6e6; margin-bottom: 25px; font-family: 'IBMPlexMono', monospace;">Adi Karelitz's Curation</h2>
+            <div style="text-align: center; margin-bottom: 30px; position: relative; display: inline-block;">
+              <img src="assets/Artists/Adi Karelitz/Adi Karelitz by Michal Chelbin.jpg" alt="Adi Karelitz by Michal Chelbin" style="max-width: 300px; max-height: 300px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);">
+              <div style="position: absolute; bottom: 10px; left: 10px; color: #e6e6e6; font-family: 'SourceCodePro', monospace; font-size: 11px; background: rgba(0, 0, 0, 0.8); padding: 4px 8px; border-radius: 3px; white-space: nowrap;">© Michal Chelbin</div>
+            </div>
+            
+            <!-- Gallery Carousel -->
+            <div style="margin-top: 40px; margin-bottom: 30px;">
+              <h3 style="font-size: 20px; font-weight: bold; color: #e6e6e6; margin-bottom: 20px; font-family: 'SourceCodePro', monospace; text-align: center;">Gallery</h3>
+              <div id="carousel-container" style="position: relative; width: 100%; height: min(60vh, 400px); display: flex; align-items: center; justify-content: center; perspective: 1000px;">
+                <div id="carousel" style="position: absolute; left: 50%; top: 50%; width: 500px; height: 320px; margin-left: -250px; margin-top: -160px; transform-style: preserve-3d; cursor: grab;">
+                  <!-- Gallery images will be inserted here -->
+                </div>
+              </div>
+            </div>
+            ${generateASCIIDivider()}
+            <div style="color: #e6e6e6; font-family: 'SourceCodePro', monospace; font-size: 16px; line-height: 1.8;">
+              <p style="margin-bottom: 20px;">
+                Memory_Almost_Full, held in Vitrina Gallery as an embassy of the international The Wrong Biennale, explores disruptions as a post-digital aesthetic in the age of the AI revolution. The advent of Artificial Intelligence has challenged our traditional perceptions of human interaction, creativity, and intelligence. With its pervasive use in both thought and creative processes, the line between physical reality and the digital realm is becoming increasingly blurred and more fluid than ever.
+              </p>
+              ${generateASCIIDivider()}
+              <p style="margin-bottom: 20px;">
+                The works adopt a range of mediums and technologies to foreground and linger on the ruptures and connections formed in the conceptual and aesthetic space that unfolds between the human and the technological. Many of them focus on the glitch as a visual and conceptual metaphor for the gaps and fractures that emerge in these interfaces. How do disruptions, malfunctions, errors, and bugs function as formative actions in a "perfect" digital world?
+              </p>
+              ${generateASCIIDivider()}
+              <p style="margin-bottom: 20px;">
+                In his 2017 book, <em>Glitch Art in Theory and Practice: Critical Failures and Post-Digital Aesthetics</em>, Michael Betancourt proposed a theoretical framework that sees the glitch not as a mere technical phenomenon but as a critical aesthetic related to capitalism. Betancourt argued that the glitch serves as a model for a general theory of critical media, exposing the breaking points in modern technological systems. It functions as a moment of revelation, i.e., a moment where the technological system exposes its own vulnerability and inherent imperfection.
+              </p>
+              ${generateASCIIDivider()}
+              <p style="margin-bottom: 0;">
+                The Wrong Biennale is an independent international art biennial; a multicultural and decentralized platform that embraces an open approach, allowing creatives to sidestep the elitist infrastructure of art fairs and present digital art to a global audience. Founded in 2013 by the Spanish artist and curator David Quiles Guilló, The Wrong Biennale is held both online in the digital sphere and in physical locations.
+              </p>
+            </div>
+          </div>
+        `;
+
+        overlay.appendChild(popup);
+        document.body.appendChild(overlay);
+
+        // Create gallery carousel after popup is added to DOM
+        setTimeout(() => {
+          createGalleryCarousel();
+        }, 100);
+
+        // Close popup handlers
+        const closePopup = () => {
+          overlay.remove();
+          document.removeEventListener("keydown", handleEscKey);
+        };
+
+        // Handle ESC key press
+        const handleEscKey = (e) => {
+          if (e.key === "Escape") {
+            closePopup();
+          }
+        };
+
+        popup
+          .querySelector(".popup-close")
+          .addEventListener("click", closePopup);
+
+        // Close when clicking outside the popup
+        overlay.addEventListener("click", (e) => {
+          if (e.target === overlay) {
+            closePopup();
+          }
+        });
+
+        // Add ESC key listener
+        document.addEventListener("keydown", handleEscKey);
+      }
+
+      // Artist data for popups
+      const artistData = {
+        "Anat Saacks.jpg": {
+          name: "Anat Saacks",
+          title: "A Bird to Remember",
+          medium:
+            "Photo, wooden and plexiglass box, stones, digital projection, LLM, 2025",
+          description:
+            "A realistic photo of a bird, found dead at the entrance to the artist's home, stands at the heart of a conversation with an AI-powered language model (LLM), which operates as an emotion- simulating entity that is asked to respond to casual loss. The work underscores the emotional gap between humans and machines: between direct documentation of death and an algorithm that offers what it identifies as emotion, solace, interpretation, and memory.",
+          bio: "Saaks is a graphic designer and visual artist. She is a lecturer at HIT Holon Institute of Technology, the owner of A designstudio for design and branding, as well as a social activist and volunteer at a mental health organization.",
+          images: [
+            "assets/Artists/Anat Saacks/AS02 - anat saacks.jpg",
+            "assets/Artists/Anat Saacks/AS03 - anat saacks.jpg",
+            "assets/Artists/Anat Saacks/AS04 - anat saacks.jpg",
+            "assets/Artists/Anat Saacks/AS05 - anat saacks.jpg",
+            "assets/Artists/Anat Saacks/Anat Saacks.jpg",
+          ],
+        },
+        "Chenn Hearthstone_placeholder.png": {
+          name: "Chenn Hearthstone",
+          title: "Bill of Rights",
+          medium: "ChatGPT, Fooocus, Runway, Illustrator, 2025",
+          description:
+            'Imagine a future world with robots that develop sophisticated emotions and humans upload their consciousness to the digital cloud. What would the concept of "human rights" look like in such a world? The work presents a new bill of rights, created after a deep conversation with ChatGPT about the new complexities of this hypothetical world. The conversation led to the formulation of five basic rights that apply to anyone who exists in any shape or form of life – be it human or mechanical.',
+          bio: "Chenn Hearthstone is a visual artist who started working with digital tools recently, after being diagnosed with a genetic syndrome that affects her ability to rely predominantly on her hands.",
+          images: [
+            "assets/Artists/Chenn Hearthstone/Chenn Hearthstone_placeholder.png",
+          ],
+          videoLink: "https://www.youtube.com/watch?v=dAo9QeZ5zxo",
+        },
+        "Dafna_Sartiel.jpg": {
+          name: "Dafna Sartiel",
+          title: "Something Went Wrong",
+          medium: "Etchings, 2011-2025",
+          description:
+            "An ongoing series of etchings created in different stages since 2011. Each print features an error message etched into the digital memory of that period.",
+          bio: "Dafna Sartiel's artistic practice includes printmaking, engraving, photography, mosaic, and sculpture. She has been working in design for many years, and since 2005 she has been making art, specializing in printmaking and engraving. Her work often explores the tension between the medium to the image and the meaning it holds.",
+          images: [
+            "assets/Artists/Dafna Sartiel/Dafna_Sartiel.jpg",
+            "assets/Artists/Dafna Sartiel/2011_RESTART_Dafna_Sartiel_10_20cm.jpg",
+            "assets/Artists/Dafna Sartiel/2011_RESTART_Dafna_Sartiel_Frame_32_39.jpg",
+            "assets/Artists/Dafna Sartiel/2012_LOADING_Dafna_Sartiel_Frame_34_33.jpg",
+            "assets/Artists/Dafna Sartiel/2012_LOADING_Dafna_Sartiel.jpg",
+            "assets/Artists/Dafna Sartiel/2015_AW_SNAP_Dafna_Sartiel_frame.jpg",
+            "assets/Artists/Dafna Sartiel/2015_FILE_NOT_FOUND_Dafna_Sartiel_5x5cm.jpg",
+          ],
+        },
+        "EitanBartal_placeholder.png": {
+          name: "Eitan Bartal",
+          title: "Carnosynthetica Biofabricata",
+          medium:
+            "3D printing, silicone, polyurethane, Perspex, vibration motors, 2025",
+          description:
+            'A speculatively bioengineered engineered organism developed through the integration of advanced synthetic biology and AI algorithms. The "animal/organism" was specifically designed for the efficient and sustainable production of high-quality protein for human consumption.',
+          bio: "Eitan Bartal is an artist, designer, and senior lecturer at HIT Holon Institute of Technology. His works explore the urban space as an arena where sociopolitical power dynamics are reenacted while critically examining formative mass culture imagery and symbols.",
+          images: ["assets/Artists/Eitan Bartal/EitanBartal_placeholder.png"],
+          videoLink: "https://www.youtube.com/shorts/PSR8BFQ6reg",
+        },
+        "Eyal Datz_placeholder.png": {
+          name: "Eyal Datz",
+          title: "Every Light Has Its Shadow",
+          medium: "Video (9 min.), 2024",
+          description:
+            "In 2023, an AI-powered robot in the likeness of Nicolaus Copernicus was installed at Warsaw's Copernicus Science Centre. Copernicus's facial expressions, the pauses in his speech pattern, and his pensive gaze were all a part of an aesthetic designed to give the robot a human semblance. The video documents the robot's interactions with museum visitors and how the disruption is aimed at removing barriers between the human and the artificial.",
+          bio: 'Eyal Datz is a documentary filmmaker whose projects have been featured by major television channels and screened at international festivals. He recently created the web series "Press Play" for Kan 11, exploring the interface between gaming, culture, and advanced technologies such as VR and AR, while examining their impact on contemporary society and culture.',
+          images: ["assets/Artists/Eyal Datz/Eyal Datz_placeholder.png"],
+          videoLink: "https://vimeo.com/842264728",
+        },
+        "Eyal Yehowa Gruss_placeholder.png": {
+          name: "Eyal Yehowa Gruss",
+          title: "And the boy was happy",
+          medium: "Code generated animation, 2025",
+          description:
+            "Gruss inadvertently developed an animation technique based on an image-to-image generator. Due to a glitchy feedback loop, the system brightened the images fed to it and the figures in them, and the model seemed to interpret the images as drawings on paper. This generated an image that evolves semantically and, with a little guidance, lends itself to storytelling.",
+          bio: "Eyal Yehowa Gruss is an artist, programmer, poet, algorithm researcher, and computational creativity lecturer at HIT Holon Institute of Technology. He creates interactive installations, multimedia shows, constrained and algorithmic poetry, and code art.",
+          images: [
+            "assets/Artists/Eyal Yehowa Gruss/Eyal Yehowa Gruss_placeholder.png",
+          ],
+          externalLink: "https://x.com/eyaler/status/1848106256860602530",
+        },
+
+        "EyalGruss.png": {
+          name: "Eyal Yehowa Gruss",
+          title: "And the boy was happy",
+          medium: "Code generated animation, 2025",
+          description:
+            "Gruss inadvertently developed an animation technique based on an image-to-image generator. Due to a glitchy feedback loop, the system brightened the images fed to it and the figures in them, and the model seemed to interpret the images as drawings on paper. This generated an image that evolves semantically and, with a little guidance, lends itself to storytelling.",
+          bio: "Eyal Yehowa Gruss is an artist, programmer, poet, algorithm researcher, and computational creativity lecturer at HIT Holon Institute of Technology. He creates interactive installations, multimedia shows, constrained and algorithmic poetry, and code art.",
+          images: ["assets/Artists/Eyal Yehowa Gruss/EyalGruss.png"],
+          videoLink: "https://www.youtube.com/watch?v=M8qbfkifG84",
+        },
+
+        "Gilad Fridman.jpg": {
+          name: "Gilad Friedman",
+          title: "Artifact.obj",
+          medium: "3D printing, code based digital printing, 2025",
+          description:
+            'The work offers a speculative interpretation of "artifacts" from our time in the future. Friedman presents a 3D artifact that was printed from a digital file. After being subjected to a corruption process, code extracted from the file was used for programming a unique pattern. Friedman used this software to plot out the printed pattern of the rug displayed next to the object, as its corrupt offspring.',
+          bio: "Gilad Friedman is a multidisciplinary artist who works with crafts and traditional paintings as well as classic industrial design and CAD software. He employs technology as a design and experience generating tool, experimenting with parametric and generative design.",
+          images: ["assets/Artists/Gilad Friedman/Gilad Fridman.jpg"],
+        },
+        "Haya Sheffer.jpg": {
+          name: "Haya Sheffer",
+          title: "85% Human",
+          medium: "Pencil on paper, digital photos, 2023-2025",
+          description:
+            "A collection of photos from CCTV footage taken in a mountainous rural area is presented alongside a large-scale drawing based on the same images. The extraction of the images from their original context and the unexpected juxtaposition of CCTV and AI-based image recognition with wild nature create an unexpected glitch of a satirical, surprising, and critical narrative. The research was supported by the UKRI – UK Research and Innovation.",
+          bio: "Sheffer is a doctoral researcher who focuses on advanced technologies for personal use, the power they hold, and their impact on the individual, the perception of the self, and society.",
+          images: [
+            "assets/Artists/Haya Sheffer/Haya Sheffer.jpg",
+            "assets/Artists/Haya Sheffer/Sheffer-80_ - Haya Sheffer (1).jpg",
+            "assets/Artists/Haya Sheffer/Sheffer-80_ - Haya Sheffer.jpg",
+            "assets/Artists/Haya Sheffer/Sheffer-80_5 - Haya Sheffer.jpg",
+            "assets/Artists/Haya Sheffer/Sheffer-80_6 - Haya Sheffer.jpg",
+            "assets/Artists/Haya Sheffer/Screenshot_20250728_114622_WhatsApp.jpg",
+          ],
+        },
+        "Naama Steinbock.jpg": {
+          name: "Naama Steinbock",
+          title: "Kimkum",
+          medium: "Pottery, clay, porcelain, 2025",
+          description:
+            "The project examines the teapot as a cultural, formal, and functional object by taking it apart and compiling an archive of handmade ceramic variations. In her exploration of craft, Steinbock embraces the labor-intensive truth of the physical process set against a fast-paced and fickle digital world. The project started as part of the Benyamini Contemporary Ceramics Center residency program.",
+          bio: "Naama Steinbock is a product designer, partner at Reddish Studio, and professor in the Department of Industrial Design at HIT Holon Institute of Technology.",
+          images: [
+            "assets/Artists/Naama Steinbock/Naama Steinbock.jpg",
+            "assets/Artists/Naama Steinbock/IMG_64631.jpg",
+            "assets/Artists/Naama Steinbock/IMG_64671.jpg",
+            "assets/Artists/Naama Steinbock/IMG_65441.jpg",
+            "assets/Artists/Naama Steinbock/IMG_65551.jpg",
+            "assets/Artists/Naama Steinbock/IMG_65721.jpg",
+            "assets/Artists/Naama Steinbock/IMG_65791 (1).jpg",
+            "assets/Artists/Naama Steinbock/IMG_66041.jpg",
+          ],
+        },
+        "Oded Ezer_placeholder.png": {
+          name: "Oded Ezer",
+          title: "Preloader #1",
+          medium: "Animated GIF, 2015",
+          description:
+            "The work presents a visual glitch of a cinematic scene that left an indelible mark on cultural consciousness and the collective unconscious. The Preloader symbol, a universal icon of loading and buffering, is embedded in the image at the exact moment it is expected to be revealed, transforming the delay into a political practice. Through a simple editing action, the work thwarts not only the viewer's expectation, but also the cultural structure of visual memory.",
+          bio: "Ezer is a typographer, type designer, conceptual artist, and lecturer at HIT Holon Institute of Technology. He examines the role visual culture plays in technology and human communication and has presented speculative projects and artworks at venues like MoMA in New York and the V&A in London.",
+          images: ["assets/Artists/Oded Ezer/Oded Ezer_placeholder.png"],
+          videoLink: "https://vimeo.com/187967588",
+        },
+        "ofir_liberman.jpg": {
+          name: "Ofir Liberman",
+          title: "Ditaplot Dreams 1,2,3",
+          medium: "Pen plotter printing, dedicated software, 2025",
+          description:
+            "Three prints documenting Liberman's shamanic journeys during his initiation process into the Toltec (pre-Columbian) tradition. The fragments of these journeys were captured using automatic writing, which Liberman then converted into prompts, digitally reducing them using a dedicated software he created for this project. The final prints were printed using a pen plotter. Thus, each journey passed through several steps – from the shamanic experience through algorithmic processing to the eventual return to concrete reality.",
+          bio: "Lieberman is an educator, designer, and artist who works in the intersection of art, research, and technology. His work combines UX design, interactive systems development, and artistic exploration of coding languages and algorithms.",
+          images: [
+            "assets/Artists/Ofir Liberman/ofir_liberman.jpg",
+            "assets/Artists/Ofir Liberman/IMG_1582A.jpg",
+            "assets/Artists/Ofir Liberman/IMG-20250626-WA0022A.jpg",
+          ],
+        },
+        "Rony Ginosar.jpg": {
+          name: "Rony Ginosar",
+          title: "Emergence",
+          medium: "Digital printing and code, 2022",
+          description:
+            'Ordinarily, we do not stop to dwell on errors. But sometimes, they hold a special beauty. The work presents a compilation of errors, or as they are commonly called: "bugs." The only difference between these photos taken with a smartphone camera and a regular photo is a bug in the camera\'s code. This is not a psychedelic painting or design; it is also not the result of deliberate composition or color choice. This is a spontaneous photograph that exposes the beauty of an error.',
+          bio: "Rony Ginosar is a designer, algorithm researcher, and lecturer at HIT Holon Institute of Technology. She studied visual communication and computer science, with a focus on computer vision (CV), particularly typography and the intersections of design and coding in both practical and research aspects. Her work explores Visual Algorithms, with a specialization in Hebrew typography.",
+          images: [
+            "assets/Artists/Rony Ginosar/Rony Ginosar.jpg",
+            "assets/Artists/Rony Ginosar/1_igal_hit_5.jpg",
+            "assets/Artists/Rony Ginosar/4_naomi_3.jpg",
+            "assets/Artists/Rony Ginosar/extra_igal4.jpg",
+            "assets/Artists/Rony Ginosar/עותק של 6_piepsh_1.jpg",
+          ],
+        },
+        "fbm_b134006708485641932.png": {
+          name: "Shaul Tzemach",
+          title: "Brownian Fluctuation",
+          medium: "Interactive generative animation, 2025",
+          description:
+            "Shaul Tzemach creates a generative environment of visual noise based on the random motion of particles (known as Brownian motion). The viewer's movements merge with the work as a fluid algorithmic convergence, while the structure of primary forms starts to take shape and crystallize out of the disorder of the universe.",
+          bio: "Starting out as a visual artist, Tzemach works with new media, kinetic art, interactive art, real-time generative art, video mapping, and 3D projections. His interdisciplinary works combine different methods in an exploration of themes like becoming, transformation, duration, and the growth of forms.",
+          images: [
+            "assets/Artists/Shaul Tzemach/fbm_b134006708485641932.png",
+            "assets/Artists/Shaul Tzemach/fbm_b134006708505554427.png",
+            "assets/Artists/Shaul Tzemach/fbm_b134006708525704596.png",
+          ],
+          videoLink: "https://vimeo.com/1114683961",
+        },
+        "Yoav Ruda_placeholder.png": {
+          name: "Yoav Ruda",
+          title: "The Double-slit Bug",
+          medium: "Video (4:25 min.), 2025",
+          description:
+            "Ruda considers the double-slit experiment – which tests whether radiation behaves like a wave or like particles – to be the scientific discovery that fundamentally undermines our perception of reality more than any other experiment. His audiovisual collage, based on an original poetic text, captures the uneasy feeling one gets after realizing the full implications of this experiment.",
+          bio: "Ruda works in a range of mediums, including video, film, photography, and digital art. His photography and video works have been exhibited in Israel and abroad, he has created original videos for live concerts of top Israeli musicians, and he has recently made a series of poetry slam-based videos.",
+          images: ["assets/Artists/Yoav Ruda/Yoav Ruda_placeholder.png"],
+          videoLink: "https://www.youtube.com/watch?v=Z6C4aO8_IJ8",
+        },
+        "yonatan ben-simhon.jpeg": {
+          name: "Yonatan Ben-Simhon and Mattan Tenne",
+          title: "Deep Hate Machine",
+          medium: "PC and printer, 2025",
+          description:
+            "Deep Hate Machine was originally introduced in 2013 as a machine with low self-esteem that scours Twitter, detecting and printing out expressions of anger directed at machines. By 2025, the deep hate machine has evolved and expanded its operations to include generative artificial intelligence, and the texts it prints out are sentiments on the only thing that interests it: The machine problem.",
+          bio: "Yonatan Ben-Simhon and Mattan Tenne are AI professionals and artists. The two met at AOL, as algorithm engineers specialized in machine learning and natural language analysis, where they discovered their love of language models. Using machines and AI as their medium of choice, they expose the flaws in the machine and in the human estimation of its abilities.",
+          images: [
+            "assets/Artists/Yonatan Ben-Simhon and Mattan Tenne/yonatan ben-simhon.jpeg",
+          ],
+        },
+        "Yuval Keshet.JPG": {
+          name: "Yuval Keshet",
+          title: "Simulacrum",
+          medium: "Photography, inkjet print, 2021",
+          description:
+            "The public space is inundated with images, with billboards and ads posted around construction sites and featured on passing trucks. Sometimes these look like glimpses of other realities within the one in which we live, and it seems that with the right framing, multiple realities can be flattened and fused together.",
+          bio: "Yuval Keshet is a creative and visual artist who combines social and cultural research and practice in the broad field of visual and material culture.",
+          images: [
+            "assets/Artists/Yuval Keshet/Yuval Keshet.JPG",
+            "assets/Artists/Yuval Keshet/יובל_קשת_30_40.jpg",
+            "assets/Artists/Yuval Keshet/יובל_קשת_30_40A.jpg",
+          ],
+        },
+      };
+
+      // Click/tap handler for Three.js images
+      function onImageClick(event) {
+        console.log("Three.js canvas clicked/tapped!", event.type);
+
+        // Calculate mouse position in normalized device coordinates
+        const rect = renderer.domElement.getBoundingClientRect();
+        mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+        mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+        console.log("Mouse position:", mouse.x, mouse.y);
+
+        // Update raycaster with camera and mouse position
+        raycaster.setFromCamera(mouse, camera);
+
+        // Get intersected objects
+        const intersects = raycaster.intersectObjects(imagePlanes);
+        console.log("Intersected objects:", intersects.length);
+
+        if (intersects.length > 0) {
+          const clickedObject = intersects[0].object;
+          console.log("Clicked object:", clickedObject.userData);
+
+          // Check if this image is clickable
+          if (clickedObject.userData.isClickable) {
+            console.log("Image is clickable!");
+            const artist = clickedObject.userData.artist;
+            const imageName = artist.path.split("/").pop();
+            console.log("Full artist path:", artist.path);
+            console.log("Extracted image name:", imageName);
+            console.log("Available artist data keys:", Object.keys(artistData));
+
+            // Find the artist data
+            const artistInfo = artistData[imageName];
+            console.log("Artist info found:", artistInfo);
+            if (artistInfo) {
+              console.log("Opening popup for:", artistInfo.name);
+              showArtistPopup(artistInfo);
+            } else {
+              console.log("No artist info found for:", imageName);
+            }
+          } else {
+            console.log("Image is not clickable");
+          }
+        } else {
+          console.log("No objects intersected");
+        }
+      }
+
+      // Preload all images in parallel for faster loading
+      function preloadImages() {
+        const loadPromises = artistImages.map((artist) => {
+          return new Promise((resolve, reject) => {
+            const texture = textureLoader.load(
+              artist.path,
+              (loadedTexture) => {
+                // Optimize texture settings for better performance
+                loadedTexture.generateMipmaps = false;
+                loadedTexture.minFilter = THREE.LinearFilter;
+                loadedTexture.magFilter = THREE.LinearFilter;
+                loadedTexture.format = THREE.RGBAFormat;
+                loadedTexture.flipY = true;
+
+                resolve({ artist, texture: loadedTexture });
+              },
+              undefined,
+              (error) => {
+                console.warn(`Failed to load image: ${artist.path}`, error);
+                reject(error);
+              }
+            );
+          });
+        });
+
+        return Promise.all(loadPromises);
+      }
+
+      // Function to create ASCII frame texture with image
+      function createASCIIFrameTexture(imageTexture, artistName) {
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+
+        // Set canvas size with padding for ASCII frame
+        const padding = 20; // Space for frame
+        const textHeight = 25; // Space for text above frame
+        const standardImageWidth = 400; // Fixed width for all images
+        const imageWidth = imageTexture.image.width;
+        const imageHeight = imageTexture.image.height;
+
+        // Calculate proportional height based on standard width
+        const proportionalImageHeight =
+          (imageHeight / imageWidth) * standardImageWidth;
+
+        canvas.width = standardImageWidth + padding * 2;
+        canvas.height = proportionalImageHeight + padding * 2 + textHeight;
+
+        // Draw text above the frame (white, monospace font)
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "bold 20px IBMPlexMono, monospace";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(`[*] ${artistName}`, canvas.width / 2, textHeight / 2);
+
+        // ASCII frame coordinates
+        const frameX = padding;
+        const frameY = textHeight;
+        const frameWidth = standardImageWidth;
+        const frameHeight = proportionalImageHeight;
+
+        // Corner brackets removed
+
+        // Draw the actual image inside the frame
+        ctx.drawImage(
+          imageTexture.image,
+          frameX,
+          frameY,
+          frameWidth,
+          frameHeight
+        );
+
+        return canvas;
+      }
+
+      // Create all image planes after preloading
+      preloadImages()
+        .then((loadedTextures) => {
+          loadedTextures.forEach(({ artist, texture }) => {
+            // Create ASCII frame with image
+            const framedCanvas = createASCIIFrameTexture(texture, artist.name);
+
+            // Create texture from the framed canvas
+            const framedTexture = new THREE.CanvasTexture(framedCanvas);
+            framedTexture.generateMipmaps = false;
+            framedTexture.minFilter = THREE.LinearFilter;
+            framedTexture.magFilter = THREE.LinearFilter;
+
+            // Calculate aspect ratio from framed canvas
+            const aspectRatio = framedCanvas.width / framedCanvas.height;
+            const baseHeight = 3.5; // Slightly larger to accommodate frame
+            const width = baseHeight * aspectRatio;
+
+            // Create geometry with proper aspect ratio
+            const geometry = new THREE.PlaneGeometry(width, baseHeight);
+
+            const material = new THREE.MeshBasicMaterial({
+              map: framedTexture,
+              transparent: true,
+              opacity: 0.95,
+              side: THREE.DoubleSide,
+              alphaTest: 0.1, // Optimize transparency rendering
+            });
+
+            const plane = new THREE.Mesh(geometry, material);
+
+            // Random position in 3D space - adjust for mobile
+            const spread = isMobile ? 20 : 30; // Smaller spread on mobile
+            const heightSpread = isMobile ? 15 : 20;
+            plane.position.set(
+              (Math.random() - 0.5) * spread,
+              (Math.random() - 0.5) * heightSpread,
+              (Math.random() - 0.5) * spread
+            );
+
+            // Ensure images render in front of lines
+            plane.renderOrder = 1;
+
+            // Store reference for billboard behavior and artist data
+            plane.userData = {
+              isBillboard: true,
+              artist: artist,
+              isClickable: isClickableImage(artist.path),
+            };
+            imagePlanes.push(plane);
+            scene.add(plane);
+          });
+
+          // Create connections after all images are loaded
+          createConnections();
+
+          // Trigger fade-in effect once everything is loaded
+          setTimeout(() => {
+            renderer.domElement.classList.add("fade-in");
+          }, 100); // Small delay to ensure everything is rendered
+        })
+        .catch((error) => {
+          console.error("Error loading images:", error);
+          // Still trigger fade-in even if some images fail to load
+          setTimeout(() => {
+            renderer.domElement.classList.add("fade-in");
+          }, 100);
+        });
+
+      // Function to create connections between images (optimized)
+      function createConnections() {
+        // Reduce number of connections for better performance - more aggressive on mobile
+        const maxConnections = isMobile
+          ? Math.min(imagePlanes.length * 0.3, 10)
+          : Math.min(imagePlanes.length * 0.5, 20); // Limit total connections
+        let connectionCount = 0;
+
+        for (
+          let i = 0;
+          i < imagePlanes.length && connectionCount < maxConnections;
+          i++
+        ) {
+          // Each image connects to 1-2 other images (reduced from 1-3)
+          const numConnections = Math.floor(Math.random() * 2) + 1;
+          const connectedIndices = new Set();
+
+          // Ensure we don't connect to the same image
+          while (
+            connectedIndices.size < numConnections &&
+            connectedIndices.size < imagePlanes.length - 1 &&
+            connectionCount < maxConnections
+          ) {
+            const randomIndex = Math.floor(Math.random() * imagePlanes.length);
+            if (randomIndex !== i) {
+              connectedIndices.add(randomIndex);
+            }
+          }
+
+          // Create lines to connected images
+          connectedIndices.forEach((targetIndex) => {
+            if (connectionCount >= maxConnections) return;
+
+            const startPos = imagePlanes[i].position;
+            const endPos = imagePlanes[targetIndex].position;
+
+            // Create thick dashed line by using multiple parallel lines
+            const direction = new THREE.Vector3().subVectors(endPos, startPos);
+            const length = direction.length();
+            direction.normalize();
+
+            // Create perpendicular vector for thickness
+            const perpendicular = new THREE.Vector3(0, 1, 0);
+            const cross = new THREE.Vector3()
+              .crossVectors(direction, perpendicular)
+              .normalize();
+
+            // Create 3 parallel lines for thickness
+            for (let i = -1; i <= 1; i++) {
+              const offset = cross.clone().multiplyScalar(i * 0.03);
+              const offsetStart = startPos.clone().add(offset);
+              const offsetEnd = endPos.clone().add(offset);
+
+              const points = [offsetStart, offsetEnd];
+
+              const geometry = new THREE.BufferGeometry().setFromPoints(points);
+
+              // Create line material with thick green dashed appearance
+              const material = new THREE.LineDashedMaterial({
+                color: 0x00ff00,
+                dashSize: 0.25,
+                gapSize: 0.05,
+                depthTest: true,
+                depthWrite: false,
+              });
+
+              const line = new THREE.Line(geometry, material);
+              line.renderOrder = -10; // Render far behind other objects
+              line.frustumCulled = true;
+
+              // Compute line distances for dashed material
+              line.computeLineDistances();
+
+              connectionLines.push(line);
+              scene.add(line);
+            }
+            connectionCount++;
+          });
+        }
+      }
+
+      // Camera position - adjust for mobile
+      camera.position.z = isMobile ? 20 : 25;
+
+      // Simplified orbit controls with mobile optimizations
+      const controls = new THREE.OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+      controls.dampingFactor = isMobile ? 0.1 : 0.05; // Faster damping on mobile
+      controls.enableZoom = true;
+      controls.enablePan = !isMobile; // Disable pan on mobile for better touch experience
+      controls.enableRotate = true;
+
+      // Adjust controls for mobile
+      if (isMobile) {
+        controls.touches = {
+          ONE: THREE.TOUCH.ROTATE,
+          TWO: THREE.TOUCH.DOLLY_PAN,
+        };
+        controls.enableKeys = false; // Disable keyboard controls on mobile
+      }
+
+      // Performance optimization variables
+      const frustum = new THREE.Frustum();
+      const cameraMatrix = new THREE.Matrix4();
+
+      // Rotation animation variables - adjust for mobile
+      const rotationSpeed = isMobile ? 0.0001 : 0.0003; // Slower rotation on mobile
+
+      // Floating ASCII elements system
+      let asciiElements = [];
+      let asciiTime = 0;
+      let asciiCanvas, asciiCtx;
+
+      // ASCII patterns
+      const asciiPatterns = [
+        // Owl
+        [
+          "       o        o",
+          "  ___   \\      /   ___",
+          ".` __`-. \\/\\/\\/ .-'__ '.",
+          "( /  \\  \\/(..)\/  /  \\ )",
+          "\\ \\ O ) ( (oo) ) ( O / /",
+          " \\ \\_/ __>----<__ \\_/ /",
+          '  ".   >_      _<   ."',
+          "    >   /      \\   <",
+          "   / /( \\      / )\\ \\",
+          '  / `" _/ ____ \\_ "\' \\',
+          "  \\_.-` A/  & \\A '-._/",
+        ],
+
+        // Decorative face
+        [
+          ".==-.                   .-==.",
+          " \\()8`-._  `.   .'  _.-'8()/",
+          ' (88"   ::.  \\./  .::   "88)',
+          "  \\_.'`-::::.(#).::::-'`._/",
+          "    `._... .q(_)p. ..._'",
+          '      ""-..-.\'|=|`-..-""',
+          '      .""\' .\'|=|`. `"".',
+          "    ,':8(o)./|=|\\.(o)8:`.",
+          "   (O :8 ::/ \\_/ \\:: 8: O)",
+          "    \\O `::/       \\::' O/",
+          '     ""--\'         `--""',
+        ],
+
+        // Simple face
+        [
+          "    .----.   @   @",
+          '   / .-"-.\`.  \\v/',
+          "   | | '\\ \\ \\_/ )",
+          " ,-\\ `-.' /.'  /",
+          "'---`----'----'",
+        ],
+
+        // Caterpillar
+        [
+          "    \\_/-.--.--.--.--.--.",
+          '    (")__)__)__)__)__)__)',
+          '     ^ "" "" "" "" "" ""',
+        ],
+
+        // Simple stick figure
+        ['\\(")/', "-( )-", "/(_)\\"],
+
+        // Cat
+        [
+          "    =/\\                 /\\=",
+          "    / \\._   (\\_/)   _./\\",
+          "   / .''._'--(o.o)--'_.''\\",
+          "  /.' _/ |`=/ \" \\=`| \\_ `.\\",
+          " /` .' \\;-,'\\___/',-;/ `. '\\",
+          "/.-'      `\\(-V-)/`       `-.\\",
+          '`            "   "',
+        ],
+
+        // Pig
+        [
+          "             ___",
+          '          .="   "=._.---.',
+          '        ."         c  Y p',
+          "       /   ,       `.  w_/",
+          "       |   -.   /     /",
+          " _,..._|      )_-\\ \\_=.\\",
+          '`-....- `------))) =- " ',
+        ],
+
+        // Car
+        [
+          "                                  .-.",
+          "     (___________________________()6 `-,",
+          '     (   ______________________   / "`',
+          "     //\\\\                      //\\\\",
+          '     "" ""                     "" ""',
+        ],
+
+        // Building/Structure
+        [
+          "   /|~|\\",
+          "  / |=| \\",
+          " /  | |  \\",
+          "|   | |   |",
+          "|   | |   |",
+          "|   | |   |",
+          "|   |=|   |",
+          "|  //A\\\\  |",
+          "| /// \\\\\\ |",
+          "|///   \\\\\\|",
+          "`         `",
+        ],
+
+        // Rocket/Ship
+        [
+          "               .",
+          "                    / V\\",
+          "                  / `  /",
+          "                 <<   |",
+          "                 /    |",
+          "               /      |",
+          "             /        |",
+          "           /    \\  \\ /",
+          "          (      ) | |",
+          "  ________|   _/_  | |",
+          "<__________\\______)\\__)",
+        ],
+
+        // Cat face
+        [
+          "                  ,,__",
+          "        ..  ..   / o._)                   .---.",
+          "       /--'/--\\  \\-'||        .----.    .'     '.",
+          "      /        \\_/ / |      .'      '..'         '-.",
+          "    .'\\  \\__\\  __.'.'     .'          i-._",
+          "      )\\ |  )\\ |      _.'",
+          "     // \\\\ // \\\\",
+          "    ||_  \\\\|_  \\\\_",
+          "    '--' '--'' '--''",
+        ],
+
+        // Mouse
+        ["    |\\__/,|   (`\\", "  _.|o o  |_   ) )", "-(((---(((--------"],
+
+        // Fish
+        ["  _      _      _", ">(.)__ <(.)__ =(.)__", " (___/  (___/  (___/"],
+
+        // Dragon
+        [
+          "          ,  ,",
+          "          \\\\ \\\\",
+          "          ) \\\\ \\\\    _p_",
+          "          )^\\\\)\\)\\)  /  *\\",
+          "           \\_|| || / /^`-'",
+          "  __       -\\ \\\\--/ /",
+          "<'  \\\\___/   ___. )'",
+          "     `====\\ )___/\\\\",
+          '          //     `"',
+          "          \\\\    /  \\",
+          '          `"',
+        ],
+
+        // Face
+        [
+          "            ;,'",
+          "     _o_    ;:;'",
+          " ,-.'---`.__ ;",
+          "((j`=====',-'",
+          " `-\\     /",
+          "    `-='",
+        ],
+
+        // Mail/Envelope
+        [
+          "           _",
+          "          |E]",
+          "        .-|=====-.",
+          "        | | mail |",
+          "     ___|________|",
+          "            ||",
+          "            ||",
+          "            ||   www",
+          "     ,;,    ||   )_(,;;;,",
+          "     <_>  \\ ||   \\|/ \\_/",
+          "     \\|/  \\\\||  \\\\|   |//",
+          "_jgs_\\|//_\\\\|///_\\V/_\\|//__",
+        ],
+      ];
+
+      // Initialize ASCII elements system
+      function initASCIIElements() {
+        asciiCanvas = document.createElement("canvas");
+        asciiCanvas.id = "ascii-canvas";
+        asciiCanvas.style.position = "fixed";
+        asciiCanvas.style.top = "0px";
+        asciiCanvas.style.left = "0px";
+        asciiCanvas.style.width = "100vw";
+        asciiCanvas.style.height = "100vh";
+        asciiCanvas.style.pointerEvents = "none";
+        asciiCanvas.style.zIndex = "99999";
+        asciiCanvas.style.backgroundColor = "rgba(255, 0, 0, 0.3)"; // More visible red tint
+        asciiCanvas.style.border = "10px solid yellow";
+        asciiCanvas.style.boxSizing = "border-box";
+
+        // Try to add it as the last child of body (on top of everything)
+        document.body.appendChild(asciiCanvas);
+        console.log("ASCII canvas added to DOM:", asciiCanvas);
+        console.log("Canvas position:", asciiCanvas.style.position);
+        console.log("Canvas z-index:", asciiCanvas.style.zIndex);
+
+        asciiCtx = asciiCanvas.getContext("2d");
+        console.log("ASCII context created:", asciiCtx);
+        resizeASCIICanvas();
+        console.log(
+          "ASCII canvas resized to:",
+          asciiCanvas.width,
+          "x",
+          asciiCanvas.height
+        );
+
+        // Test canvas context immediately
+        console.log("Testing canvas context...");
+        asciiCtx.fillStyle = "red";
+        asciiCtx.fillRect(0, 0, 100, 100);
+        console.log("Drew test rectangle");
+
+        // Check if canvas has any content
+        const imageData = asciiCtx.getImageData(0, 0, 10, 10);
+        console.log("Canvas image data:", imageData.data.slice(0, 20));
+
+        // Create initial ASCII elements
+        for (let i = 0; i < 3; i++) {
+          createASCIIElement();
+        }
+
+        // Add a test element in the center to verify visibility
+        let testElement = {
+          pattern: ["TEST", "ASCII"],
+          x: window.innerWidth / 2,
+          y: window.innerHeight / 2,
+          vx: 0,
+          vy: 0,
+          rotation: 0,
+          rotationSpeed: 0,
+          scale: 1,
+          alpha: 255,
+          timeOffset: 0,
+          life: 0,
+          maxLife: 1000,
+        };
+        asciiElements.push(testElement);
+
+        console.log(
+          "ASCII elements system initialized with",
+          asciiElements.length,
+          "elements"
+        );
+
+        // Immediate test - draw something very obvious
+        console.log(
+          "Canvas dimensions:",
+          asciiCanvas.width,
+          "x",
+          asciiCanvas.height
+        );
+        console.log("Context:", asciiCtx);
+
+        // Clear the canvas first
+        asciiCtx.clearRect(0, 0, asciiCanvas.width, asciiCanvas.height);
+
+        // Draw a big red rectangle first
+        asciiCtx.fillStyle = "rgba(255, 0, 0, 0.8)";
+        asciiCtx.fillRect(50, 50, 300, 100);
+
+        // Then draw text
+        asciiCtx.fillStyle = "rgba(255, 255, 255, 1)"; // White text
+        asciiCtx.font = "bold 32px Arial";
+        asciiCtx.textAlign = "center";
+        asciiCtx.textBaseline = "middle";
+        asciiCtx.fillText(
+          "CAN YOU SEE THIS?",
+          asciiCanvas.width / 2,
+          asciiCanvas.height / 2
+        );
+
+        // Draw another rectangle in center
+        asciiCtx.fillStyle = "rgba(0, 255, 0, 0.8)";
+        asciiCtx.fillRect(
+          asciiCanvas.width / 2 - 100,
+          asciiCanvas.height / 2 - 50,
+          200,
+          100
+        );
+
+        console.log("Drew immediate test text and rectangle");
+
+        // Test div overlay removed - clean interface
+
+        // Don't create initial ASCII elements - start clean
+        console.log("ASCII elements system initialized - starting clean");
+
+        // Test if canvas is actually visible
+        setTimeout(() => {
+          const canvas = document.getElementById("ascii-canvas");
+          if (canvas) {
+            console.log("Canvas found in DOM:", canvas);
+            console.log(
+              "Canvas computed style:",
+              window.getComputedStyle(canvas)
+            );
+            console.log(
+              "Canvas offset:",
+              canvas.offsetWidth,
+              "x",
+              canvas.offsetHeight
+            );
+          } else {
+            console.log("ERROR: Canvas not found in DOM!");
+          }
+        }, 1000);
+      }
+
+      function resizeASCIICanvas() {
+        asciiCanvas.width = window.innerWidth;
+        asciiCanvas.height = window.innerHeight;
+      }
+
+      function createASCIIElement() {
+        let pattern =
+          asciiPatterns[Math.floor(Math.random() * asciiPatterns.length)];
+        let element = {
+          pattern: pattern,
+          x: window.innerWidth / 2 + Math.random() * 200 - 100,
+          y: window.innerHeight / 2 + Math.random() * 200 - 100,
+          vx: (Math.random() - 0.5) * 0.5,
+          vy: (Math.random() - 0.5) * 0.5,
+          rotation: 0,
+          rotationSpeed: (Math.random() - 0.5) * 0.02,
+          scale: Math.random() * 0.4 + 0.8,
+          alpha: Math.random() * 100 + 155,
+          timeOffset: Math.random() * 100,
+          life: 0,
+          maxLife: Math.random() * 300 + 200,
+        };
+        asciiElements.push(element);
+      }
+
+      function updateASCIIElements() {
+        asciiTime += 0.02;
+
+        // Check network position to determine if ASCII elements should appear
+        let networkPosition = getNetworkPosition();
+        let shouldShowASCII =
+          networkPosition.x < -0.1 && networkPosition.y < -0.1;
+
+        // Debug: log position occasionally
+        if (Math.random() < 0.001) {
+          console.log(
+            "Network position:",
+            networkPosition,
+            "Should show ASCII:",
+            shouldShowASCII
+          );
+        }
+
+        if (shouldShowASCII && asciiElements.length < 8) {
+          // Create new ASCII elements from center to right up
+          if (Math.random() < 0.1) {
+            createASCIIElement();
+            console.log("Created ASCII element! Total:", asciiElements.length);
+          }
+        }
+
+        // Also create elements occasionally regardless of position for testing
+        if (asciiElements.length < 3 && Math.random() < 0.01) {
+          createASCIIElement();
+          console.log(
+            "Created test ASCII element! Total:",
+            asciiElements.length
+          );
+        }
+
+        // Update existing elements
+        for (let i = asciiElements.length - 1; i >= 0; i--) {
+          let element = asciiElements[i];
+          element.life++;
+
+          // No rotation
+
+          // Remove old elements
+          if (element.life > element.maxLife) {
+            asciiElements.splice(i, 1);
+            continue;
+          }
+
+          // Update position
+          element.x += element.vx;
+          element.y += element.vy;
+
+          // Add gentle floating motion
+          let breathX = Math.sin(asciiTime + element.timeOffset) * 2;
+          let breathY = Math.cos(asciiTime + element.timeOffset * 0.7) * 1;
+
+          element.x += breathX;
+          element.y += breathY;
+
+          // No rotation
+
+          // Fade out over time
+          element.alpha = Math.max(
+            0,
+            255 - (element.life / element.maxLife) * 100
+          );
+        }
+      }
+
+      function drawASCIIElements() {
+        asciiCtx.clearRect(0, 0, asciiCanvas.width, asciiCanvas.height);
+
+        // Debug: log drawing occasionally
+        if (asciiElements.length > 0 && Math.random() < 0.01) {
+          console.log("Drawing", asciiElements.length, "ASCII elements");
+        }
+
+        for (let element of asciiElements) {
+          asciiCtx.save();
+          asciiCtx.translate(element.x, element.y);
+          // No rotation
+          asciiCtx.scale(element.scale, element.scale);
+
+          // Draw each line of the ASCII pattern
+          for (let y = 0; y < element.pattern.length; y++) {
+            let line = element.pattern[y];
+            let lineX = (-line.length * 8) / 2;
+            let lineY = (-element.pattern.length * 10) / 2 + y * 10;
+
+            // Add gentle floating motion to each line
+            let lineFloatX = Math.sin(asciiTime + y * 0.1) * 1;
+            let lineFloatY = Math.cos(asciiTime + y * 0.1) * 0.5;
+
+            asciiCtx.save();
+            asciiCtx.translate(lineX + lineFloatX, lineY + lineFloatY);
+
+            // Draw the line in sharp green
+            asciiCtx.fillStyle = `rgba(0, 255, 0, ${Math.max(
+              0.9,
+              element.alpha / 255
+            )})`;
+            asciiCtx.font = "bold 14px monospace";
+            asciiCtx.textAlign = "left";
+            asciiCtx.textBaseline = "top";
+            asciiCtx.fillText(line, 0, 0);
+            asciiCtx.restore();
+          }
+          asciiCtx.restore();
+        }
+      }
+
+      function getNetworkPosition() {
+        // Get the current camera/network position
+        let position = {
+          x: (camera.position.x - 0) / 50, // Normalize to -1 to 1
+          y: (camera.position.y - 0) / 50,
+          z: (camera.position.z - 25) / 25,
+        };
+        return position;
+      }
+
+      // Create ASCII elements as HTML divs (working solution!)
+      function createHTMLASCIIElements() {
+        console.log("Creating HTML ASCII elements...");
+
+        // Create initial ASCII elements
+        for (let i = 0; i < 3; i++) {
+          createHTMLASCIIElement();
+        }
+      }
+
+      function createHTMLASCIIElement() {
+        let pattern =
+          asciiPatterns[Math.floor(Math.random() * asciiPatterns.length)];
+        let asciiDiv = document.createElement("div");
+        asciiDiv.className = "ascii-element";
+        asciiDiv.style.position = "fixed";
+        asciiDiv.style.left = Math.random() * window.innerWidth + "px";
+        asciiDiv.style.top = Math.random() * window.innerHeight + "px";
+        asciiDiv.style.color = "lime";
+        asciiDiv.style.fontFamily = "monospace";
+        asciiDiv.style.fontSize = "12px";
+        asciiDiv.style.fontWeight = "bold";
+        asciiDiv.style.zIndex = "999999";
+        asciiDiv.style.pointerEvents = "none";
+        asciiDiv.style.whiteSpace = "pre";
+        asciiDiv.style.lineHeight = "1.2";
+        asciiDiv.style.textAlign = "left";
+        asciiDiv.style.transform = `scale(${Math.random() * 0.5 + 0.8})`;
+        asciiDiv.style.opacity = "0.9";
+        asciiDiv.style.transition = "all 0.1s ease-out";
+        asciiDiv.textContent = pattern.join("\n");
+
+        // Add gentle breathing animation properties
+        asciiDiv.vx = 0; // No initial velocity
+        asciiDiv.vy = 0;
+        // No rotation
+        asciiDiv.timeOffset = Math.random() * Math.PI * 2;
+        asciiDiv.life = 0;
+        asciiDiv.maxLife = Math.random() * 300 + 200;
+
+        // Add very subtle breathing properties
+        asciiDiv.floatAmplitude = Math.random() * 3 + 2; // 2-5px very gentle floating
+        asciiDiv.floatSpeed = Math.random() * 0.002 + 0.001; // Extremely slow breathing
+        asciiDiv.floatPhase = Math.random() * Math.PI * 2;
+        asciiDiv.driftX = 0; // No drift, just gentle breathing
+        asciiDiv.driftY = 0;
+
+        document.body.appendChild(asciiDiv);
+        console.log("Created HTML ASCII element with pattern:", pattern[0]);
+        return asciiDiv;
+      }
+
+      // Track previous camera position to detect movement
+      let previousCameraPosition = { x: 0, y: 0, z: 0 };
+      let isDragging = false;
+      let dragStartTime = 0;
+
+      function updateHTMLASCIIElements() {
+        asciiTime += 0.01;
+
+        // Get current camera position
+        let currentPosition = {
+          x: camera.position.x,
+          y: camera.position.y,
+          z: camera.position.z,
+        };
+
+        // Calculate movement
+        let movement = {
+          x: currentPosition.x - previousCameraPosition.x,
+          y: currentPosition.y - previousCameraPosition.y,
+          z: currentPosition.z - previousCameraPosition.z,
+        };
+
+        // Check if there's significant movement (dragging)
+        let currentlyDragging =
+          Math.abs(movement.x) > 0.5 ||
+          Math.abs(movement.y) > 0.5 ||
+          Math.abs(movement.z) > 0.5;
+
+        // Detect drag start
+        if (currentlyDragging && !isDragging) {
+          isDragging = true;
+          dragStartTime = Date.now();
+          createAnimatedASCIIElement();
+        }
+
+        // Detect drag end
+        if (!currentlyDragging && isDragging) {
+          isDragging = false;
+        }
+
+        // Update previous position
+        previousCameraPosition = { ...currentPosition };
+
+        // Update existing elements
+        const elements = document.querySelectorAll(".ascii-element");
+        for (let i = elements.length - 1; i >= 0; i--) {
+          let element = elements[i];
+          element.life++;
+
+          // No rotation
+
+          // Remove elements after 5 seconds (300 frames at 60fps)
+          if (element.life > 300) {
+            // Fade out before removing
+            element.style.transition = "opacity 0.5s ease-out";
+            element.style.opacity = "0";
+            setTimeout(() => {
+              if (element.parentNode) {
+                element.remove();
+              }
+            }, 500);
+            continue;
+          }
+
+          // Update animation for elements that are still animating
+          if (element.isAnimating) {
+            let progress = Math.min(
+              1,
+              (Date.now() - element.startTime) / element.animationDuration
+            );
+
+            // Ease out animation
+            let easedProgress = 1 - Math.pow(1 - progress, 3);
+
+            // Calculate position from center to target
+            let currentX =
+              element.startX +
+              (element.targetX - element.startX) * easedProgress;
+            let currentY =
+              element.startY +
+              (element.targetY - element.startY) * easedProgress;
+
+            // Calculate scale from 0 to 1
+            let currentScale = easedProgress;
+
+            // Calculate opacity from 0 to 1
+            let currentOpacity = easedProgress;
+
+            element.style.left = currentX + "px";
+            element.style.top = currentY + "px";
+            element.style.transform = `scale(${currentScale})`;
+            element.style.opacity = currentOpacity;
+
+            // Mark as finished animating
+            if (progress >= 1) {
+              element.isAnimating = false;
+            }
+          } else {
+            // Organic breathing animation - focus on scale changes to feel alive
+            let time = asciiTime * element.floatSpeed + element.floatPhase;
+
+            // Keep position static - no movement, just breathing
+            let currentLeft = parseFloat(element.style.left);
+            let currentTop = parseFloat(element.style.top);
+            element.style.left = currentLeft + "px";
+            element.style.top = currentTop + "px";
+
+            // Continuous gentle breathing through scale changes
+            let baseScale = 0.8;
+            let breathScale = Math.sin(time) * 0.03; // Very subtle scale breathing
+            let scale = baseScale + breathScale;
+
+            // Apply breathing scale only (no rotation)
+            element.style.transform = `scale(${scale})`;
+
+            // Keep opacity stable - focus on scale breathing
+            element.style.opacity = "0.7";
+          }
+        }
+      }
+
+      function createAnimatedASCIIElement() {
+        // Create ASCII element that animates from center to empty space
+        let pattern =
+          asciiPatterns[Math.floor(Math.random() * asciiPatterns.length)];
+        let asciiDiv = document.createElement("div");
+        asciiDiv.className = "ascii-element";
+        asciiDiv.style.position = "fixed";
+        asciiDiv.style.color = "lime";
+        asciiDiv.style.fontFamily = "monospace";
+        asciiDiv.style.fontSize = "12px";
+        asciiDiv.style.fontWeight = "bold";
+        asciiDiv.style.zIndex = "999999";
+        asciiDiv.style.pointerEvents = "none";
+        asciiDiv.style.whiteSpace = "pre";
+        asciiDiv.style.lineHeight = "1.2";
+        asciiDiv.style.textAlign = "left";
+        asciiDiv.textContent = pattern.join("\n");
+
+        // Start from center of screen
+        let centerX = window.innerWidth / 2;
+        let centerY = window.innerHeight / 2;
+
+        // Choose random empty space as target
+        let targetX = Math.random() * window.innerWidth;
+        let targetY = Math.random() * window.innerHeight;
+
+        // Set initial position (center)
+        asciiDiv.style.left = centerX + "px";
+        asciiDiv.style.top = centerY + "px";
+
+        // Set initial scale and opacity (0)
+        asciiDiv.style.transform = "scale(0)";
+        asciiDiv.style.opacity = "0";
+
+        // Animation properties
+        asciiDiv.isAnimating = true;
+        asciiDiv.startTime = Date.now();
+        asciiDiv.animationDuration = 1000; // 1 second animation
+        asciiDiv.startX = centerX;
+        asciiDiv.startY = centerY;
+        asciiDiv.targetX = targetX;
+        asciiDiv.targetY = targetY;
+
+        // Add gentle breathing properties for after animation
+        asciiDiv.vx = 0; // No velocity, just gentle breathing
+        asciiDiv.vy = 0;
+        // No rotation
+        asciiDiv.timeOffset = Math.random() * Math.PI * 2;
+        asciiDiv.life = 0;
+        asciiDiv.maxLife = 300; // 5 seconds at 60fps
+
+        // Add very subtle breathing properties
+        asciiDiv.floatAmplitude = Math.random() * 3 + 2; // 2-5px very gentle floating
+        asciiDiv.floatSpeed = Math.random() * 0.002 + 0.001; // Extremely slow breathing
+        asciiDiv.floatPhase = Math.random() * Math.PI * 2;
+        asciiDiv.driftX = 0; // No drift, just gentle breathing
+        asciiDiv.driftY = 0;
+
+        document.body.appendChild(asciiDiv);
+        console.log(
+          "Created animated ASCII element from center to empty space"
+        );
+      }
+
+      // Optimized animation loop
+      function animate() {
+        requestAnimationFrame(animate);
+
+        // Update camera matrix for frustum culling
+        cameraMatrix.multiplyMatrices(
+          camera.projectionMatrix,
+          camera.matrixWorldInverse
+        );
+        frustum.setFromProjectionMatrix(cameraMatrix);
+
+        // Constant slow rotation around Y-axis - reduce on mobile
+        if (!isMobile) {
+          scene.rotation.y += rotationSpeed;
+        }
+
+        // Optimized billboard behavior with frustum culling
+        imagePlanes.forEach((plane) => {
+          // Only update billboard behavior if plane is in view
+          if (frustum.intersectsObject(plane)) {
+            plane.lookAt(camera.position);
+            plane.visible = true;
+          } else {
+            plane.visible = false; // Hide objects outside frustum
+          }
+        });
+
+        controls.update();
+        renderer.render(scene, camera);
+
+        // Update HTML ASCII elements
+        updateHTMLASCIIElements();
+      }
+
+      // Optimized window resize handler
+      window.addEventListener("resize", () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+
+        // Resize ASCII canvas
+        if (asciiCanvas) {
+          resizeASCIICanvas();
+        }
+
+        // Update mobile detection on resize
+        const newIsMobile =
+          /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+            navigator.userAgent
+          ) || window.innerWidth <= 768;
+        if (newIsMobile !== isMobile) {
+          // Reload page if mobile state changes significantly
+          location.reload();
+        }
+      });
+
+      // Initialize ASCII elements system
+      initASCIIElements();
+
+      // Start animation
+      animate();
+
+      // Delicate mouse-tracking gradient effect - disable on mobile for performance
+      if (!isMobile) {
+        document.addEventListener("mousemove", (event) => {
+          const x = (event.clientX / window.innerWidth) * 100;
+          const y = (event.clientY / window.innerHeight) * 100;
+
+          document.body.style.background = `
+            radial-gradient(
+              circle at ${x}% ${y}%,
+              rgba(90, 90, 90, 0.3) 0%,
+              rgba(70, 70, 70, 0.15) 40%,
+              rgba(50, 50, 50, 0.08) 70%,
+              rgba(30, 30, 30, 0) 100%
+            ),
+            radial-gradient(
+              ellipse at 50% 50%,
+              #c0c0c0 0%,
+              #a8a8a8 20%,
+              #808080 40%,
+              #585858 60%,
+              #303030 80%,
+              #181818 95%,
+              #080808 100%
+            ),
+            url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="1.8" numOctaves="7" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter><rect width="600" height="600" filter="url(%23noise)" opacity="0.95"/></svg>')`;
+          document.body.style.backgroundBlendMode =
+            "normal, multiply, multiply";
+          document.body.style.backgroundSize = "cover, cover, 200px 200px";
+        });
+      }
+
+      // Gallery functionality
+      const galleryImages = [
+        {
+          src: "assets/Artists/Gallery/20250918_153711.jpg",
+          credit: "© Dafna Sartiel",
+        },
+        {
+          src: "assets/Artists/Gallery/Dafna_Sartiel_1.jpg",
+          credit: "© Dafna Sartiel",
+        },
+        {
+          src: "assets/Artists/Gallery/Dafna_Sartiel_2.jpg",
+          credit: "© Dafna Sartiel",
+        },
+        {
+          src: "assets/Artists/Gallery/Dafna_Sartiel_3.jpg",
+          credit: "© Dafna Sartiel",
+        },
+        {
+          src: "assets/Artists/Gallery/Dafna_Sartiel_4.jpg",
+          credit: "© Dafna Sartiel",
+        },
+        {
+          src: "assets/Artists/Gallery/Dafna_Sartiel_5.jpg",
+          credit: "© Dafna Sartiel",
+        },
+        {
+          src: "assets/Artists/Gallery/Dafna_Sartiel_6.jpg",
+          credit: "© Dafna Sartiel",
+        },
+        {
+          src: "assets/Artists/Gallery/Dafna_Sartiel_7.jpg",
+          credit: "© Dafna Sartiel",
+        },
+        {
+          src: "assets/Artists/Gallery/Dafna_Sartiel_8.jpg",
+          credit: "© Dafna Sartiel",
+        },
+        {
+          src: "assets/Artists/Gallery/Dafna_Sartiel_9.jpg",
+          credit: "© Dafna Sartiel",
+        },
+        {
+          src: "assets/Artists/Gallery/Dafna_Sartiel_10.jpg",
+          credit: "© Dafna Sartiel",
+        },
+        {
+          src: "assets/Artists/Gallery/Dafna_Sartiel_11.jpg",
+          credit: "© Dafna Sartiel",
+        },
+        {
+          src: "assets/Artists/Gallery/Dafna_Sartiel_12.jpg",
+          credit: "© Dafna Sartiel",
+        },
+        {
+          src: "assets/Artists/Gallery/Tamar Lev-On_1.jpg",
+          credit: "© Tamar Lev-On",
+        },
+        {
+          src: "assets/Artists/Gallery/Tamar Lev-On_2.jpg",
+          credit: "© Tamar Lev-On",
+        },
+        {
+          src: "assets/Artists/Gallery/Adi Karelitz.jpg",
+          credit: "© Adi Karelitz",
+        },
+        {
+          src: "assets/Artists/Gallery/Anat Sacks.jpg",
+          credit: "© Dafna Sartiel",
+        },
+      ];
+
+      // Create gallery carousel in curation popup
+      function createGalleryCarousel() {
+        const carousel = document.getElementById("carousel");
+        if (!carousel) return;
+
+        carousel.innerHTML = "";
+
+        galleryImages.forEach((image, index) => {
+          const angle = (360 / galleryImages.length) * index;
+          const face = document.createElement("div");
+          face.className = "gallery-carousel__face";
+          face.style.cssText = `
+            position: absolute;
+            width: 220px;
+            height: 150px;
+            background-image: url('${image.src}');
+            background-size: contain;
+            background-position: center;
+            background-repeat: no-repeat;
+            display: flex;
+            align-items: flex-end;
+            justify-content: flex-start;
+            transform: rotateY(${angle}deg) translateZ(450px);
+            cursor: pointer;
+          `;
+
+          // Add credit overlay
+          const credit = document.createElement("div");
+          credit.style.cssText = `
+            position: absolute;
+            bottom: 5px;
+            left: 5px;
+            color: #e6e6e6;
+            font-family: 'SourceCodePro', monospace;
+            font-size: 8px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 2px 4px;
+            border-radius: 2px;
+            white-space: nowrap;
+          `;
+          credit.textContent = image.credit;
+          face.appendChild(credit);
+
+          carousel.appendChild(face);
+        });
+
+        // Add carousel interaction
+        let currentRotation = 0;
+        const rotationStep = 360 / galleryImages.length;
+        let isDragging = false;
+        let startX = 0;
+        let startRotation = 0;
+        let isAnimating = false;
+        let animationId = null;
+        let lastAnimationTime = Date.now();
+        const dragSensitivity = 0.5;
+
+        // Auto-rotation
+        function animateRotation() {
+          if (!isAnimating && !isDragging) {
+            const now = Date.now();
+            const deltaTime = now - lastAnimationTime;
+            lastAnimationTime = now;
+            currentRotation += (deltaTime / 1000) * (360 / 120);
+            carousel.style.transform = `rotateY(${currentRotation}deg)`;
+          }
+          animationId = requestAnimationFrame(animateRotation);
+        }
+
+        animateRotation();
+
+        // Mouse events
+        carousel.addEventListener("mousedown", (e) => {
+          if (isAnimating) return;
+          isDragging = true;
+          startX = e.clientX;
+          startRotation = currentRotation;
+          carousel.style.cursor = "grabbing";
+          e.preventDefault();
+        });
+
+        document.addEventListener("mousemove", (e) => {
+          if (!isDragging) return;
+          e.preventDefault();
+          const deltaX = e.clientX - startX;
+          const rotationDelta =
+            (deltaX / carousel.offsetWidth) * 360 * dragSensitivity;
+          const newRotation = startRotation + rotationDelta;
+          carousel.style.transform = `rotateY(${newRotation}deg)`;
+          currentRotation = newRotation;
+        });
+
+        document.addEventListener("mouseup", () => {
+          if (!isDragging) return;
+          isDragging = false;
+          carousel.style.cursor = "grab";
+          lastAnimationTime = Date.now();
+        });
+
+        // Face click events
+        const faces = carousel.querySelectorAll(".gallery-carousel__face");
+        faces.forEach((face, index) => {
+          face.addEventListener("click", (e) => {
+            if (isDragging) return;
+            isAnimating = true;
+            const targetRotation = -index * rotationStep;
+            const currentRotationNormalized =
+              ((currentRotation % 360) + 360) % 360;
+            let rotationDiff = targetRotation - currentRotationNormalized;
+            if (rotationDiff > 180) rotationDiff -= 360;
+            if (rotationDiff < -180) rotationDiff += 360;
+            const newRotation = currentRotation + rotationDiff;
+            carousel.style.transition =
+              "transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)";
+            carousel.style.transform = `rotateY(${newRotation}deg)`;
+            currentRotation = newRotation;
+            setTimeout(() => {
+              carousel.style.transition = "none";
+              isAnimating = false;
+              lastAnimationTime = Date.now();
+            }, 800);
+          });
+        });
+      }
+
+      // Change the floating image periodically
+      function changeFloatingImage() {
+        const randomImage =
+          galleryImages[Math.floor(Math.random() * galleryImages.length)];
+        const img = galleryToggle.querySelector("img");
+        if (img) {
+          img.src = randomImage.src;
+        }
+      }
+
+      // Change image every 10 seconds
+      setInterval(changeFloatingImage, 10000);
+    </script>
+  </body>
+</html>
