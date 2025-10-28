@@ -23,6 +23,10 @@
         font-family: "IBMPlexMono";
         src: url("assets/IBMPlexMono-Light.ttf") format("truetype");
       }
+      @font-face {
+        font-family: "OCR";
+        src: url("assets/OCR-a___.ttf") format("truetype");
+      }
       body {
         margin: 0;
         padding: 0;
@@ -51,13 +55,13 @@
         position: relative;
         cursor: none; /* Hide default cursor */
       }
-      
+
       /* Custom green cursor */
       .custom-cursor {
         position: fixed;
         pointer-events: none;
         z-index: 2147483647;
-        font-family: 'Courier New', monospace;
+        font-family: "Courier New", monospace;
         font-size: 50px;
         font-weight: bold;
         color: #00ff41;
@@ -67,64 +71,82 @@
         display: block !important;
         opacity: 1 !important;
       }
-      
+
       /* Ensure cursor stays custom in popups */
-      .popup, .popup * {
+      .popup,
+      .popup * {
         cursor: none !important;
       }
-      
+
       /* Make sure cursor appears above all popups */
       .popup {
         z-index: 1000;
       }
-      
+
       .popup .popup-content {
         z-index: 1001;
       }
-      
+
       .popup-overlay {
         z-index: 1000;
       }
-      
+
       /* Allow default cursor on video elements */
-      iframe, video, embed, object {
+      iframe,
+      video,
+      embed,
+      object {
         cursor: auto;
       }
 
       /* Responsive Design */
+      @media (max-width: 1024px) {
+        #title {
+          margin-bottom: 0px;
+        }
+      }
+
       @media (max-width: 768px) {
         body {
           overflow-x: hidden;
         }
 
-        #curation-link {
-          font-size: clamp(8px, 2.5vw, 16px);
-          right: clamp(5px, 1.5vw, 10px);
-          top: clamp(12px, 2.5vh, 22px);
-          max-width: 35vw;
+        #title {
+          margin-bottom: -2px;
         }
 
         .left-logo {
           bottom: clamp(8px, 2vh, 20px);
           left: clamp(8px, 2vw, 20px);
         }
-        
+
+        .bottom-left-logo {
+          bottom: clamp(8px, 1.5vh, 15px);
+          left: clamp(15px, 3vw, 30px);
+        }
+
+        .bottom-right-logo {
+          bottom: clamp(8px, 1.5vh, 15px);
+          right: clamp(15px, 3vw, 30px);
+        }
+
         .right-logos {
           bottom: clamp(12px, 3vh, 22px);
           right: clamp(12px, 3vw, 22px);
           gap: clamp(6px, 1.5vw, 15px);
         }
-        
+
         .right-logos .logo {
           height: clamp(50px, 10vw, 80px);
         }
-        
+
         #copyright {
           top: clamp(100px, 15vh, 130px);
           right: clamp(8px, 2vw, 15px);
-          font-size: clamp(10px, 2.4vw, 13px);
+          font-size: clamp(14px, 3.2vw, 18px);
           transform: rotate(90deg);
           transform-origin: right top;
+          opacity: 1;
         }
 
         .popup {
@@ -163,24 +185,27 @@
       }
 
       @media (max-width: 480px) {
-        #curation-link {
-          font-size: clamp(7px, 2vw, 14px);
-          right: clamp(3px, 1vw, 8px);
-          top: clamp(10px, 2vh, 17px);
-          max-width: 30vw;
-        }
-
         .left-logo {
           bottom: clamp(6px, 1.5vh, 12px);
           left: clamp(6px, 1.5vw, 12px);
         }
-        
+
+        .bottom-left-logo {
+          bottom: clamp(5px, 1vh, 10px);
+          left: clamp(10px, 2vw, 20px);
+        }
+
+        .bottom-right-logo {
+          bottom: clamp(5px, 1vh, 10px);
+          right: clamp(10px, 2vw, 20px);
+        }
+
         .right-logos {
           bottom: clamp(10px, 2.5vh, 15px);
           right: clamp(10px, 2.5vw, 15px);
           gap: clamp(4px, 1vw, 8px);
         }
-        
+
         .right-logos .logo {
           height: clamp(40px, 8vw, 60px);
         }
@@ -206,6 +231,29 @@
           padding-bottom: 20px !important;
         }
 
+        #top-left-container {
+          top: clamp(12px, 3vh, 18px);
+          left: clamp(8px, 1.5vw, 12px);
+        }
+
+        #title {
+          height: clamp(60px, 12vh, 110px);
+          max-width: clamp(280px, 60vw, 500px);
+          margin-bottom: -3px;
+        }
+
+        #copyright {
+          top: 50%;
+          left: 5px;
+          font-size: clamp(8px, 2vw, 10px);
+          transform: translateY(-50%) rotate(-90deg);
+          white-space: nowrap;
+          position: fixed;
+          z-index: 1001;
+          color: #ffffff;
+          opacity: 1;
+        }
+
         /* Carousel scaling handled by JavaScript */
       }
 
@@ -213,6 +261,10 @@
         .popup {
           max-width: 1200px;
           max-height: 800px;
+        }
+
+        #curation-link {
+          margin-left: 10px;
         }
       }
       canvas {
@@ -227,44 +279,43 @@
         opacity: 1;
       }
 
+      #top-left-container {
+        position: fixed;
+        top: 76px;
+        left: 32px;
+        z-index: 101;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
       #title {
         height: clamp(80px, 15vh, 180px);
         width: auto;
         max-width: clamp(400px, 75vw, 900px);
         object-fit: contain;
-        position: fixed;
-        top: 76px;
-        left: 32px;
-        z-index: 101;
+        position: relative;
+        margin-bottom: 10px;
       }
 
       @media (max-width: 768px) {
-        #title {
-          height: clamp(60px, 12vh, 120px);
-          max-width: clamp(300px, 65vw, 600px);
+        #top-left-container {
           top: clamp(18px, 4vh, 25px);
           left: clamp(10px, 2vw, 15px);
         }
-      }
 
-      @media (max-width: 480px) {
         #title {
-          height: clamp(45px, 9vh, 90px);
-          max-width: clamp(220px, 55vw, 450px);
-          top: clamp(12px, 3vh, 18px);
-          left: clamp(8px, 1.5vw, 12px);
+          height: clamp(80px, 16vh, 150px);
+          max-width: clamp(350px, 70vw, 700px);
+          margin-bottom: -2px;
         }
-        #copyright {
-          top: 50%;
-          left: 0px;
-          font-size: clamp(8px, 2vw, 10px);
-          writing-mode: vertical-rl;
-          text-orientation: mixed;
-          transform: translateY(-50%);
-          white-space: nowrap;
-          position: fixed;
-          z-index: 1001;
-          color: #ffffff;
+
+        .desktop-image {
+          display: none !important;
+        }
+
+        .mobile-image {
+          display: block !important;
         }
       }
 
@@ -585,30 +636,29 @@
 
       #curation-link {
         color: rgb(255, 255, 255);
-        font-family: "OCR A Std", monospace;
+        font-family: "OCR", monospace;
         text-align: left;
-        position: fixed;
-        left: 200px;
-        top: 280px;
+        position: relative;
         z-index: 101;
-        cursor: pointer;
         text-decoration: none;
         transition: opacity 0.3s ease;
         line-height: 1.1;
+        align-self: center;
       }
-      
+
       #curation-link .name {
-        font-size: 18pt;
+        font-size: clamp(12pt, 3vw, 18pt);
         display: block;
       }
-      
+
       #curation-link .title {
-        font-size: 16pt;
+        font-size: clamp(10pt, 2.5vw, 16pt);
         display: block;
       }
 
       #curation-link:hover {
-        opacity: 0.7;
+        color: #00ff00;
+        text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00, 0 0 30px #00ff00;
       }
 
       /* Left side logo */
@@ -620,7 +670,54 @@
         align-items: center;
         z-index: 101;
       }
-      
+
+      /* Bottom left logo */
+      .bottom-left-logo {
+        position: fixed;
+        bottom: clamp(10px, 2vh, 20px);
+        left: clamp(20px, 4vw, 40px);
+        display: flex;
+        align-items: center;
+        z-index: 101;
+      }
+
+      /* Bottom right logo */
+      .bottom-right-logo {
+        position: fixed;
+        bottom: clamp(1px, 0vh, 1px);
+        right: clamp(10px, 2vw, 20px);
+        display: flex;
+        align-items: center;
+        z-index: 101;
+      }
+
+      .bottom-left-logo .logo {
+        height: clamp(70px, 12vw, 120px);
+      }
+
+      .bottom-right-logo .logo {
+        height: clamp(120px, 20vw, 170px);
+      }
+
+      /* Mobile logo size increases */
+      @media (max-width: 768px) {
+        .bottom-left-logo .logo {
+          height: clamp(90px, 15vw, 150px) !important;
+        }
+        .bottom-right-logo .logo {
+          height: clamp(150px, 25vw, 220px) !important;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .bottom-left-logo .logo {
+          height: clamp(100px, 18vw, 160px) !important;
+        }
+        .bottom-right-logo .logo {
+          height: clamp(160px, 28vw, 240px) !important;
+        }
+      }
+
       .logos .logo:first-child {
         position: fixed;
         left: 1800px;
@@ -637,7 +734,7 @@
         width: auto;
         opacity: 0.9;
       }
-      
+
       .right-logos .logo {
         height: clamp(60px, 12vw, 100px);
         width: auto;
@@ -766,20 +863,27 @@
         transform: scale(0.95);
       }
 
+      #copyright {
+        position: fixed;
+        right: 15px;
+        top: 80%;
+        transform: rotate(90deg);
+        transform-origin: right top;
+        color: #ffffff;
+        font-size: 16px;
+        font-family: "SourceCodePro", monospace;
+        z-index: 1000;
+        opacity: 0.8;
+        line-height: 1.4;
+        white-space: nowrap;
+      }
+
+      /* Mobile copyright font size */
+      @media (max-width: 768px) {
         #copyright {
-          position: fixed;
-          left: 1880.12px;
-          top: 490.54px;
-          transform: rotate(90deg);
-          transform-origin: left top;
-          color: #ffffff;
           font-size: 11px;
-          font-family: "SourceCodePro", monospace;
-          z-index: 1000;
-          opacity: 0.8;
-          line-height: 1.4;
-          white-space: nowrap;
         }
+      }
 
       @keyframes floatAcross {
         0% {
@@ -813,22 +917,33 @@
   <body>
     <!-- Custom cursor -->
     <div class="custom-cursor" id="custom-cursor">*</div>
-    
-    <img id="title" src="assets/logos/logo02.png" alt="Memory Almost Full" />
-    <div id="curation-link" onclick="showCurationPopup()">
-      <span class="name">ADI KARELITZ:</span>
-      <span class="title">CURATOR</span>
+
+    <!-- Top left logo and curator container -->
+    <div id="top-left-container">
+      <img id="title" src="assets/logos/logo02.png" alt="Memory Almost Full" />
+      <div id="curation-link" onclick="showCurationPopup()">
+        <span class="name">ADI KARELITZ:</span>
+        <span class="title">CURATOR</span>
+      </div>
     </div>
-    <div class="logos">
-      <img src="assets/logos/HIT_VITRINA_LOGO.png" alt="HIT Vitrina Logo" class="logo" />
+
+    <!-- Bottom left logo -->
+    <div class="bottom-left-logo">
       <img src="assets/artists/LOGO-WHITE.001.png" alt="Logo" class="logo" />
     </div>
-    
-    <!-- Right side logo -->
-    <div class="right-logos">
-      <img src="assets/logos/HIT_fullLogo.png" alt="HIT Full Logo" class="logo" />
+
+    <!-- Bottom right logo -->
+    <div class="bottom-right-logo">
+      <img
+        src="assets/logos/HIT_fullLogo.png"
+        alt="HIT Full Logo"
+        class="logo"
+      />
     </div>
-    
+
+    <!-- Right side logo -->
+    <div class="right-logos"></div>
+
     <!-- Copyright moved to right side -->
     <div id="copyright">
       © 2025 Designed & Built by Daphne Perlman & Amit Cohen
@@ -1820,9 +1935,9 @@
                 In his 2017 book, <em>Glitch Art in Theory and Practice: Critical Failures and Post-Digital Aesthetics</em>, Michael Betancourt proposed a theoretical framework that sees the glitch not as a mere technical phenomenon but as a critical aesthetic related to capitalism. Betancourt argued that the glitch serves as a model for a general theory of critical media, exposing the breaking points in modern technological systems. It functions as a moment of revelation, i.e., a moment where the technological system exposes its own vulnerability and inherent imperfection.
               </p>
               <p style="margin-bottom: 0;">
-                The Wrong Biennale is an independent international art biennial; a multicultural and decentralized platform that embraces an open approach, allowing creatives to sidestep the elitist infrastructure of art fairs and present digital art to a global audience. Founded in 2013 by the Spanish artist and curator David Quiles Guilló, The Wrong Biennale is held both online in the digital sphere and in physical locations.
+                The Wrong Biennale is an independent international art biennial; a multicultural and decentralized platform that embraces an open approach, allowing creatives to sidestep the elitist infrastructure of art fairs and present digital art to a global audience. Founded in 2013 by the Spanish artist and curator David Quiles Guilló, The Wrong Biennale is held both online in the digital sphere and in physical locations.<br><br>⁠Tamar Lev-On: Cutaror of Vitryna Galler
               </p>
-              
+              <br>
               <!-- Clear float to prevent layout issues -->
               <div style="clear: both;"></div>
             </div>
@@ -2280,7 +2395,7 @@
 
             const material = new THREE.MeshBasicMaterial({
               map: framedTexture,
-        transparent: true,
+              transparent: true,
               opacity: 0.95,
               side: THREE.DoubleSide,
               alphaTest: 0.1, // Optimize transparency rendering
@@ -2526,72 +2641,78 @@
         donutCanvas.width = window.innerWidth;
         donutCanvas.height = window.innerHeight;
       });
-      
+
       // Custom cursor functionality
-      const customCursor = document.getElementById('custom-cursor');
+      const customCursor = document.getElementById("custom-cursor");
       let mouseX = 0;
       let mouseY = 0;
-      
+
       // Track mouse movement
-      document.addEventListener('mousemove', (e) => {
+      document.addEventListener("mousemove", (e) => {
         mouseX = e.clientX;
         mouseY = e.clientY;
-        customCursor.style.left = mouseX + 'px';
-        customCursor.style.top = mouseY + 'px';
-        
+        customCursor.style.left = mouseX + "px";
+        customCursor.style.top = mouseY + "px";
+
         // Check if mouse is over any iframe or video - more comprehensive check
         const elementBelow = document.elementFromPoint(e.clientX, e.clientY);
-        const isOverVideo = elementBelow && (
-          elementBelow.tagName === 'IFRAME' || 
-          elementBelow.tagName === 'VIDEO' ||
-          elementBelow.closest('iframe') ||
-          elementBelow.closest('video') ||
-          (elementBelow.src && (elementBelow.src.includes('youtube') || elementBelow.src.includes('vimeo'))) ||
-          elementBelow.classList.contains('vimeo') ||
-          elementBelow.classList.contains('youtube')
-        );
-        
+        const isOverVideo =
+          elementBelow &&
+          (elementBelow.tagName === "IFRAME" ||
+            elementBelow.tagName === "VIDEO" ||
+            elementBelow.closest("iframe") ||
+            elementBelow.closest("video") ||
+            (elementBelow.src &&
+              (elementBelow.src.includes("youtube") ||
+                elementBelow.src.includes("vimeo"))) ||
+            elementBelow.classList.contains("vimeo") ||
+            elementBelow.classList.contains("youtube"));
+
         // Also check for popup videos with buffer zone
-        const popupVideos = document.querySelectorAll('.popup iframe, .popup video');
+        const popupVideos = document.querySelectorAll(
+          ".popup iframe, .popup video"
+        );
         let isNearPopupVideo = false;
-        
-        popupVideos.forEach(video => {
+
+        popupVideos.forEach((video) => {
           const rect = video.getBoundingClientRect();
           const buffer = 30; // 30px buffer zone around popup videos
-          
-          if (mouseX >= rect.left - buffer && 
-              mouseX <= rect.right + buffer && 
-              mouseY >= rect.top - buffer && 
-              mouseY <= rect.bottom + buffer) {
+
+          if (
+            mouseX >= rect.left - buffer &&
+            mouseX <= rect.right + buffer &&
+            mouseY >= rect.top - buffer &&
+            mouseY <= rect.bottom + buffer
+          ) {
             isNearPopupVideo = true;
           }
         });
-        
+
         if (isOverVideo || isNearPopupVideo) {
-          customCursor.style.display = 'none';
-          customCursor.style.opacity = '0';
+          customCursor.style.display = "none";
+          customCursor.style.opacity = "0";
         } else {
-          customCursor.style.display = 'block';
-          customCursor.style.opacity = '1';
+          customCursor.style.display = "block";
+          customCursor.style.opacity = "1";
         }
       });
-      
+
       // Hide cursor when mouse leaves window
-      document.addEventListener('mouseleave', () => {
-        customCursor.style.opacity = '0';
+      document.addEventListener("mouseleave", () => {
+        customCursor.style.opacity = "0";
       });
-      
+
       // Show cursor when mouse enters window
-      document.addEventListener('mouseenter', () => {
-        customCursor.style.opacity = '1';
-        customCursor.style.display = 'block';
+      document.addEventListener("mouseenter", () => {
+        customCursor.style.opacity = "1";
+        customCursor.style.display = "block";
       });
-      
+
       // Ensure cursor is always visible and on top
-      customCursor.style.display = 'block';
-      customCursor.style.opacity = '1';
-      customCursor.style.zIndex = '2147483647';
-      
+      customCursor.style.display = "block";
+      customCursor.style.opacity = "1";
+      customCursor.style.zIndex = "2147483647";
+
       // Simple cursor management - no aggressive overrides
 
       // Camera position - adjust for mobile (further zoom out on mobile)
@@ -3680,7 +3801,7 @@
             transform: translateX(-50%);
             color: #e6e6e6;
             font-family: 'SourceCodePro', monospace;
-            font-size: 6px;
+            font-size: clamp(4px, 1.5vw, 12px);
             background: rgba(0, 0, 0, 0.8);
             padding: 2px 4px;
             border-radius: 2px;
@@ -3743,6 +3864,32 @@
           if (!isDragging) return;
           isDragging = false;
           carousel.style.cursor = "grab";
+          lastAnimationTime = Date.now();
+        });
+
+        // Touch events for mobile
+        carousel.addEventListener("touchstart", (e) => {
+          if (isAnimating) return;
+          isDragging = true;
+          startX = e.touches[0].clientX;
+          startRotation = currentRotation;
+          e.preventDefault();
+        });
+
+        document.addEventListener("touchmove", (e) => {
+          if (!isDragging) return;
+          e.preventDefault();
+          const deltaX = e.touches[0].clientX - startX;
+          const rotationDelta =
+            (deltaX / carousel.offsetWidth) * 360 * dragSensitivity;
+          const newRotation = startRotation + rotationDelta;
+          carousel.style.transform = `rotateY(${newRotation}deg)`;
+          currentRotation = newRotation;
+        });
+
+        document.addEventListener("touchend", () => {
+          if (!isDragging) return;
+          isDragging = false;
           lastAnimationTime = Date.now();
         });
 
