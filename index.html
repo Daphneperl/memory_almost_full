@@ -104,10 +104,27 @@
           max-width: 35vw;
         }
 
-        .logos {
+        .left-logo {
           bottom: clamp(8px, 2vh, 20px);
-          right: clamp(8px, 2vw, 20px);
+          left: clamp(8px, 2vw, 20px);
+        }
+        
+        .right-logos {
+          bottom: clamp(12px, 3vh, 22px);
+          right: clamp(12px, 3vw, 22px);
           gap: clamp(6px, 1.5vw, 15px);
+        }
+        
+        .right-logos .logo {
+          height: clamp(50px, 10vw, 80px);
+        }
+        
+        #copyright {
+          top: clamp(100px, 15vh, 130px);
+          right: clamp(8px, 2vw, 15px);
+          font-size: clamp(10px, 2.4vw, 13px);
+          transform: rotate(90deg);
+          transform-origin: right top;
         }
 
         .popup {
@@ -153,10 +170,19 @@
           max-width: 30vw;
         }
 
-        .logos {
+        .left-logo {
           bottom: clamp(6px, 1.5vh, 12px);
-          right: clamp(6px, 1.5vw, 12px);
+          left: clamp(6px, 1.5vw, 12px);
+        }
+        
+        .right-logos {
+          bottom: clamp(10px, 2.5vh, 15px);
+          right: clamp(10px, 2.5vw, 15px);
           gap: clamp(4px, 1vw, 8px);
+        }
+        
+        .right-logos .logo {
+          height: clamp(40px, 8vw, 60px);
         }
 
         .popup {
@@ -202,31 +228,43 @@
       }
 
       #title {
-        height: clamp(50px, 10vh, 140px);
+        height: clamp(80px, 15vh, 180px);
         width: auto;
-        max-width: clamp(250px, 60vw, 700px);
+        max-width: clamp(400px, 75vw, 900px);
         object-fit: contain;
         position: fixed;
-        top: 20px;
-        left: clamp(8px, 2vw, 10px);
+        top: 76px;
+        left: 32px;
         z-index: 101;
       }
 
       @media (max-width: 768px) {
         #title {
-          height: clamp(35px, 7vh, 90px);
-          max-width: clamp(180px, 45vw, 450px);
-          top: 15px;
-          left: clamp(5px, 1vw, 8px);
+          height: clamp(60px, 12vh, 120px);
+          max-width: clamp(300px, 65vw, 600px);
+          top: clamp(18px, 4vh, 25px);
+          left: clamp(10px, 2vw, 15px);
         }
       }
 
       @media (max-width: 480px) {
         #title {
-          height: clamp(30px, 6vh, 70px);
-          max-width: clamp(140px, 40vw, 350px);
-          top: 10px;
-          left: clamp(3px, 0.5vw, 5px);
+          height: clamp(45px, 9vh, 90px);
+          max-width: clamp(220px, 55vw, 450px);
+          top: clamp(12px, 3vh, 18px);
+          left: clamp(8px, 1.5vw, 12px);
+        }
+        #copyright {
+          top: 50%;
+          left: 0px;
+          font-size: clamp(8px, 2vw, 10px);
+          writing-mode: vertical-rl;
+          text-orientation: mixed;
+          transform: translateY(-50%);
+          white-space: nowrap;
+          position: fixed;
+          z-index: 1001;
+          color: #ffffff;
         }
       }
 
@@ -547,50 +585,62 @@
 
       #curation-link {
         color: rgb(255, 255, 255);
-        font-size: clamp(10px, 3vw, 20px);
-        font-weight: regular;
-        font-family: "IBMPlexMono", monospace;
-        text-align: right;
-        letter-spacing: clamp(0.3px, 0.1vw, 1px);
-        transform: scaleY(1.2) translateY(-1px);
-        transform-origin: center right;
-        margin: 0;
+        font-family: "OCR A Std", monospace;
+        text-align: left;
         position: fixed;
-        top: clamp(18px, 3.5vh, 28px);
-        right: clamp(15px, 4vw, 30px);
+        left: 200px;
+        top: 280px;
         z-index: 101;
         cursor: pointer;
-        text-decoration: underline;
+        text-decoration: none;
         transition: opacity 0.3s ease;
-        max-width: 40vw;
-        word-wrap: break-word;
+        line-height: 1.1;
+      }
+      
+      #curation-link .name {
+        font-size: 18pt;
+        display: block;
+      }
+      
+      #curation-link .title {
+        font-size: 16pt;
+        display: block;
       }
 
       #curation-link:hover {
         opacity: 0.7;
       }
 
-      .logos {
+      /* Left side logo */
+      .left-logo {
         position: fixed;
-        bottom: clamp(10px, 3vh, 20px);
-        right: clamp(10px, 3vw, 20px);
+        left: 36px;
+        top: 989px;
         display: flex;
-        gap: clamp(8px, 2vw, 15px);
-        z-index: 101;
         align-items: center;
+        z-index: 101;
       }
-
+      
       .logos .logo:first-child {
         position: fixed;
-        bottom: clamp(10px, 3vh, 20px);
-        left: clamp(10px, 3vw, 20px);
-        right: auto;
+        left: 1800px;
+        top: 968px;
+        display: flex;
+        flex-direction: column;
+        gap: clamp(8px, 2vh, 15px);
+        align-items: flex-end;
+        z-index: 101;
       }
 
       .logo {
         height: clamp(40px, 8vw, 80px);
         width: auto;
         opacity: 0.9;
+      }
+      
+      .right-logos .logo {
+        height: clamp(60px, 12vw, 100px);
+        width: auto;
         transition: opacity 0.3s ease;
       }
 
@@ -716,22 +766,20 @@
         transform: scale(0.95);
       }
 
-      #copyright {
-        position: fixed;
-        top: 50%;
-        left: 0px;
-        font-size: clamp(8px, 1.5vw, 16px);
-        writing-mode: vertical-lr;
-        text-orientation: mixed;
-        transform: translateY(-50%);
-        white-space: nowrap;
-        position: fixed;
-        z-index: 1001;
-        color: #ffffff;
-        font-family: "SourceCodePro", monospace;
-        opacity: 0.7;
-        line-height: 1.4;
-      }
+        #copyright {
+          position: fixed;
+          left: 1880.12px;
+          top: 490.54px;
+          transform: rotate(90deg);
+          transform-origin: left top;
+          color: #ffffff;
+          font-size: 11px;
+          font-family: "SourceCodePro", monospace;
+          z-index: 1000;
+          opacity: 0.8;
+          line-height: 1.4;
+          white-space: nowrap;
+        }
 
       @keyframes floatAcross {
         0% {
@@ -768,16 +816,20 @@
     
     <img id="title" src="assets/logos/logo02.png" alt="Memory Almost Full" />
     <div id="curation-link" onclick="showCurationPopup()">
-      Curation: Adi Karelitz
+      <span class="name">ADI KARELITZ:</span>
+      <span class="title">CURATOR</span>
     </div>
     <div class="logos">
-      <img
-        src="assets/logos/HIT_VITRINA_LOGO.png"
-        alt="HIT Vitrina Logo"
-        class="logo"
-      />
-      <img src="assets/Artists/LOGO-WHITE.001.png" alt="Logo" class="logo" />
+      <img src="assets/logos/HIT_VITRINA_LOGO.png" alt="HIT Vitrina Logo" class="logo" />
+      <img src="assets/artists/LOGO-WHITE.001.png" alt="Logo" class="logo" />
     </div>
+    
+    <!-- Right side logo -->
+    <div class="right-logos">
+      <img src="assets/logos/HIT_fullLogo.png" alt="HIT Full Logo" class="logo" />
+    </div>
+    
+    <!-- Copyright moved to right side -->
     <div id="copyright">
       © 2025 Designed & Built by Daphne Perlman & Amit Cohen
     </div>
@@ -2228,7 +2280,7 @@
 
             const material = new THREE.MeshBasicMaterial({
               map: framedTexture,
-              transparent: true,
+        transparent: true,
               opacity: 0.95,
               side: THREE.DoubleSide,
               alphaTest: 0.1, // Optimize transparency rendering

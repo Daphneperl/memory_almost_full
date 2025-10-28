@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASCII Experiments</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #000000;
+            overflow: hidden;
+            font-family: 'Courier New', monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        canvas {
+            display: block;
+            background: #000000;
+            cursor: pointer;
+            border: 2px solid #ff1493;
+            border-radius: 8px;
+        }
+        
+        /* Experiment Controls */
+        #experiment-controls {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .exp-btn {
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            border: 2px solid #00ff00;
+            padding: 8px 16px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+        
+        .exp-btn:hover {
+            background: rgba(0, 255, 0, 0.3);
+            box-shadow: 0 0 10px #00ff00;
+        }
+        
+        .exp-btn.active {
+            background: rgba(0, 255, 0, 0.5);
+            box-shadow: 0 0 15px #00ff00;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="ascii-canvas"></canvas>
+    
+    <!-- Experiment Controls -->
+    <div id="experiment-controls">
+        <button id="donut-btn" class="exp-btn">3D Donut</button>
+        <button id="matrix-btn" class="exp-btn">Matrix Rain</button>
+        <button id="fire-btn" class="exp-btn">ASCII Fire</button>
+        <button id="wave-btn" class="exp-btn">Wave Animation</button>
+        <button id="spiral-btn" class="exp-btn active">Spiral</button>
+        <button id="gif-btn" class="exp-btn">GIF to ASCII</button>
+    </div>
+
+    <!-- Include GIF parsing library -->
+    <script src="https://cdn.jsdelivr.net/npm/gif.js@0.2.0/dist/gif.js"></script>
+    <script>
+        // 3D Donut Experiment
+        class DonutExperiment {
+            constructor(canvas) {
+                this.canvas = canvas;
+                this.ctx = canvas.getContext('2d');
+                this.angle = 0;
+                this.angle2 = 0;
+                this.buffer = [];
+                this.zBuffer = [];
+                this.width = 0;
+                this.height = 0;
+                this.init();
+            }
+            
+            init() {
+                this.resize();
+                window.addEventListener('resize', () => this.resize());
+            }
+            
+            resize() {
+                this.width = Math.floor(800 / 8);
+                this.height = Math.floor(600 / 16);
+                this.buffer = new Array(this.width * this.height).fill(' ');
+                this.zBuffer = new Array(this.width * this.height).fill(0);
+            }
+            
+            animate() {
+                this.ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                this.angle += 0.07;
+                this.angle2 += 0.03;
+                
+                const cosA = Math.cos(this.angle);
+                const sinA = Math.sin(this.angle);
+                const cosA2 = Math.cos(this.angle2);
+                const sinA2 = Math.sin(this.angle2);
+                
+                // Clear buffers
+                this.buffer.fill(' ');
+                this.zBuffer.fill(0);
+                
+                // Generate donut
+                for (let j = 0; j < 6.28; j += 0.07) {
+                    const cosJ = Math.cos(j);
+                    const sinJ = Math.sin(j);
+                    
+                    for (let i = 0; i < 6.28; i += 0.02) {
+                        const cosI = Math.cos(i);
+                        const sinI = Math.sin(i);
+                        
+                        const x = cosI + 2;
+                        const y = sinI;
+                        const z = j;
+                        
+                        // 3D rotation
+                        const nx = x * cosA - y * sinA;
+                        const ny = x * sinA + y * cosA;
+                        const nz = z;
+                        
+                        const nz2 = nz * cosA2 - ny * sinA2;
+                        const ny2 = nz * sinA2 + ny * cosA2;
+                        const nx2 = nx;
+                        
+                        // Perspective projection
+                        const ooz = 1 / (nz2 + 5);
+                        const xp = Math.floor(this.width / 2 + 30 * ooz * nx2);
+                        const yp = Math.floor(this.height / 2 + 15 * ooz * ny2);
+                        
+                        // Calculate lighting
+                        const l = cosI * cosJ * cosA - sinJ * sinA;
+                        
+                        if (xp >= 0 && xp < this.width && yp >= 0 && yp < this.height) {
+                            const idx = yp * this.width + xp;
+                            if (ooz > this.zBuffer[idx]) {
+                                this.zBuffer[idx] = ooz;
+                                const lum = Math.floor(8 * l);
+                                const char = lum > 0 ? '.,-~:;=!*#$@'[Math.min(lum, 11)] : ' ';
+                                this.buffer[idx] = char;
+                            }
+                        }
+                    }
+                }
+                
+                // Draw buffer
+                this.ctx.font = '16px Courier New';
+                this.ctx.fillStyle = '#ff1493';
+                this.ctx.textAlign = 'left';
+                this.ctx.textBaseline = 'top';
+                
+                for (let y = 0; y < this.height; y++) {
+                    for (let x = 0; x < this.width; x++) {
+                        const char = this.buffer[y * this.width + x];
+                        if (char !== ' ') {
+                            this.ctx.fillText(char, x * 8, y * 16);
+                        }
+                    }
+                }
+            }
+        }
+        
+        // Matrix Rain Experiment
+        class MatrixRainExperiment {
+            constructor(canvas) {
+                this.canvas = canvas;
+                this.ctx = canvas.getContext('2d');
+                this.drops = [];
+                this.chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()_+-=[]{}|;:,.<>?';
+                this.init();
+            }
+            
+            init() {
+                this.resize();
+                window.addEventListener('resize', () => this.resize());
+            }
+            
+            resize() {
+                const cols = Math.floor(800 / 20);
+                this.drops = new Array(cols).fill(0);
+            }
+            
+            animate() {
+                this.ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                this.ctx.font = '20px Courier New';
+                this.ctx.fillStyle = '#ff1493';
+                
+                for (let i = 0; i < this.drops.length; i++) {
+                    const char = this.chars[Math.floor(Math.random() * this.chars.length)];
+                    this.ctx.fillText(char, i * 20, this.drops[i] * 20);
+                    
+                    if (this.drops[i] * 20 > this.canvas.height && Math.random() > 0.975) {
+                        this.drops[i] = 0;
+                    }
+                    this.drops[i]++;
+                }
+            }
+        }
+        
+        // ASCII Fire Experiment
+        class FireExperiment {
+            constructor(canvas) {
+                this.canvas = canvas;
+                this.ctx = canvas.getContext('2d');
+                this.fireBuffer = [];
+                this.fireChars = ' .,:;+*?%S#@';
+                this.init();
+            }
+            
+            init() {
+                this.resize();
+                window.addEventListener('resize', () => this.resize());
+            }
+            
+            resize() {
+                this.width = Math.floor(800 / 8);
+                this.height = Math.floor(600 / 16);
+                this.fireBuffer = Array(this.width * this.height).fill(0);
+            }
+            
+            animate() {
+                this.ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                // Update fire
+                for (let x = 0; x < this.width; x++) {
+                    this.fireBuffer[(this.height - 1) * this.width + x] = Math.random() > 0.5 ? 12 : 0;
+                }
+                
+                for (let y = 1; y < this.height; y++) {
+                    for (let x = 0; x < this.width; x++) {
+                        const idx = y * this.width + x;
+                        const below = (y + 1) * this.width + x;
+                        const newVal = this.fireBuffer[below] - Math.floor(Math.random() * 3);
+                        this.fireBuffer[idx] = Math.max(0, newVal);
+                    }
+                }
+                
+                // Draw fire
+                this.ctx.font = '16px Courier New';
+                this.ctx.textAlign = 'left';
+                this.ctx.textBaseline = 'top';
+                
+                for (let y = 0; y < this.height; y++) {
+                    for (let x = 0; x < this.width; x++) {
+                        const intensity = this.fireBuffer[y * this.width + x];
+                        if (intensity > 0) {
+                            this.ctx.fillStyle = `hsl(320, 100%, ${intensity * 8}%)`;
+                            this.ctx.fillText(this.fireChars[Math.min(intensity, this.fireChars.length - 1)], x * 8, y * 16);
+                        }
+                    }
+                }
+            }
+        }
+        
+        // Wave Animation Experiment
+        class WaveExperiment {
+            constructor(canvas) {
+                this.canvas = canvas;
+                this.ctx = canvas.getContext('2d');
+                this.time = 0;
+                this.init();
+            }
+            
+            init() {
+                this.resize();
+                window.addEventListener('resize', () => this.resize());
+            }
+            
+            resize() {
+                this.width = Math.floor(800 / 8);
+                this.height = Math.floor(600 / 16);
+            }
+            
+            animate() {
+                this.ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                this.time += 0.1;
+                
+                this.ctx.font = '16px Courier New';
+                this.ctx.fillStyle = '#ff1493';
+                this.ctx.textAlign = 'left';
+                this.ctx.textBaseline = 'top';
+                
+                for (let x = 0; x < this.width; x++) {
+                    const wave1 = Math.sin((x * 0.1) + this.time) * 10;
+                    const wave2 = Math.sin((x * 0.05) + this.time * 1.5) * 5;
+                    const wave3 = Math.sin((x * 0.02) + this.time * 2) * 3;
+                    const y = Math.floor((this.height / 2) + wave1 + wave2 + wave3);
+                    
+                    if (y >= 0 && y < this.height) {
+                        this.ctx.fillText('~', x * 8, y * 16);
+                    }
+                }
+            }
+        }
+        
+        // Spiral Experiment
+        class SpiralExperiment {
+            constructor(canvas) {
+                this.canvas = canvas;
+                this.ctx = canvas.getContext('2d');
+                this.angle = 0;
+                this.init();
+            }
+            
+            init() {
+                this.resize();
+                window.addEventListener('resize', () => this.resize());
+            }
+            
+            resize() {
+                this.centerX = 400;
+                this.centerY = 300;
+            }
+            
+            animate() {
+                this.ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                this.angle += 0.02;
+                
+                this.ctx.font = '16px Courier New';
+                this.ctx.fillStyle = '#ff1493';
+                this.ctx.textAlign = 'center';
+                this.ctx.textBaseline = 'middle';
+                
+                const chars = '.,-~:;=!*#$@';
+                
+                for (let i = 0; i < 1000; i++) {
+                    const t = i * 0.1;
+                    const r = t * 2;
+                    const x = this.centerX + r * Math.cos(t + this.angle);
+                    const y = this.centerY + r * Math.sin(t + this.angle);
+                    
+                    if (x >= 0 && x < this.canvas.width && y >= 0 && y < this.canvas.height) {
+                        const charIndex = Math.floor((Math.sin(t * 2) + 1) * chars.length / 2);
+                        this.ctx.fillText(chars[charIndex], x, y);
+                    }
+                }
+            }
+        }
+        
+        // GIF to ASCII Converter
+        class GifToAsciiExperiment {
+            constructor(canvas) {
+                this.canvas = canvas;
+                this.ctx = canvas.getContext('2d');
+                this.video = null;
+                this.asciiChars = ' .,:;+*?%S#@';
+                this.init();
+            }
+            
+            init() {
+                this.resize();
+                this.setupFileInput();
+                window.addEventListener('resize', () => this.resize());
+            }
+            
+            resize() {
+                this.width = Math.floor(800 / 8);
+                this.height = Math.floor(600 / 16);
+            }
+            
+            setupFileInput() {
+                // Create file input
+                const fileInput = document.createElement('input');
+                fileInput.type = 'file';
+                fileInput.accept = 'image/*,video/*';
+                fileInput.style.position = 'fixed';
+                fileInput.style.top = '60px';
+                fileInput.style.left = '20px';
+                fileInput.style.zIndex = '1001';
+                fileInput.style.opacity = '0';
+                fileInput.style.pointerEvents = 'none';
+                document.body.appendChild(fileInput);
+                
+                fileInput.addEventListener('change', (e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                        this.loadMedia(file);
+                    }
+                });
+                
+                // Add click handler to canvas to trigger file input
+                this.canvas.addEventListener('click', () => {
+                    fileInput.click();
+                });
+                
+                // Add instruction text
+                this.addInstructions();
+            }
+            
+            addInstructions() {
+                const instructions = document.createElement('div');
+                instructions.innerHTML = 'Click canvas to load GIF/Image';
+                instructions.style.position = 'fixed';
+                instructions.style.top = '60px';
+                instructions.style.left = '20px';
+                instructions.style.color = '#ff1493';
+                instructions.style.fontFamily = 'Courier New, monospace';
+                instructions.style.fontSize = '12px';
+                instructions.style.zIndex = '1001';
+                instructions.style.pointerEvents = 'none';
+                document.body.appendChild(instructions);
+            }
+            
+            loadMedia(file) {
+                console.log('Loading file:', file.name, 'Type:', file.type);
+                
+                // Try video approach first for GIFs
+                if (file.type.startsWith('video/') || file.type === 'image/gif') {
+                    this.loadVideo(file);
+                    
+                    // If video doesn't work after 2 seconds, try canvas approach
+                    setTimeout(() => {
+                        if (!this.isAnimating && file.type === 'image/gif') {
+                            console.log('Video approach failed, trying canvas approach');
+                            this.loadGifAsCanvas(file);
+                        }
+                    }, 2000);
+                } else if (file.type.startsWith('image/')) {
+                    this.loadImage(file);
+                }
+            }
+            
+            loadVideo(file) {
+                console.log('Loading as video element');
+                const video = document.createElement('video');
+                video.src = URL.createObjectURL(file);
+                video.loop = true;
+                video.muted = true;
+                video.autoplay = true;
+                video.playsInline = true;
+                video.crossOrigin = 'anonymous';
+                video.style.display = 'none';
+                document.body.appendChild(video);
+                
+                let animationStarted = false;
+                
+                video.addEventListener('loadeddata', () => {
+                    console.log('Video data loaded');
+                    this.video = video;
+                    if (!animationStarted) {
+                        animationStarted = true;
+                        this.animate();
+                    }
+                });
+                
+                // Force play for GIFs
+                video.addEventListener('canplay', () => {
+                    console.log('Video can play, attempting to start');
+                    video.play().then(() => {
+                        console.log('Video playing successfully');
+                        if (!animationStarted) {
+                            animationStarted = true;
+                            this.animate();
+                        }
+                    }).catch(e => {
+                        console.log('Video play failed:', e);
+                        // Try alternative approach
+                        setTimeout(() => {
+                            if (!this.isAnimating && file.type === 'image/gif') {
+                                console.log('Video approach failed, trying canvas approach');
+                                this.loadGifAsCanvas(file);
+                            }
+                        }, 1000);
+                    });
+                });
+                
+                // Handle video time updates for smooth animation
+                video.addEventListener('timeupdate', () => {
+                    if (this.isAnimating) {
+                        this.drawFrame();
+                    }
+                });
+                
+                // Handle video errors
+                video.addEventListener('error', (e) => {
+                    console.log('Video error:', e);
+                    if (file.type === 'image/gif') {
+                        console.log('Video failed, trying canvas approach');
+                        this.loadGifAsCanvas(file);
+                    }
+                });
+            }
+            
+            loadImage(file) {
+                const img = new Image();
+                img.src = URL.createObjectURL(file);
+                
+                img.onload = () => {
+                    this.video = img;
+                    console.log('Image loaded');
+                    this.animate();
+                };
+            }
+            
+            // Alternative method for GIFs that don't work as video
+            loadGifAsCanvas(file) {
+                console.log('Using canvas approach for GIF');
+                
+                // Try to use a proper GIF library if available
+                if (typeof GIF !== 'undefined') {
+                    this.loadGifWithLibrary(file);
+                } else {
+                    // Fallback to simple image approach
+                    this.loadGifSimple(file);
+                }
+            }
+            
+            loadGifWithLibrary(file) {
+                console.log('Using GIF library approach');
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const gif = new GIF({
+                        workers: 2,
+                        quality: 10,
+                        width: this.width,
+                        height: this.height
+                    });
+                    
+                    // This is a simplified approach - in reality we'd need to parse the GIF frames
+                    // For now, fall back to simple approach
+                    this.loadGifSimple(file);
+                };
+                reader.readAsDataURL(file);
+            }
+            
+            loadGifSimple(file) {
+                console.log('Using simple GIF approach');
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        console.log('Image loaded, creating animated GIF');
+                        // Create a simple animation loop for the GIF
+                        this.video = img;
+                        this.isAnimating = true;
+                        this.frameCount = 0;
+                        this.animateGif();
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+            
+            animateGif() {
+                if (!this.isAnimating) return;
+                
+                // Clear with slight fade for motion blur effect
+                this.ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                // Draw the image to a temporary canvas
+                const tempCanvas = document.createElement('canvas');
+                const tempCtx = tempCanvas.getContext('2d');
+                tempCanvas.width = this.width;
+                tempCanvas.height = this.height;
+                
+                // Scale and draw the image
+                tempCtx.drawImage(this.video, 0, 0, this.width, this.height);
+                
+                // Get image data
+                const imageData = tempCtx.getImageData(0, 0, this.width, this.height);
+                const data = imageData.data;
+                
+                // Convert to ASCII
+                this.ctx.font = '16px Courier New';
+                this.ctx.fillStyle = '#ff1493';
+                this.ctx.textAlign = 'left';
+                this.ctx.textBaseline = 'top';
+                
+                for (let y = 0; y < this.height; y++) {
+                    for (let x = 0; x < this.width; x++) {
+                        const index = (y * this.width + x) * 4;
+                        const r = data[index];
+                        const g = data[index + 1];
+                        const b = data[index + 2];
+                        
+                        // Convert RGB to grayscale
+                        const gray = (r + g + b) / 3;
+                        
+                        // Map grayscale to ASCII character
+                        const charIndex = Math.floor((gray / 255) * (this.asciiChars.length - 1));
+                        const char = this.asciiChars[charIndex];
+                        
+                        this.ctx.fillText(char, x * 8, y * 16);
+                    }
+                }
+                
+                this.frameCount++;
+                
+                // Continue animation loop (simulate GIF animation)
+                if (this.isAnimating) {
+                    setTimeout(() => {
+                        requestAnimationFrame(() => this.animateGif());
+                    }, 100); // 10 FPS for smooth animation
+                }
+            }
+            
+            animate() {
+                if (!this.video) return;
+                
+                this.isAnimating = true;
+                this.drawFrame();
+            }
+            
+            drawFrame() {
+                if (!this.video) return;
+                
+                // Clear with slight fade for motion blur effect
+                this.ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                // Draw video/image to a temporary canvas
+                const tempCanvas = document.createElement('canvas');
+                const tempCtx = tempCanvas.getContext('2d');
+                tempCanvas.width = this.width;
+                tempCanvas.height = this.height;
+                
+                // Scale and draw the media
+                tempCtx.drawImage(this.video, 0, 0, this.width, this.height);
+                
+                // Get image data
+                const imageData = tempCtx.getImageData(0, 0, this.width, this.height);
+                const data = imageData.data;
+                
+                // Convert to ASCII
+                this.ctx.font = '16px Courier New';
+                this.ctx.fillStyle = '#ff1493';
+                this.ctx.textAlign = 'left';
+                this.ctx.textBaseline = 'top';
+                
+                for (let y = 0; y < this.height; y++) {
+                    for (let x = 0; x < this.width; x++) {
+                        const index = (y * this.width + x) * 4;
+                        const r = data[index];
+                        const g = data[index + 1];
+                        const b = data[index + 2];
+                        
+                        // Convert RGB to grayscale
+                        const gray = (r + g + b) / 3;
+                        
+                        // Map grayscale to ASCII character
+                        const charIndex = Math.floor((gray / 255) * (this.asciiChars.length - 1));
+                        const char = this.asciiChars[charIndex];
+                        
+                        this.ctx.fillText(char, x * 8, y * 16);
+                    }
+                }
+                
+                // Continue animation loop
+                if (this.isAnimating) {
+                    requestAnimationFrame(() => this.drawFrame());
+                }
+            }
+            
+            stop() {
+                this.isAnimating = false;
+            }
+        }
+        
+        // Experiment Manager
+        class ExperimentManager {
+            constructor(canvas) {
+                this.canvas = canvas;
+                this.ctx = canvas.getContext('2d');
+                this.currentExperiment = null;
+                this.experiments = {
+                    donut: new DonutExperiment(canvas),
+                    matrix: new MatrixRainExperiment(canvas),
+                    fire: new FireExperiment(canvas),
+                    wave: new WaveExperiment(canvas),
+                    spiral: new SpiralExperiment(canvas),
+                    gif: new GifToAsciiExperiment(canvas)
+                };
+                this.animationId = null;
+                this.init();
+            }
+            
+            init() {
+                this.resize();
+                this.setupControls();
+                this.switchExperiment('spiral');
+                window.addEventListener('resize', () => this.resize());
+            }
+            
+            resize() {
+                // Set canvas to a fixed desktop size
+                this.canvas.width = 800;
+                this.canvas.height = 600;
+            }
+            
+            setupControls() {
+                const buttons = document.querySelectorAll('.exp-btn');
+                buttons.forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const experiment = btn.id.replace('-btn', '');
+                        this.switchExperiment(experiment);
+                        
+                        // Update button states
+                        buttons.forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                    });
+                });
+            }
+            
+            switchExperiment(name) {
+                if (this.animationId) {
+                    cancelAnimationFrame(this.animationId);
+                }
+                
+                // Stop current experiment if it has a stop method
+                if (this.currentExperiment && this.currentExperiment.stop) {
+                    this.currentExperiment.stop();
+                }
+                
+                this.currentExperiment = this.experiments[name];
+                this.animate();
+            }
+            
+            animate() {
+                if (this.currentExperiment) {
+                    this.currentExperiment.animate();
+                }
+                this.animationId = requestAnimationFrame(() => this.animate());
+            }
+        }
+        
+        // Initialize when page loads
+        window.addEventListener('load', () => {
+            const canvas = document.getElementById('ascii-canvas');
+            if (canvas) {
+                const experimentManager = new ExperimentManager(canvas);
+            } else {
+                console.error('Canvas not found!');
+            }
+        });
+    </script>
+</body>
+</html>
