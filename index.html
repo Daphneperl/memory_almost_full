@@ -72,6 +72,13 @@
         opacity: 1 !important;
       }
 
+      /* Hide cursor completely on mobile devices */
+      @media (max-width: 768px), (pointer: coarse) {
+        .custom-cursor {
+          display: none !important;
+        }
+      }
+
       /* Ensure cursor stays custom in popups */
       .popup,
       .popup * {
@@ -174,6 +181,13 @@
           font-size: 20px;
         }
 
+        .popup-close-overlay {
+          top: 5px;
+          right: 10px;
+          width: 45px;
+          height: 45px;
+        }
+
         /* Tablet carousel responsive styles */
         #carousel-container {
           height: min(55vh, 350px) !important;
@@ -222,6 +236,21 @@
 
         .popup p {
           font-size: 13px;
+        }
+
+        .popup-close {
+          top: 8px;
+          right: 12px;
+          width: 32px;
+          height: 32px;
+          font-size: 18px;
+        }
+
+        .popup-close-overlay {
+          top: 3px;
+          right: 7px;
+          width: 40px;
+          height: 40px;
         }
 
         /* Mobile carousel responsive styles */
@@ -863,6 +892,29 @@
         transform: scale(0.95);
       }
 
+      /* Transparent overlay for mobile touch handling */
+      .popup-close-overlay {
+        position: fixed;
+        top: 20px;
+        right: 25px;
+        width: 50px;
+        height: 50px;
+        background: transparent;
+        border-radius: 50%;
+        z-index: 1000000;
+        cursor: pointer;
+        pointer-events: auto;
+        -webkit-tap-highlight-color: rgba(0, 255, 0, 0.2);
+        /* Only show on mobile devices */
+        display: none;
+      }
+
+      @media (max-width: 768px), (pointer: coarse) {
+        .popup-close-overlay {
+          display: block;
+        }
+      }
+
       #copyright {
         position: fixed;
         right: 15px;
@@ -993,70 +1045,189 @@
       if (!isMobile) {
         renderer.domElement.addEventListener("dblclick", onImageClick);
       } else {
-        // Add double-tap support for mobile devices
-        let lastTapTime = 0;
-        let lastTapX = 0;
-        let lastTapY = 0;
+        // Custom mobile touch handling for swipe rotation and tap popup
         let touchStartTime = 0;
         let touchStartX = 0;
         let touchStartY = 0;
-        const doubleTapDelay = 400; // Maximum time between taps (ms)
-        const tapMovementThreshold = 30; // Maximum movement for a valid tap (pixels)
+        let touchCurrentX = 0;
+        let touchCurrentY = 0;
+        let touchPreviousX = 0;
+        let touchPreviousY = 0;
+        let isSwipeGesture = false;
+        let lastTapTime = 0;
+
+        // Pinch zoom variables
+        let initialPinchDistance = 0;
+        let initialCameraDistance = 0;
+        let isPinchGesture = false;
+
+        const tapThreshold = 15; // Maximum movement for a tap (pixels)
+        const tapTimeThreshold = 250; // Maximum time for a tap (ms)
+        const swipeThreshold = 25; // Minimum movement to start a swipe (pixels)
+        const doubleTapDelay = 300; // Prevent accidental double-tap (ms)
+
+        // Helper function to calculate distance between two touch points
+        function getTouchDistance(touch1, touch2) {
+          const dx = touch1.clientX - touch2.clientX;
+          const dy = touch1.clientY - touch2.clientY;
+          return Math.sqrt(dx * dx + dy * dy);
+        }
+
+        // Helper function to get camera distance from origin
+        function getCameraDistance() {
+          return Math.sqrt(
+            camera.position.x * camera.position.x +
+              camera.position.y * camera.position.y +
+              camera.position.z * camera.position.z
+          );
+        }
 
         renderer.domElement.addEventListener("touchstart", (event) => {
+          event.preventDefault();
           touchStartTime = Date.now();
           touchStartX = event.touches[0].clientX;
           touchStartY = event.touches[0].clientY;
+          touchCurrentX = touchStartX;
+          touchCurrentY = touchStartY;
+          touchPreviousX = touchStartX;
+          touchPreviousY = touchStartY;
+          isSwipeGesture = false;
+          isPinchGesture = false;
+
+          // Handle pinch gesture (two fingers)
+          if (event.touches.length === 2) {
+            isPinchGesture = true;
+            initialPinchDistance = getTouchDistance(
+              event.touches[0],
+              event.touches[1]
+            );
+            initialCameraDistance = getCameraDistance();
+          }
+        });
+
+        renderer.domElement.addEventListener("touchmove", (event) => {
+          event.preventDefault();
+          touchCurrentX = event.touches[0].clientX;
+          touchCurrentY = event.touches[0].clientY;
+
+          // Handle pinch zoom (two fingers)
+          if (event.touches.length === 2 && isPinchGesture) {
+            const currentPinchDistance = getTouchDistance(
+              event.touches[0],
+              event.touches[1]
+            );
+            const pinchRatio = currentPinchDistance / initialPinchDistance;
+
+            // Calculate new camera distance based on pinch ratio
+            const newCameraDistance = initialCameraDistance / pinchRatio;
+
+            // Limit zoom range (prevent getting too close or too far)
+            const minDistance = 5;
+            const maxDistance = 100;
+            const clampedDistance = Math.max(
+              minDistance,
+              Math.min(maxDistance, newCameraDistance)
+            );
+
+            // Scale camera position to maintain same direction but new distance
+            const currentDistance = getCameraDistance();
+            const scaleFactor = clampedDistance / currentDistance;
+
+            camera.position.x *= scaleFactor;
+            camera.position.y *= scaleFactor;
+            camera.position.z *= scaleFactor;
+
+            // Update camera lookAt to maintain focus on center
+            camera.lookAt(0, 0, 0);
+          }
+          // Handle swipe rotation (single finger)
+          else if (event.touches.length === 1) {
+            const deltaX = touchCurrentX - touchStartX;
+            const deltaY = touchCurrentY - touchStartY;
+            const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+
+            // If movement exceeds threshold, this is a swipe gesture
+            if (distance > swipeThreshold) {
+              isSwipeGesture = true;
+
+              // Calculate incremental movement from previous frame for smooth rotation
+              const incrementalX = touchCurrentX - touchPreviousX;
+              const incrementalY = touchCurrentY - touchPreviousY;
+
+              // Apply smooth incremental camera rotation
+              const rotationSpeed = 0.008;
+
+              // Rotate camera around Y axis (horizontal swipe) - smooth incremental
+              const horizontalRotation = incrementalX * rotationSpeed;
+              const cosH = Math.cos(horizontalRotation);
+              const sinH = Math.sin(horizontalRotation);
+              const newX = camera.position.x * cosH - camera.position.z * sinH;
+              const newZ = camera.position.x * sinH + camera.position.z * cosH;
+              camera.position.x = newX;
+              camera.position.z = newZ;
+
+              // Rotate camera around X axis (vertical swipe) - smooth incremental with limits
+              const verticalRotation = incrementalY * rotationSpeed;
+              const currentVerticalAngle = Math.atan2(
+                camera.position.y,
+                Math.sqrt(
+                  camera.position.x * camera.position.x +
+                    camera.position.z * camera.position.z
+                )
+              );
+              const newVerticalAngle = Math.max(
+                -Math.PI / 3,
+                Math.min(Math.PI / 3, currentVerticalAngle + verticalRotation)
+              );
+
+              const horizontalDistance = Math.sqrt(
+                camera.position.x * camera.position.x +
+                  camera.position.z * camera.position.z
+              );
+              camera.position.y =
+                horizontalDistance * Math.tan(newVerticalAngle);
+
+              // Update camera lookAt to maintain focus on center
+              camera.lookAt(0, 0, 0);
+
+              // Update previous position for next frame
+              touchPreviousX = touchCurrentX;
+              touchPreviousY = touchCurrentY;
+            }
+          }
         });
 
         renderer.domElement.addEventListener("touchend", (event) => {
+          event.preventDefault();
           const touchEndTime = Date.now();
           const touchDuration = touchEndTime - touchStartTime;
           const touchEndX = event.changedTouches[0].clientX;
           const touchEndY = event.changedTouches[0].clientY;
-          const touchDistance = Math.sqrt(
-            Math.pow(touchEndX - touchStartX, 2) +
-              Math.pow(touchEndY - touchStartY, 2)
-          );
 
-          // Check if this was a quick tap (not a drag)
-          if (touchDuration < 300 && touchDistance < tapMovementThreshold) {
-            const currentTime = touchEndTime;
-            const timeSinceLastTap = currentTime - lastTapTime;
+          const deltaX = touchEndX - touchStartX;
+          const deltaY = touchEndY - touchStartY;
+          const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 
-            // Check if this is close to the last tap position
-            const distanceFromLastTap = Math.sqrt(
-              Math.pow(touchEndX - lastTapX, 2) +
-                Math.pow(touchEndY - lastTapY, 2)
-            );
+          // Touch ended - reset gesture states
+          isPinchGesture = false;
 
-            // If double-tap detected (within time window and position threshold)
-            if (
-              timeSinceLastTap < doubleTapDelay &&
-              timeSinceLastTap > 0 &&
-              distanceFromLastTap < tapMovementThreshold
-            ) {
-              console.log("Double-tap detected!");
-              event.preventDefault();
-              event.stopPropagation();
+          // If this wasn't a swipe and meets tap criteria, trigger popup
+          if (
+            !isSwipeGesture &&
+            !isPinchGesture &&
+            distance < tapThreshold &&
+            touchDuration < tapTimeThreshold &&
+            Date.now() - lastTapTime > doubleTapDelay
+          ) {
+            lastTapTime = Date.now();
 
-              // Create a synthetic event with proper coordinates
-              const syntheticEvent = {
-                clientX: touchEndX,
-                clientY: touchEndY,
-                type: "doubletap",
-              };
-              onImageClick(syntheticEvent);
-
-              // Reset to prevent triple-tap triggering
-              lastTapTime = 0;
-            } else {
-              // First tap or too far from last tap
-              console.log("First tap detected, waiting for second tap...");
-              lastTapTime = currentTime;
-              lastTapX = touchEndX;
-              lastTapY = touchEndY;
-            }
+            // Create a synthetic click event for popup
+            const syntheticEvent = {
+              clientX: touchEndX,
+              clientY: touchEndY,
+              type: "tap",
+            };
+            onImageClick(syntheticEvent);
           }
         });
       }
@@ -1365,6 +1536,7 @@
 
         popup.innerHTML += `
           <button class="popup-close">&times;</button>
+          <div class="popup-close-overlay"></div>
           <div style="position: relative; z-index: 999999;">
             <h2 style="font-size: 28px; font-weight: bold; color: #e6e6e6; margin-bottom: 35px; font-family: 'Source Code Variable', monospace;">${
               artist.name
@@ -1571,22 +1743,38 @@
 
         // Attach close button listener IMMEDIATELY after DOM insertion
         const closeButton = popup.querySelector(".popup-close");
+        const closeOverlay = popup.querySelector(".popup-close-overlay");
         console.log("Immediately looking for close button:", closeButton);
+        console.log("Immediately looking for close overlay:", closeOverlay);
+
+        // Function to close popup
+        const closePopup = (e) => {
+          console.log("Close button/overlay activated - immediate listener");
+          e.preventDefault();
+          e.stopPropagation();
+          // Clear animation interval
+          if (overlay.dataset.animationInterval) {
+            clearInterval(overlay.dataset.animationInterval);
+          }
+          overlay.remove();
+          document.removeEventListener("keydown", handleEscKey);
+        };
+
         if (closeButton) {
           console.log("Found close button immediately, attaching listener");
-          closeButton.addEventListener("click", (e) => {
-            console.log("Close button clicked - immediate listener");
-            e.preventDefault();
-            e.stopPropagation();
-            // Clear animation interval
-            if (overlay.dataset.animationInterval) {
-              clearInterval(overlay.dataset.animationInterval);
-            }
-            overlay.remove();
-            document.removeEventListener("keydown", handleEscKey);
-          });
+          closeButton.addEventListener("click", closePopup);
         } else {
           console.error("Close button not found immediately!");
+        }
+
+        if (closeOverlay) {
+          console.log(
+            "Found close overlay immediately, attaching touch listeners"
+          );
+          closeOverlay.addEventListener("touchstart", closePopup);
+          closeOverlay.addEventListener("click", closePopup);
+        } else {
+          console.error("Close overlay not found immediately!");
         }
 
         // Add ESC key listener immediately
@@ -1910,6 +2098,7 @@
 
         popup.innerHTML += `
           <button class="popup-close">&times;</button>
+          <div class="popup-close-overlay"></div>
           <div style="position: relative; z-index: 2;">
             <h2 style="font-size: 36px; font-weight: 900; color: #e6e6e6; margin-bottom: 25px; font-family: 'IBMPlexMono', monospace;">Adi Karelitz's Curation</h2>
             <div style="color: #e6e6e6; font-family: 'SourceCodePro', monospace; font-size: 16px; line-height: 1.8; margin-bottom: 40px; position: relative; text-align: justify;">
@@ -1984,27 +2173,48 @@
 
         // Attach close button listener IMMEDIATELY after DOM insertion
         const closeButton = popup.querySelector(".popup-close");
+        const closeOverlay = popup.querySelector(".popup-close-overlay");
         console.log(
           "Immediately looking for curation close button:",
           closeButton
         );
+        console.log(
+          "Immediately looking for curation close overlay:",
+          closeOverlay
+        );
+
+        // Function to close popup
+        const closePopup = (e) => {
+          console.log(
+            "Curation close button/overlay activated - immediate listener"
+          );
+          e.preventDefault();
+          e.stopPropagation();
+          // Clear animation interval
+          if (overlay.dataset.animationInterval) {
+            clearInterval(overlay.dataset.animationInterval);
+          }
+          overlay.remove();
+          document.removeEventListener("keydown", handleEscKey);
+        };
+
         if (closeButton) {
           console.log(
             "Found curation close button immediately, attaching listener"
           );
-          closeButton.addEventListener("click", (e) => {
-            console.log("Curation close button clicked - immediate listener");
-            e.preventDefault();
-            e.stopPropagation();
-            // Clear animation interval
-            if (overlay.dataset.animationInterval) {
-              clearInterval(overlay.dataset.animationInterval);
-            }
-            overlay.remove();
-            document.removeEventListener("keydown", handleEscKey);
-          });
+          closeButton.addEventListener("click", closePopup);
         } else {
           console.error("Curation close button not found immediately!");
+        }
+
+        if (closeOverlay) {
+          console.log(
+            "Found curation close overlay immediately, attaching touch listeners"
+          );
+          closeOverlay.addEventListener("touchstart", closePopup);
+          closeOverlay.addEventListener("click", closePopup);
+        } else {
+          console.error("Curation close overlay not found immediately!");
         }
 
         // Add ESC key listener immediately
@@ -2642,76 +2852,78 @@
         donutCanvas.height = window.innerHeight;
       });
 
-      // Custom cursor functionality
-      const customCursor = document.getElementById("custom-cursor");
-      let mouseX = 0;
-      let mouseY = 0;
+      // Custom cursor functionality - only on desktop
+      if (!isMobile) {
+        const customCursor = document.getElementById("custom-cursor");
+        let mouseX = 0;
+        let mouseY = 0;
 
-      // Track mouse movement
-      document.addEventListener("mousemove", (e) => {
-        mouseX = e.clientX;
-        mouseY = e.clientY;
-        customCursor.style.left = mouseX + "px";
-        customCursor.style.top = mouseY + "px";
+        // Track mouse movement
+        document.addEventListener("mousemove", (e) => {
+          mouseX = e.clientX;
+          mouseY = e.clientY;
+          customCursor.style.left = mouseX + "px";
+          customCursor.style.top = mouseY + "px";
 
-        // Check if mouse is over any iframe or video - more comprehensive check
-        const elementBelow = document.elementFromPoint(e.clientX, e.clientY);
-        const isOverVideo =
-          elementBelow &&
-          (elementBelow.tagName === "IFRAME" ||
-            elementBelow.tagName === "VIDEO" ||
-            elementBelow.closest("iframe") ||
-            elementBelow.closest("video") ||
-            (elementBelow.src &&
-              (elementBelow.src.includes("youtube") ||
-                elementBelow.src.includes("vimeo"))) ||
-            elementBelow.classList.contains("vimeo") ||
-            elementBelow.classList.contains("youtube"));
+          // Check if mouse is over any iframe or video - more comprehensive check
+          const elementBelow = document.elementFromPoint(e.clientX, e.clientY);
+          const isOverVideo =
+            elementBelow &&
+            (elementBelow.tagName === "IFRAME" ||
+              elementBelow.tagName === "VIDEO" ||
+              elementBelow.closest("iframe") ||
+              elementBelow.closest("video") ||
+              (elementBelow.src &&
+                (elementBelow.src.includes("youtube") ||
+                  elementBelow.src.includes("vimeo"))) ||
+              elementBelow.classList.contains("vimeo") ||
+              elementBelow.classList.contains("youtube"));
 
-        // Also check for popup videos with buffer zone
-        const popupVideos = document.querySelectorAll(
-          ".popup iframe, .popup video"
-        );
-        let isNearPopupVideo = false;
+          // Also check for popup videos with buffer zone
+          const popupVideos = document.querySelectorAll(
+            ".popup iframe, .popup video"
+          );
+          let isNearPopupVideo = false;
 
-        popupVideos.forEach((video) => {
-          const rect = video.getBoundingClientRect();
-          const buffer = 30; // 30px buffer zone around popup videos
+          popupVideos.forEach((video) => {
+            const rect = video.getBoundingClientRect();
+            const buffer = 30; // 30px buffer zone around popup videos
 
-          if (
-            mouseX >= rect.left - buffer &&
-            mouseX <= rect.right + buffer &&
-            mouseY >= rect.top - buffer &&
-            mouseY <= rect.bottom + buffer
-          ) {
-            isNearPopupVideo = true;
+            if (
+              mouseX >= rect.left - buffer &&
+              mouseX <= rect.right + buffer &&
+              mouseY >= rect.top - buffer &&
+              mouseY <= rect.bottom + buffer
+            ) {
+              isNearPopupVideo = true;
+            }
+          });
+
+          if (isOverVideo || isNearPopupVideo) {
+            customCursor.style.display = "none";
+            customCursor.style.opacity = "0";
+          } else {
+            customCursor.style.display = "block";
+            customCursor.style.opacity = "1";
           }
         });
 
-        if (isOverVideo || isNearPopupVideo) {
-          customCursor.style.display = "none";
+        // Hide cursor when mouse leaves window
+        document.addEventListener("mouseleave", () => {
           customCursor.style.opacity = "0";
-        } else {
-          customCursor.style.display = "block";
+        });
+
+        // Show cursor when mouse enters window
+        document.addEventListener("mouseenter", () => {
           customCursor.style.opacity = "1";
-        }
-      });
+          customCursor.style.display = "block";
+        });
 
-      // Hide cursor when mouse leaves window
-      document.addEventListener("mouseleave", () => {
-        customCursor.style.opacity = "0";
-      });
-
-      // Show cursor when mouse enters window
-      document.addEventListener("mouseenter", () => {
-        customCursor.style.opacity = "1";
+        // Ensure cursor is always visible and on top
         customCursor.style.display = "block";
-      });
-
-      // Ensure cursor is always visible and on top
-      customCursor.style.display = "block";
-      customCursor.style.opacity = "1";
-      customCursor.style.zIndex = "2147483647";
+        customCursor.style.opacity = "1";
+        customCursor.style.zIndex = "2147483647";
+      }
 
       // Simple cursor management - no aggressive overrides
 
@@ -2728,10 +2940,8 @@
 
       // Adjust controls for mobile
       if (isMobile) {
-        controls.touches = {
-          ONE: THREE.TOUCH.ROTATE,
-          TWO: THREE.TOUCH.DOLLY_PAN,
-        };
+        // Disable OrbitControls completely on mobile - we use custom touch controls
+        controls.enabled = false;
         controls.enableKeys = false; // Disable keyboard controls on mobile
       }
 
