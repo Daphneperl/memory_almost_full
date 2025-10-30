@@ -106,6 +106,36 @@
         cursor: auto;
       }
 
+      /* Desktop scrollbar styling: neon green thumb on black track */
+      @media (hover: hover) and (pointer: fine) {
+        /* Firefox */
+        * {
+          scrollbar-color: #39ff14 #000000; /* thumb track */
+          scrollbar-width: thin;
+        }
+
+        /* WebKit (Chrome, Edge, Safari) */
+        *::-webkit-scrollbar {
+          width: 12px;
+          height: 12px;
+        }
+
+        *::-webkit-scrollbar-track {
+          background: #000000;
+        }
+
+        *::-webkit-scrollbar-thumb {
+          background-color: #39ff14;
+          border-radius: 8px;
+          border: 2px solid #000000;
+          box-shadow: 0 0 8px 2px #39ff14;
+        }
+
+        *::-webkit-scrollbar-corner {
+          background: #000000;
+        }
+      }
+
       /* Responsive Design */
       @media (max-width: 1024px) {
         #title {
@@ -174,18 +204,18 @@
         }
 
         .popup-close {
-          top: 10px;
-          right: 15px;
-          width: 35px;
-          height: 35px;
-          font-size: 20px;
+          top: 0px !important;
+          right: 4px !important;
+          width: 52px;
+          height: 52px;
+          font-size: 32px;
         }
 
         .popup-close-overlay {
-          top: 5px;
-          right: 10px;
-          width: 45px;
-          height: 45px;
+          top: 0px !important;
+          right: 0px !important;
+          width: 64px;
+          height: 64px;
         }
 
         /* Tablet carousel responsive styles */
@@ -239,18 +269,18 @@
         }
 
         .popup-close {
-          top: 8px;
-          right: 12px;
-          width: 32px;
-          height: 32px;
-          font-size: 18px;
+          top: 0px !important;
+          right: 4px !important;
+          width: 44px;
+          height: 44px;
+          font-size: 26px;
         }
 
         .popup-close-overlay {
-          top: 3px;
-          right: 7px;
-          width: 40px;
-          height: 40px;
+          top: 0px !important;
+          right: 0px !important;
+          width: 56px;
+          height: 56px;
         }
 
         /* Mobile carousel responsive styles */
@@ -862,12 +892,12 @@
         right: 25px;
         background: transparent;
         border: none;
-        font-size: 18px;
+        font-size: 28px;
         cursor: pointer;
         color: #00ff00;
         z-index: 999999;
-        width: 40px;
-        height: 40px;
+        width: 48px;
+        height: 48px;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -897,8 +927,8 @@
         position: fixed;
         top: 20px;
         right: 25px;
-        width: 50px;
-        height: 50px;
+        width: 60px;
+        height: 60px;
         background: transparent;
         border-radius: 50%;
         z-index: 1000000;
@@ -1041,9 +1071,35 @@
       renderer.setClearColor(0x000000, 0); // Transparent background
       document.body.appendChild(renderer.domElement);
 
-      // Add double-click handler to Three.js canvas (desktop)
+      // Desktop: single-click opens popup, drag rotates via OrbitControls
+      let isPointerDownDesktop = false;
+      let controlsChangedDuringDrag = false;
+      let pointerStartX = 0;
+      let pointerStartY = 0;
+      const CLICK_THRESHOLD = 10; // pixels - maximum movement to consider a click
       if (!isMobile) {
-        renderer.domElement.addEventListener("dblclick", onImageClick);
+        renderer.domElement.addEventListener("pointerdown", (event) => {
+          isPointerDownDesktop = true;
+          controlsChangedDuringDrag = false;
+          pointerStartX = event.clientX;
+          pointerStartY = event.clientY;
+        });
+        renderer.domElement.addEventListener("pointerup", (event) => {
+          const wasPointerDown = isPointerDownDesktop;
+          isPointerDownDesktop = false;
+          if (!wasPointerDown) return;
+
+          // Calculate distance moved during this interaction
+          const deltaX = event.clientX - pointerStartX;
+          const deltaY = event.clientY - pointerStartY;
+          const distanceMoved = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+
+          // Only treat as click if movement was below threshold
+          // This allows clicks even if OrbitControls slightly moved the camera
+          if (distanceMoved < CLICK_THRESHOLD) {
+            onImageClick(event);
+          }
+        });
       } else {
         // Custom mobile touch handling for swipe rotation and tap popup
         let touchStartTime = 0;
@@ -1887,6 +1943,9 @@
           let isAnimating = false;
           let animationId = null;
           let lastAnimationTime = 0;
+          let carouselStartX = 0;
+          let carouselStartY = 0;
+          const CAROUSEL_CLICK_THRESHOLD = 15; // pixels - maximum movement to consider a click
 
           // Get responsive scale factor based on screen size
           const getScaleFactor = () => {
@@ -1929,6 +1988,8 @@
             isDragging = true;
             startX = e.clientX;
             startY = e.clientY;
+            carouselStartX = e.clientX;
+            carouselStartY = e.clientY;
             startRotation = currentRotation;
             carousel.style.cursor = "grabbing";
             e.preventDefault();
@@ -1947,8 +2008,14 @@
             currentRotation = newRotation;
           });
 
-          document.addEventListener("mouseup", () => {
+          document.addEventListener("mouseup", (e) => {
             if (!isDragging) return;
+
+            // Calculate distance moved during this interaction
+            const deltaX = e.clientX - carouselStartX;
+            const deltaY = e.clientY - carouselStartY;
+            const distanceMoved = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+
             isDragging = false;
             carousel.style.cursor = "grab";
             lastAnimationTime = Date.now(); // Reset animation timing
@@ -1986,7 +2053,17 @@
           // Add click handlers to each face for navigation
           faces.forEach((face, index) => {
             face.addEventListener("click", (e) => {
-              if (isDragging) return; // Prevent click if we were dragging
+              // Calculate how far the mouse moved during this interaction
+              const deltaX = e.clientX - carouselStartX;
+              const deltaY = e.clientY - carouselStartY;
+              const distanceMoved = Math.sqrt(
+                deltaX * deltaX + deltaY * deltaY
+              );
+
+              // Only treat as click if movement was below threshold (no significant drag)
+              if (distanceMoved >= CAROUSEL_CLICK_THRESHOLD) {
+                return;
+              }
 
               isAnimating = true;
               carousel.style.animation = "none";
@@ -2124,7 +2201,7 @@
                 In his 2017 book, <em>Glitch Art in Theory and Practice: Critical Failures and Post-Digital Aesthetics</em>, Michael Betancourt proposed a theoretical framework that sees the glitch not as a mere technical phenomenon but as a critical aesthetic related to capitalism. Betancourt argued that the glitch serves as a model for a general theory of critical media, exposing the breaking points in modern technological systems. It functions as a moment of revelation, i.e., a moment where the technological system exposes its own vulnerability and inherent imperfection.
               </p>
               <p style="margin-bottom: 0;">
-                The Wrong Biennale is an independent international art biennial; a multicultural and decentralized platform that embraces an open approach, allowing creatives to sidestep the elitist infrastructure of art fairs and present digital art to a global audience. Founded in 2013 by the Spanish artist and curator David Quiles Guilló, The Wrong Biennale is held both online in the digital sphere and in physical locations.<br><br>⁠Tamar Lev-On: Cutaror of Vitryna Galler
+                The Wrong Biennale is an independent international art biennial; a multicultural and decentralized platform that embraces an open approach, allowing creatives to sidestep the elitist infrastructure of art fairs and present digital art to a global audience. Founded in 2013 by the Spanish artist and curator David Quiles Guilló, The Wrong Biennale is held both online in the digital sphere and in physical locations.<br><br>⁠Tamar Lev-On: Cutaror of Vitrina Gallery
               </p>
               <br>
               <!-- Clear float to prevent layout issues -->
@@ -2858,15 +2935,15 @@
         let mouseX = 0;
         let mouseY = 0;
 
-        // Track mouse movement
-        document.addEventListener("mousemove", (e) => {
-          mouseX = e.clientX;
-          mouseY = e.clientY;
+        // Function to update cursor position
+        function updateCursorPosition(clientX, clientY) {
+          mouseX = clientX;
+          mouseY = clientY;
           customCursor.style.left = mouseX + "px";
           customCursor.style.top = mouseY + "px";
 
           // Check if mouse is over any iframe or video - more comprehensive check
-          const elementBelow = document.elementFromPoint(e.clientX, e.clientY);
+          const elementBelow = document.elementFromPoint(clientX, clientY);
           const isOverVideo =
             elementBelow &&
             (elementBelow.tagName === "IFRAME" ||
@@ -2906,7 +2983,22 @@
             customCursor.style.display = "block";
             customCursor.style.opacity = "1";
           }
+        }
+
+        // Track mouse movement
+        document.addEventListener("mousemove", (e) => {
+          updateCursorPosition(e.clientX, e.clientY);
         });
+
+        // Track pointer movement (handles both mouse and drag events)
+        // Use capture phase to ensure we get the events even during dragging
+        document.addEventListener(
+          "pointermove",
+          (e) => {
+            updateCursorPosition(e.clientX, e.clientY);
+          },
+          { capture: true }
+        );
 
         // Hide cursor when mouse leaves window
         document.addEventListener("mouseleave", () => {
@@ -2937,6 +3029,12 @@
       controls.enableZoom = true;
       controls.enablePan = !isMobile; // Disable pan on mobile for better touch experience
       controls.enableRotate = true;
+      // Mark a drag only when controls actually change during a pointer interaction
+      controls.addEventListener("change", () => {
+        if (isPointerDownDesktop) {
+          controlsChangedDuringDrag = true;
+        }
+      });
 
       // Adjust controls for mobile
       if (isMobile) {
@@ -4034,6 +4132,9 @@
         let animationId = null;
         let lastAnimationTime = Date.now();
         const dragSensitivity = 0.5;
+        let galleryStartX = 0;
+        let galleryStartY = 0;
+        const GALLERY_CLICK_THRESHOLD = 15; // pixels - maximum movement to consider a click
 
         // Auto-rotation
         function animateRotation() {
@@ -4054,6 +4155,8 @@
           if (isAnimating) return;
           isDragging = true;
           startX = e.clientX;
+          galleryStartX = e.clientX;
+          galleryStartY = e.clientY;
           startRotation = currentRotation;
           carousel.style.cursor = "grabbing";
           e.preventDefault();
@@ -4070,8 +4173,14 @@
           currentRotation = newRotation;
         });
 
-        document.addEventListener("mouseup", () => {
+        document.addEventListener("mouseup", (e) => {
           if (!isDragging) return;
+
+          // Calculate distance moved during this interaction
+          const deltaX = e.clientX - galleryStartX;
+          const deltaY = e.clientY - galleryStartY;
+          const distanceMoved = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+
           isDragging = false;
           carousel.style.cursor = "grab";
           lastAnimationTime = Date.now();
@@ -4107,7 +4216,16 @@
         const faces = carousel.querySelectorAll(".gallery-carousel__face");
         faces.forEach((face, index) => {
           face.addEventListener("click", (e) => {
-            if (isDragging) return;
+            // Calculate how far the mouse moved during this interaction
+            const deltaX = e.clientX - galleryStartX;
+            const deltaY = e.clientY - galleryStartY;
+            const distanceMoved = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+
+            // Only treat as click if movement was below threshold (no significant drag)
+            if (distanceMoved >= GALLERY_CLICK_THRESHOLD) {
+              return;
+            }
+
             isAnimating = true;
             const targetRotation = -index * rotationStep;
             const currentRotationNormalized =
