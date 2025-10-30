@@ -738,6 +738,7 @@
         display: flex;
         align-items: center;
         z-index: 101;
+        transform: translate(-10px, 10px);
       }
 
       /* Bottom right logo */
@@ -748,32 +749,41 @@
         display: flex;
         align-items: center;
         z-index: 101;
+        transform: translate(14px, 30px);
       }
 
       .bottom-left-logo .logo {
-        height: clamp(70px, 12vw, 120px);
+        height: clamp(60px, 10vw, 100px);
       }
 
       .bottom-right-logo .logo {
-        height: clamp(120px, 20vw, 170px);
+        height: clamp(165px, 27vw, 270px);
       }
 
       /* Mobile logo size increases */
       @media (max-width: 768px) {
         .bottom-left-logo .logo {
-          height: clamp(90px, 15vw, 150px) !important;
+          height: clamp(70px, 12vw, 120px) !important;
         }
         .bottom-right-logo .logo {
-          height: clamp(150px, 25vw, 220px) !important;
+          height: clamp(195px, 31vw, 285px) !important;
         }
       }
 
       @media (max-width: 480px) {
         .bottom-left-logo .logo {
-          height: clamp(100px, 18vw, 160px) !important;
+          height: clamp(80px, 14vw, 130px) !important;
         }
         .bottom-right-logo .logo {
-          height: clamp(160px, 28vw, 240px) !important;
+          height: clamp(205px, 33vw, 305px) !important;
+        }
+      }
+
+      /* Desktop-only: scale the entire bottom-left logo container */
+      @media (min-width: 1025px) {
+        body .bottom-left-logo {
+          transform: translate(-10px, 10px) scale(1.3) !important;
+          transform-origin: bottom left !important;
         }
       }
 
@@ -958,6 +968,13 @@
         opacity: 0.8;
         line-height: 1.4;
         white-space: nowrap;
+        text-decoration: none;
+        cursor: pointer;
+      }
+
+      #copyright:hover {
+        color: #00ff00;
+        text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00, 0 0 30px #00ff00;
       }
 
       /* Mobile copyright font size */
@@ -1027,9 +1044,14 @@
     <div class="right-logos"></div>
 
     <!-- Copyright moved to right side -->
-    <div id="copyright">
+    <a
+      id="copyright"
+      href="https://amitco-daph.vercel.app/"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
       © 2025 Designed & Built by Daphne Perlman & Amit Cohen
-    </div>
+    </a>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
@@ -2585,6 +2607,37 @@
         }
       }
 
+      // Hover outline on images in the network (desktop only)
+      let lastHoveredPlane = null;
+      function onCanvasMouseMove(event) {
+        if (isMobile) return;
+        const rect = renderer.domElement.getBoundingClientRect();
+        mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+        mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+        raycaster.setFromCamera(mouse, camera);
+        const intersects = raycaster.intersectObjects(imagePlanes);
+
+        const hovered = intersects.length > 0 ? intersects[0].object : null;
+
+        if (hovered !== lastHoveredPlane) {
+          if (
+            lastHoveredPlane &&
+            lastHoveredPlane.userData &&
+            lastHoveredPlane.userData.hoverOutline
+          ) {
+            lastHoveredPlane.userData.hoverOutline.visible = false;
+          }
+          if (hovered && hovered.userData && hovered.userData.hoverOutline) {
+            hovered.userData.hoverOutline.visible = true;
+          }
+          lastHoveredPlane = hovered;
+        }
+      }
+
+      // Bind hover handler to renderer canvas
+      renderer.domElement.addEventListener("mousemove", onCanvasMouseMove);
+
       // Preload all images in parallel for faster loading
       function preloadImages() {
         const loadPromises = artistImages.map((artist) => {
@@ -2708,6 +2761,54 @@
               artist: artist,
               isClickable: isClickableImage(artist.path),
             };
+
+            // Desktop-only: add a dashed outline overlay that matches the image area inside the frame
+            if (!isMobile) {
+              const outlineCanvas = document.createElement("canvas");
+              outlineCanvas.width = framedCanvas.width;
+              outlineCanvas.height = framedCanvas.height;
+              const octx = outlineCanvas.getContext("2d");
+
+              // Recompute the image frame rect as used in createASCIIFrameTexture
+              const padding = 20;
+              const textHeight = 25;
+              const frameX = padding;
+              const frameY = textHeight;
+              const frameWidth = outlineCanvas.width - padding * 2;
+              const frameHeight =
+                outlineCanvas.height - padding * 2 - textHeight;
+
+              // Draw dashed rectangle around the image itself
+              octx.strokeStyle = "#00ff00";
+              octx.lineWidth = 3;
+              octx.setLineDash([8, 6]);
+              octx.strokeRect(
+                frameX + 1.5,
+                frameY + 1.5,
+                frameWidth - 3,
+                frameHeight - 3
+              );
+
+              const outlineTexture = new THREE.CanvasTexture(outlineCanvas);
+              outlineTexture.generateMipmaps = false;
+              outlineTexture.minFilter = THREE.LinearFilter;
+              outlineTexture.magFilter = THREE.LinearFilter;
+
+              const outlineMaterial = new THREE.MeshBasicMaterial({
+                map: outlineTexture,
+                transparent: true,
+                depthTest: false,
+              });
+
+              const outlineMesh = new THREE.Mesh(
+                geometry.clone(),
+                outlineMaterial
+              );
+              outlineMesh.renderOrder = 2;
+              outlineMesh.visible = false;
+              plane.add(outlineMesh);
+              plane.userData.hoverOutline = outlineMesh;
+            }
             imagePlanes.push(plane);
             scene.add(plane);
           });
