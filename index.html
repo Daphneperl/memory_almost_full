@@ -332,6 +332,7 @@
         transition: opacity 2s ease-in;
         position: relative;
         z-index: 10;
+        will-change: opacity;
       }
 
       canvas.fade-in {
@@ -382,6 +383,8 @@
       .ascii-element {
         animation: cray 6s infinite steps(50);
         display: inline-block;
+        will-change: transform;
+        transform: translateZ(0); /* GPU acceleration */
       }
 
       @keyframes cray {
@@ -2663,6 +2666,10 @@
         const canvas = document.createElement("canvas");
         const ctx = canvas.getContext("2d");
 
+        // Enable image smoothing for better quality with less artifacts
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = "high";
+
         // Set canvas size with padding for ASCII frame
         const padding = 20; // Space for frame
         const textHeight = 25; // Space for text above frame
@@ -2761,6 +2768,9 @@
               outlineCanvas.height = framedCanvas.height;
               const octx = outlineCanvas.getContext("2d");
 
+              // Disable image smoothing for outline (performance)
+              octx.imageSmoothingEnabled = false;
+
               // Recompute the image frame rect as used in createASCIIFrameTexture
               const padding = 20;
               const textHeight = 25;
@@ -2823,10 +2833,10 @@
 
       // Function to create connections between images (optimized)
       function createConnections() {
-        // Ensure every image has at least one connection
+        // Ensure every image has at least one connection - reduced for performance
         const maxConnections = isMobile
-          ? Math.min(imagePlanes.length * 0.5, 15)
-          : Math.min(imagePlanes.length * 0.8, 30); // Increase connections for better coverage
+          ? Math.min(imagePlanes.length * 0.3, 8)
+          : Math.min(imagePlanes.length * 0.5, 20); // Reduced from 0.8/30 to 0.5/20 for better performance
         let connectionCount = 0;
         const connectedImages = new Set(); // Track which images have connections
 
@@ -3003,6 +3013,7 @@
       donutCanvas.style.pointerEvents = "none";
       donutCanvas.style.opacity = "0.8"; // More visible
       donutCanvas.style.background = "transparent";
+      donutCanvas.style.willChange = "transform"; // Performance optimization
       document.body.appendChild(donutCanvas);
 
       const donutWidth = Math.floor(donutCanvas.width / 8);
@@ -3929,82 +3940,90 @@
           scene.rotation.y += rotationSpeed;
         }
 
-        // ASCII Donut animation - very slow background animation
+        // ASCII Donut animation - very slow background animation with frame skip
         donutAngle += 0.01; // Much slower than the ASCII experiments version
         donutAngle2 += 0.005;
 
-        // Clear donut canvas with transparent background
-        donutCtx.clearRect(0, 0, donutCanvas.width, donutCanvas.height);
+        // Skip frames to reduce CPU usage (redraw every 2nd frame)
+        const shouldDrawDonut = Math.floor(Date.now() / 33) % 2 === 0;
 
-        const cosA = Math.cos(donutAngle);
-        const sinA = Math.sin(donutAngle);
-        const cosA2 = Math.cos(donutAngle2);
-        const sinA2 = Math.sin(donutAngle2);
+        if (shouldDrawDonut) {
+          // Clear donut canvas with transparent background
+          donutCtx.clearRect(0, 0, donutCanvas.width, donutCanvas.height);
 
-        // Clear buffers
-        for (let i = 0; i < donutWidth * donutHeight; i++) {
-          donutBuffer[i] = " ";
-          donutZBuffer[i] = 0;
-        }
+          const cosA = Math.cos(donutAngle);
+          const sinA = Math.sin(donutAngle);
+          const cosA2 = Math.cos(donutAngle2);
+          const sinA2 = Math.sin(donutAngle2);
 
-        // Scale factor for full screen - make donut larger
-        const scale = Math.min(donutWidth, donutHeight) / 10; // Even larger scale to fill entire screen
+          // Clear buffers
+          for (let i = 0; i < donutWidth * donutHeight; i++) {
+            donutBuffer[i] = " ";
+            donutZBuffer[i] = 0;
+          }
 
-        // Generate donut
-        for (let j = 0; j < 6.28; j += 0.1) {
-          const cosJ = Math.cos(j);
-          const sinJ = Math.sin(j);
+          // Scale factor for full screen - make donut larger
+          const scale = Math.min(donutWidth, donutHeight) / 10; // Even larger scale to fill entire screen
 
-          for (let i = 0; i < 6.28; i += 0.05) {
-            const cosI = Math.cos(i);
-            const sinI = Math.sin(i);
+          // Generate donut with reduced iterations for performance
+          const stepJ = 0.15; // Increased from 0.1
+          const stepI = 0.08; // Increased from 0.05
+          for (let j = 0; j < 6.28; j += stepJ) {
+            const cosJ = Math.cos(j);
+            const sinJ = Math.sin(j);
 
-            const x = cosI + 2;
-            const y = sinI;
-            const z = j;
+            for (let i = 0; i < 6.28; i += stepI) {
+              const cosI = Math.cos(i);
+              const sinI = Math.sin(i);
 
-            // 3D rotation
-            const nx = x * cosA - y * sinA;
-            const ny = x * sinA + y * cosA;
-            const nz = z;
+              const x = cosI + 2;
+              const y = sinI;
+              const z = j;
 
-            const nz2 = nz * cosA2 - ny * sinA2;
-            const ny2 = nz * sinA2 + ny * cosA2;
-            const nx2 = nx;
+              // 3D rotation
+              const nx = x * cosA - y * sinA;
+              const ny = x * sinA + y * cosA;
+              const nz = z;
 
-            // Perspective projection with full screen scaling
-            const ooz = 1 / (nz2 + 5);
-            // Offset to ensure full screen coverage - start from left edge
-            const xp = Math.floor(scale * 30 * ooz * nx2); // Start from left edge, no center offset
-            const yp = Math.floor(donutHeight / 2 + scale * 20 * ooz * ny2); // Keep vertical centered
+              const nz2 = nz * cosA2 - ny * sinA2;
+              const ny2 = nz * sinA2 + ny * cosA2;
+              const nx2 = nx;
 
-            // Calculate lighting
-            const l = cosI * cosJ * cosA - sinJ * sinA;
+              // Perspective projection with full screen scaling
+              const ooz = 1 / (nz2 + 5);
+              // Offset to ensure full screen coverage - start from left edge
+              const xp = Math.floor(scale * 30 * ooz * nx2); // Start from left edge, no center offset
+              const yp = Math.floor(donutHeight / 2 + scale * 20 * ooz * ny2); // Keep vertical centered
 
-            if (xp >= 0 && xp < donutWidth && yp >= 0 && yp < donutHeight) {
-              const idx = yp * donutWidth + xp;
-              if (ooz > donutZBuffer[idx]) {
-                donutZBuffer[idx] = ooz;
-                const lum = Math.floor(8 * l);
-                const char = lum > 0 ? ".,-~:;=!*#$@"[Math.min(lum, 11)] : " ";
-                donutBuffer[idx] = char;
+              // Calculate lighting
+              const l = cosI * cosJ * cosA - sinJ * sinA;
+
+              if (xp >= 0 && xp < donutWidth && yp >= 0 && yp < donutHeight) {
+                const idx = yp * donutWidth + xp;
+                if (ooz > donutZBuffer[idx]) {
+                  donutZBuffer[idx] = ooz;
+                  const lum = Math.floor(8 * l);
+                  const char =
+                    lum > 0 ? ".,-~:;=!*#$@"[Math.min(lum, 11)] : " ";
+                  donutBuffer[idx] = char;
+                }
               }
             }
           }
-        }
 
-        // Draw donut with larger font for full screen
-        const fontSize = Math.max(16, Math.min(donutWidth, donutHeight) / 15); // Much larger font
-        donutCtx.font = `${fontSize}px Courier New`;
-        donutCtx.fillStyle = "#00ff41"; // Bright green like the network strings
-        donutCtx.textAlign = "left";
-        donutCtx.textBaseline = "top";
+          // Draw donut with larger font for full screen
+          const fontSize = Math.max(16, Math.min(donutWidth, donutHeight) / 15); // Much larger font
+          donutCtx.font = `${fontSize}px Courier New`;
+          donutCtx.fillStyle = "#00ff41"; // Bright green like the network strings
+          donutCtx.textAlign = "left";
+          donutCtx.textBaseline = "top";
 
-        for (let y = 0; y < donutHeight; y++) {
-          for (let x = 0; x < donutWidth; x++) {
-            const char = donutBuffer[y * donutWidth + x];
-            if (char !== " ") {
-              donutCtx.fillText(char, x * fontSize * 0.6, y * fontSize);
+          for (let y = 0; y < donutHeight; y++) {
+            for (let x = 0; x < donutWidth; x++) {
+              const char = donutBuffer[y * donutWidth + x];
+              if (char !== " ") {
+                donutCtx.fillText(char, x * fontSize * 0.6, y * fontSize);
+              }
             }
           }
         }
@@ -4055,9 +4074,18 @@
       // Start animation
       animate();
 
-      // Delicate mouse-tracking gradient effect - disable on mobile for performance
+      // Delicate mouse-tracking gradient effect - disable on mobile for performance with throttling
       if (!isMobile) {
+        let lastMouseMoveTime = 0;
+        const mouseMoveThrottle = 16; // ~60fps
+
         document.addEventListener("mousemove", (event) => {
+          const now = Date.now();
+          if (now - lastMouseMoveTime < mouseMoveThrottle) {
+            return; // Skip if too soon
+          }
+          lastMouseMoveTime = now;
+
           const x = (event.clientX / window.innerWidth) * 100;
           const y = (event.clientY / window.innerHeight) * 100;
 
