@@ -158,12 +158,12 @@
         }
 
         .bottom-left-logo {
-          bottom: clamp(8px, 1.5vh, 15px);
+          bottom: clamp(5px, 1vh, 12px);
           left: clamp(15px, 3vw, 30px);
         }
 
         .bottom-right-logo {
-          bottom: clamp(8px, 1.5vh, 15px);
+          bottom: clamp(15px, 2vh, 22px);
           right: clamp(15px, 3vw, 30px);
         }
 
@@ -233,21 +233,14 @@
           bottom: clamp(6px, 1.5vh, 12px);
           left: clamp(6px, 1.5vw, 12px);
         }
-        
-        #curation-link .name {
-          font-size: clamp(10pt, 3vw, 16pt);
-        }
-        
-        #curation-link .title {
-          font-size: clamp(8pt, 2.5vw, 14pt);
-        }
-        
-        #curation-link .gallery-curator {
-          font-size: clamp(6pt, 2.2vw, 12pt);
+
+        .bottom-left-logo {
+          bottom: clamp(2px, 0.5vh, 7px);
+          left: clamp(10px, 2vw, 20px);
         }
 
         .bottom-right-logo {
-          bottom: clamp(5px, 1vh, 10px);
+          bottom: clamp(12px, 1.5vh, 17px);
           right: clamp(10px, 2vw, 20px);
         }
 
@@ -375,6 +368,14 @@
           height: clamp(80px, 16vh, 150px);
           max-width: clamp(350px, 70vw, 700px);
           margin-bottom: -2px;
+        }
+
+        #curation-link {
+          align-self: flex-start !important;
+          margin-left: 45px !important;
+          margin-right: auto !important;
+          width: fit-content;
+          max-width: 100%;
         }
 
         .desktop-image {
@@ -719,21 +720,9 @@
         font-size: clamp(12pt, 3vw, 18pt);
         display: block;
       }
-      
+
       #curation-link .title {
         font-size: clamp(10pt, 2.5vw, 16pt);
-        display: block;
-        margin-bottom: 15px;
-      }
-      
-      #curation-link .assistant {
-        font-size: clamp(7pt, 1.5vw, 13pt);
-        display: block;
-        margin-bottom: 2px;
-      }
-      
-      #curation-link .gallery-curator {
-        font-size: clamp(5pt, 1.4vw, 11pt);
         display: block;
       }
 
@@ -745,8 +734,8 @@
       /* Left side logo */
       .left-logo {
         position: fixed;
-        left: clamp(20px, 1.9vw, 60px);
-        top: clamp(850px, 91.6vh, 1020px);
+        left: 36px;
+        top: 989px;
         display: flex;
         align-items: center;
         z-index: 101;
@@ -755,43 +744,61 @@
       /* Bottom left logo */
       .bottom-left-logo {
         position: fixed;
-        bottom: clamp(-10px, -0.5vh, 0px);
-        left: clamp(-55px, -3vw, -30px);
+        bottom: clamp(7px, 1.5vh, 17px);
+        left: clamp(20px, 4vw, 40px);
         display: flex;
         align-items: center;
         z-index: 101;
-      }
-      
-      .bottom-left-logo .logo {
-        transform: scale(0.5);
-      }
-
-      /* Right side logos */
-      .right-logos {
-        position: fixed;
-        left: clamp(1600px, 93.75vw, 1850px);
-        bottom: clamp(100px, 11vh, 130px);
-        display: flex;
-        flex-direction: column;
-        gap: clamp(8px, 2vh, 15px);
-        align-items: flex-end;
-        z-index: 101;
+        transform: translate(-10px, 10px);
       }
 
       /* Bottom right logo */
       .bottom-right-logo {
         position: fixed;
-        left: clamp(1545px, 89vw, 1795px);
-        bottom: clamp(15px, 2.5vh, 30px);
+        bottom: clamp(12px, 1.5vh, 22px);
+        right: clamp(10px, 2vw, 20px);
+        display: flex;
+        align-items: center;
+        z-index: 101;
+        transform: translate(14px, 20px);
+      }
+
+      .bottom-left-logo .logo {
+        height: clamp(65px, 10.5vw, 105px);
+      }
+
+      .bottom-right-logo .logo {
+        height: clamp(100px, 16vw, 160px);
+      }
+
+      /* Mobile logo size increases */
+      @media (max-width: 768px) {
+        .bottom-left-logo .logo {
+          height: clamp(80px, 13vw, 130px) !important;
+        }
+        .bottom-right-logo .logo {
+          height: clamp(100px, 16.5vw, 155px) !important;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .bottom-left-logo .logo {
+          height: clamp(90px, 15vw, 140px) !important;
+        }
+        .bottom-right-logo .logo {
+          height: clamp(105px, 17.5vw, 165px) !important;
+        }
+      }
+
+      .logos .logo:first-child {
+        position: fixed;
+        left: 1800px;
+        top: 968px;
         display: flex;
         flex-direction: column;
         gap: clamp(8px, 2vh, 15px);
         align-items: flex-end;
         z-index: 101;
-      }
-      
-      .bottom-right-logo .logo {
-        transform: scale(1.1);
       }
 
       .logo {
@@ -951,71 +958,32 @@
         }
       }
 
-        #copyright {
-          position: fixed;
-          left: clamp(1620px, 98.5vw, 1920px);
-          top: clamp(350px, 45.4vh, 600px);
-          transform: rotate(90deg);
-          transform-origin: left top;
-          color: #ffffff;
-          font-size: clamp(8px, 0.9vw, 12px);
+      #copyright {
+        position: fixed;
+        right: 15px;
+        top: 80%;
+        transform: rotate(90deg);
+        transform-origin: right top;
+        color: #ffffff;
+        font-size: 16px;
         font-family: "SourceCodePro", monospace;
-          z-index: 1000;
-          opacity: 0.8;
-          line-height: 1.4;
-          white-space: nowrap;
-        }
+        z-index: 1000;
+        opacity: 0.8;
+        line-height: 1.4;
+        white-space: nowrap;
+        text-decoration: none;
+        cursor: pointer;
+      }
+
+      #copyright:hover {
+        color: #00ff00;
+        text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00, 0 0 30px #00ff00;
+      }
 
       /* Mobile copyright font size */
       @media (max-width: 768px) {
         #copyright {
-          position: fixed !important;
-          right: 25px !important;
-          bottom: 80px !important;
-          left: auto !important;
-          top: auto !important;
-          transform: rotate(90deg) !important;
-          transform-origin: right bottom !important;
-          color: #ffffff !important;
-          font-size: 10px !important;
-          font-family: "SourceCodePro", monospace !important;
-          z-index: 1001 !important;
-          opacity: 0.8 !important;
-          line-height: 1.4 !important;
-          white-space: nowrap !important;
-          writing-mode: initial !important;
-          text-orientation: initial !important;
-        }
-        
-        #curation-link {
-          left: clamp(10px, 3vw, 30px) !important;
-          top: clamp(80px, 12vh, 120px) !important;
-          font-size: clamp(7px, 2vw, 14px) !important;
-          max-width: 80vw !important;
-        }
-        
-        #curation-link .name {
-          font-size: clamp(10pt, 3vw, 16pt) !important;
-        }
-        
-        #curation-link .title {
-          font-size: clamp(8pt, 2.5vw, 14pt) !important;
-        }
-        
-        .right-logos {
-          position: fixed !important;
-          right: 15px !important;
-          bottom: 15px !important;
-          left: auto !important;
-          top: auto !important;
-          display: flex !important;
-          align-items: center !important;
-        }
-        
-        .right-logos .logo {
-          height: 35px !important;
-          width: auto !important;
-          opacity: 0.9 !important;
+          font-size: 11px;
         }
       }
 
@@ -1058,23 +1026,28 @@
       <div id="curation-link" onclick="showCurationPopup()">
         <span class="name">ADI KARELITZ:</span>
         <span class="title">CURATOR</span>
-        <span class="assistant">TAMAR LEV-ON:</span>
-        <span class="gallery-curator">GALLERY CURATOR</span>
+        <br />
+        <span class="name">Tamar Lev-On:</span>
+        <span class="title">Gallery curator</span>
       </div>
     </div>
+
     <!-- Bottom left logo -->
     <div class="bottom-left-logo">
-      <img src="assets/logos/Final/TheWrongBiennale.png" alt="TheWrong Biennale" class="logo" />
+      <img src="assets/Artists/LOGO-WHITE.001.png" alt="Logo" class="logo" />
     </div>
 
     <!-- Bottom right logo -->
     <div class="bottom-right-logo">
       <img
-        src="assets/logos/Final/HIT_Vitrina.png"
-        alt="HIT Vitrina"
+        src="assets/logos/HIT_fullLogo.png"
+        alt="HIT Full Logo"
         class="logo"
       />
     </div>
+
+    <!-- Right side logo -->
+    <div class="right-logos"></div>
 
     <!-- Copyright moved to right side -->
     <a
@@ -2772,7 +2745,7 @@
 
             const material = new THREE.MeshBasicMaterial({
               map: framedTexture,
-        transparent: true,
+              transparent: true,
               opacity: 0.95,
               side: THREE.DoubleSide,
               alphaTest: 0.1, // Optimize transparency rendering
