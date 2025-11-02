@@ -229,13 +229,19 @@
       }
 
       @media (max-width: 480px) {
-        .left-logo {
-          bottom: clamp(6px, 1.5vh, 12px);
-          left: clamp(6px, 1.5vw, 12px);
+        #curation-link {
+          left: clamp(10px, 3vw, 30px);
+          top: clamp(120px, 15vh, 180px);
+          font-size: clamp(7px, 2vw, 14px);
+          max-width: 80vw;
         }
         
         #curation-link .name {
           font-size: clamp(10pt, 3vw, 16pt);
+        }
+        
+        #curation-link .assistant {
+          font-size: clamp(7pt, 2.2vw, 13pt);
         }
         
         #curation-link .title {
@@ -244,6 +250,15 @@
         
         #curation-link .gallery-curator {
           font-size: clamp(6pt, 2.2vw, 12pt);
+        }
+        .left-logo {
+          bottom: clamp(6px, 1.5vh, 12px);
+          left: clamp(6px, 1.5vw, 12px);
+        }
+
+        .bottom-left-logo {
+          bottom: clamp(5px, 1vh, 10px);
+          left: clamp(10px, 2vw, 20px);
         }
 
         .bottom-right-logo {
@@ -720,20 +735,20 @@
         display: block;
       }
       
+      #curation-link .assistant {
+        font-size: clamp(11pt, 1.5vw, 18pt);
+        display: block;
+        margin-bottom: 2px;
+      }
+      
       #curation-link .title {
         font-size: clamp(10pt, 2.5vw, 16pt);
         display: block;
         margin-bottom: 15px;
       }
       
-      #curation-link .assistant {
-        font-size: clamp(7pt, 1.5vw, 13pt);
-        display: block;
-        margin-bottom: 2px;
-      }
-      
       #curation-link .gallery-curator {
-        font-size: clamp(5pt, 1.4vw, 11pt);
+        font-size: clamp(10pt, 1.4vw, 18pt);
         display: block;
       }
 
@@ -746,7 +761,7 @@
       .left-logo {
         position: fixed;
         left: clamp(20px, 1.9vw, 60px);
-        top: clamp(850px, 91.6vh, 1020px);
+        bottom: clamp(11px, 1vh, 20px);
         display: flex;
         align-items: center;
         z-index: 101;
@@ -755,43 +770,13 @@
       /* Bottom left logo */
       .bottom-left-logo {
         position: fixed;
-        bottom: clamp(-10px, -0.5vh, 0px);
-        left: clamp(-55px, -3vw, -30px);
-        display: flex;
-        align-items: center;
-        z-index: 101;
-      }
-      
-      .bottom-left-logo .logo {
-        transform: scale(0.5);
-      }
-
-      /* Right side logos */
-      .right-logos {
-        position: fixed;
         left: clamp(1600px, 93.75vw, 1850px);
-        bottom: clamp(100px, 11vh, 130px);
+        bottom: clamp(-5px, 1vh, 2px);
         display: flex;
         flex-direction: column;
         gap: clamp(8px, 2vh, 15px);
         align-items: flex-end;
         z-index: 101;
-      }
-
-      /* Bottom right logo */
-      .bottom-right-logo {
-        position: fixed;
-        left: clamp(1545px, 89vw, 1795px);
-        bottom: clamp(15px, 2.5vh, 30px);
-        display: flex;
-        flex-direction: column;
-        gap: clamp(8px, 2vh, 15px);
-        align-items: flex-end;
-        z-index: 101;
-      }
-      
-      .bottom-right-logo .logo {
-        transform: scale(1.1);
       }
 
       .logo {
@@ -928,22 +913,20 @@
         transform: scale(0.95);
       }
 
-      /* Transparent overlay for mobile touch handling */
-      .popup-close-overlay {
-        position: fixed;
-        top: 20px;
-        right: 25px;
-        width: 60px;
-        height: 60px;
-        background: transparent;
-        border-radius: 50%;
-        z-index: 1000000;
-        cursor: pointer;
-        pointer-events: auto;
-        -webkit-tap-highlight-color: rgba(0, 255, 0, 0.2);
-        /* Only show on mobile devices */
-        display: none;
-      }
+        #copyright {
+          position: fixed;
+          right: clamp(20px, 2vw, 50px);
+          top: 50%;
+          transform: rotate(90deg) translateY(-50%);
+          transform-origin: right center;
+          color: #ffffff;
+          font-size: clamp(9px, 1.1vw, 14px);
+        font-family: "SourceCodePro", monospace;
+          z-index: 1000;
+          opacity: 0.8;
+          line-height: 1.4;
+          white-space: nowrap;
+        }
 
       @media (max-width: 768px), (pointer: coarse) {
         .popup-close-overlay {
@@ -951,20 +934,27 @@
         }
       }
 
-        #copyright {
-          position: fixed;
-          left: clamp(1620px, 98.5vw, 1920px);
-          top: clamp(350px, 45.4vh, 600px);
-          transform: rotate(90deg);
-          transform-origin: left top;
-          color: #ffffff;
-          font-size: clamp(8px, 0.9vw, 12px);
+      #copyright {
+        position: fixed;
+        right: 15px;
+        top: 80%;
+        transform: rotate(90deg);
+        transform-origin: right top;
+        color: #ffffff;
+        font-size: 16px;
         font-family: "SourceCodePro", monospace;
-          z-index: 1000;
-          opacity: 0.8;
-          line-height: 1.4;
-          white-space: nowrap;
-        }
+        z-index: 1000;
+        opacity: 0.8;
+        line-height: 1.4;
+        white-space: nowrap;
+        text-decoration: none;
+        cursor: pointer;
+      }
+
+      #copyright:hover {
+        color: #00ff00;
+        text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00, 0 0 30px #00ff00;
+      }
 
       /* Mobile copyright font size */
       @media (max-width: 768px) {
@@ -998,8 +988,16 @@
           font-size: clamp(10pt, 3vw, 16pt) !important;
         }
         
+        #curation-link .assistant {
+          font-size: clamp(8pt, 2.5vw, 14pt) !important;
+        }
+        
         #curation-link .title {
           font-size: clamp(8pt, 2.5vw, 14pt) !important;
+        }
+        
+        #curation-link .gallery-curator {
+          font-size: clamp(6pt, 2.2vw, 12pt) !important;
         }
         
         .right-logos {
@@ -1051,30 +1049,31 @@
   <body>
     <!-- Custom cursor -->
     <div class="custom-cursor" id="custom-cursor">*</div>
-
-    <!-- Top left logo and curator container -->
-    <div id="top-left-container">
-      <img id="title" src="assets/logos/logo02.png" alt="Memory Almost Full" />
-      <div id="curation-link" onclick="showCurationPopup()">
-        <span class="name">ADI KARELITZ:</span>
-        <span class="title">CURATOR</span>
-        <span class="assistant">TAMAR LEV-ON:</span>
-        <span class="gallery-curator">GALLERY CURATOR</span>
-      </div>
+    
+    <img id="title" src="assets/logos/logo02.png" alt="Memory Almost Full" />
+    <div id="curation-link" onclick="showCurationPopup()">
+      <span class="name">ADI KARELITZ:</span>
+      <span class="title">CURATOR</span>
+      <span class="assistant">TAMAR LEV-ON:</span>
+      <span class="gallery-curator">GALLERY CURATOR</span>
     </div>
+
     <!-- Bottom left logo -->
     <div class="bottom-left-logo">
-      <img src="assets/logos/Final/TheWrongBiennale.png" alt="TheWrong Biennale" class="logo" />
+      <img src="assets/Artists/LOGO-WHITE.001.png" alt="Logo" class="logo" />
     </div>
 
     <!-- Bottom right logo -->
     <div class="bottom-right-logo">
       <img
-        src="assets/logos/Final/HIT_Vitrina.png"
-        alt="HIT Vitrina"
+        src="assets/logos/HIT_fullLogo.png"
+        alt="HIT Full Logo"
         class="logo"
       />
     </div>
+
+    <!-- Right side logo -->
+    <div class="right-logos"></div>
 
     <!-- Copyright moved to right side -->
     <a
@@ -2772,7 +2771,7 @@
 
             const material = new THREE.MeshBasicMaterial({
               map: framedTexture,
-        transparent: true,
+              transparent: true,
               opacity: 0.95,
               side: THREE.DoubleSide,
               alphaTest: 0.1, // Optimize transparency rendering
