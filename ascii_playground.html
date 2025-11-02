@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ASCII Art Network Playground</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
+  <style>
+    @font-face {
+      font-family: "SourceCodePro";
+      src: url("assets/SourceCodePro-VariableFont_wght.ttf") format("truetype");
+    }
+    @font-face {
+      font-family: "IBMPlexMono";
+      src: url("assets/IBMPlexMono-Light.ttf") format("truetype");
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: "SourceCodePro", monospace;
+      background: #0a0a0a;
+      color: #00ff41;
+      overflow: hidden;
+      height: 100vh;
+      display: flex;
+    }
+    
+    /* Split view layout */
+    .playground-container {
+      display: flex;
+      width: 100%;
+      height: 100vh;
+    }
+    
+    /* Input Panel */
+    .input-panel {
+      width: 35%;
+      min-width: 350px;
+      padding: 20px;
+      background: #000;
+      border-right: 2px solid #00ff41;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+    
+    /* Tab Navigation */
+    .tab-container {
+      display: flex;
+      gap: 5px;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #00ff41;
+      padding-bottom: 10px;
+    }
+    
+    .tab-button {
+      flex: 1;
+      padding: 10px;
+      background: #111;
+      color: #888;
+      border: 1px solid #333;
+      font-family: "SourceCodePro", monospace;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.3s;
+      border-bottom: none;
+    }
+    
+    .tab-button.active {
+      background: #00ff41;
+      color: #000;
+      border-color: #00ff41;
+      font-weight: bold;
+    }
+    
+    .tab-button:hover:not(.active) {
+      background: #222;
+      color: #00ff41;
+      border-color: #00ff41;
+    }
+    
+    /* Tab Content */
+    .tab-content {
+      display: none;
+      flex: 1;
+      flex-direction: column;
+    }
+    
+    .tab-content.active {
+      display: flex;
+    }
+    
+    .input-panel h1 {
+      font-size: 24px;
+      margin-bottom: 10px;
+      color: #00ff41;
+      text-shadow: 0 0 10px #00ff41;
+    }
+    
+    .input-panel p {
+      font-size: 12px;
+      color: #888;
+      margin-bottom: 20px;
+    }
+    
+    .input-group {
+      margin-bottom: 20px;
+    }
+    
+    .input-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 14px;
+      color: #00ff41;
+    }
+    
+    #ascii-input {
+      width: 100%;
+      height: 300px;
+      background: #000;
+      color: #00ff41;
+      border: 1px solid #00ff41;
+      font-family: "SourceCodePro", monospace;
+      font-size: 12px;
+      padding: 10px;
+      resize: vertical;
+      caret-color: #00ff41;
+    }
+    
+    #ascii-input:focus {
+      outline: none;
+      box-shadow: 0 0 10px rgba(0, 255, 65, 0.5);
+    }
+    
+    .button-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+    }
+    
+    button {
+      flex: 1;
+      padding: 12px;
+      background: #00ff41;
+      color: #000;
+      border: none;
+      font-family: "SourceCodePro", monospace;
+      font-weight: bold;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    button:hover {
+      background: #00cc33;
+      box-shadow: 0 0 15px rgba(0, 255, 65, 0.7);
+    }
+    
+    button:active {
+      transform: scale(0.98);
+    }
+    
+    button.secondary {
+      background: #333;
+      color: #00ff41;
+    }
+    
+    button.secondary:hover {
+      background: #444;
+    }
+    
+    .info-text {
+      font-size: 11px;
+      color: #666;
+      margin-top: 15px;
+      line-height: 1.6;
+    }
+    
+    /* Network View Panel */
+    .network-view {
+      flex: 1;
+      position: relative;
+      background: #000;
+    }
+    
+    #network-canvas {
+      width: 100%;
+      height: 100%;
+    }
+    
+    .network-info {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 100;
+      background: rgba(0, 0, 0, 0.8);
+      padding: 15px;
+      border: 1px solid #00ff41;
+      border-radius: 4px;
+      font-size: 12px;
+      color: #00ff41;
+      pointer-events: none;
+    }
+    
+    .network-stats {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      z-index: 100;
+      background: rgba(0, 0, 0, 0.8);
+      padding: 15px;
+      border: 1px solid #00ff41;
+      border-radius: 4px;
+      font-size: 12px;
+      color: #00ff41;
+      pointer-events: none;
+    }
+    
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .playground-container {
+        flex-direction: column;
+      }
+      
+      .input-panel {
+        width: 100%;
+        min-width: auto;
+        height: 40vh;
+        border-right: none;
+        border-bottom: 2px solid #00ff41;
+      }
+      
+      .network-view {
+        height: 60vh;
+      }
+    }
+    
+    /* Scrollbar styling */
+    .input-panel::-webkit-scrollbar {
+      width: 8px;
+    }
+    
+    .input-panel::-webkit-scrollbar-track {
+      background: #000;
+    }
+    
+    .input-panel::-webkit-scrollbar-thumb {
+      background: #00ff41;
+      border-radius: 4px;
+    }
+    
+    .input-panel::-webkit-scrollbar-thumb:hover {
+      background: #00cc33;
+    }
+  </style>
+</head>
+<body>
+  <div class="playground-container">
+    <!-- Input Panel -->
+    <div class="input-panel">
+      <h1>ASCII ART PLAYGROUND</h1>
+      
+      <!-- Tab Navigation -->
+      <div class="tab-container">
+        <button class="tab-button active" data-tab="converter">Image Converter</button>
+        <button class="tab-button" data-tab="manual">Manual Input</button>
+      </div>
+      
+      <!-- Image Converter Tab -->
+      <div class="tab-content active" id="converter-tab">
+        <div class="input-group">
+          <label for="image-upload">Upload Image to Convert:</label>
+          <input type="file" id="image-upload" accept="image/*" style="display: none;">
+          <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+            <button type="button" id="upload-button" class="secondary" style="flex: 1;">Choose Image</button>
+            <button type="button" id="convert-button" class="secondary" style="flex: 1;" disabled>Convert to ASCII</button>
+          </div>
+          
+          <div style="margin-top: 10px; display: flex; gap: 10px; align-items: center;">
+            <label style="font-size: 11px; color: #888; flex: 1;">Width:</label>
+            <input type="range" id="ascii-width" min="40" max="120" value="80" style="flex: 2;">
+            <span id="width-value" style="font-size: 11px; color: #00ff41; min-width: 30px; text-align: right;">80</span>
+          </div>
+          <div style="margin-top: 5px; display: flex; gap: 10px; align-items: center;">
+            <label style="font-size: 11px; color: #888; flex: 1;">Contrast:</label>
+            <input type="range" id="ascii-contrast" min="1" max="3" step="0.1" value="1.5" style="flex: 2;">
+            <span id="contrast-value" style="font-size: 11px; color: #00ff41; min-width: 30px; text-align: right;">1.5</span>
+          </div>
+          
+          <div id="image-preview" style="margin-top: 15px; display: none;">
+            <img id="preview-img" style="max-width: 100%; border: 1px solid #00ff41; display: block; margin-bottom: 10px;">
+          </div>
+          
+          <div id="ascii-preview" style="margin-top: 15px; display: none;">
+            <label style="display: block; margin-bottom: 8px; font-size: 14px; color: #00ff41;">Converted ASCII Art:</label>
+            <div id="ascii-display" style="background: #000; color: #00ff41; border: 1px solid #00ff41; font-family: 'SourceCodePro', monospace; font-size: 8px; padding: 10px; max-height: 300px; overflow: auto; white-space: pre; line-height: 1.2; letter-spacing: 0px;"></div>
+            <textarea id="converted-ascii" readonly style="display: none;"></textarea>
+          </div>
+        </div>
+        
+        <div class="button-group" style="margin-top: 15px;">
+          <button id="send-to-canvas" style="display: none;">Send to Canvas</button>
+          <button id="clear-converter" class="secondary">Clear</button>
+        </div>
+        
+        <div class="info-text" style="margin-top: 15px;">
+          <strong>How to use:</strong><br>
+          1. Click "Choose Image" and select an image<br>
+          2. Adjust width and contrast settings<br>
+          3. Click "Convert to ASCII" - image will transform to ASCII<br>
+          4. Click "Send to Canvas" to add it to the interactive network
+        </div>
+      </div>
+      
+      <!-- Manual Input Tab -->
+      <div class="tab-content" id="manual-tab">
+        <div class="input-group">
+          <label for="ascii-input">Enter your ASCII art:</label>
+          <textarea id="ascii-input" placeholder="Paste or type your ASCII art here...
+
+Example:
+    +---+
+    |   |
+    +---+"></textarea>
+        </div>
+        
+        <div class="button-group">
+          <button id="add-to-network">Add to Canvas</button>
+          <button id="clear-all" class="secondary">Clear All</button>
+        </div>
+        
+        <div class="info-text">
+          <strong>Instructions:</strong><br>
+          • Enter ASCII art manually and click "Add to Canvas"<br>
+          • Drag any character/node to stretch connections<br>
+          • Release to let it spring back<br>
+          • Press 'R' to reload/parse ASCII<br>
+          • Press 'L' to lock/unlock nodes
+        </div>
+      </div>
+    </div>
+    
+    <!-- Network View Panel -->
+    <div class="network-view">
+      <div id="network-canvas"></div>
+      
+      <div class="network-info">
+        <div>Stretch your ASCII piece</div>
+        <div>release to watch it find its way back</div>
+      </div>
+      
+      <div class="network-stats">
+        <div>Nodes: <span id="node-count">0</span></div>
+        <div>Connections: <span id="connection-count">0</span></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Global variables
+    let nodes = [];
+    let connections = [];
+    let draggedNode = null;
+    let isDragging = false;
+    let time = 0;
+    let currentASCII = "";
+    let lockedNodes = new Set();
+    
+    // p5.js sketch
+    function setup() {
+      const inputPanel = document.querySelector('.input-panel');
+      const networkView = document.querySelector('.network-view');
+      const canvas = createCanvas(
+        networkView.clientWidth,
+        networkView.clientHeight
+      );
+      canvas.parent('#network-canvas');
+      
+      // Set text properties
+      textFont("SourceCodePro");
+      
+      updateStats();
+    }
+    
+    function draw() {
+      background(0);
+      time += 0.02;
+      
+      // Update physics
+      updatePhysics();
+      
+      // Draw connections
+      drawConnections();
+      
+      // Draw nodes
+      drawNodes();
+    }
+    
+    function parseASCII(asciiText) {
+      nodes = [];
+      connections = [];
+      lockedNodes.clear();
+      
+      if (!asciiText || !asciiText.trim()) {
+        updateStats();
+        return;
+      }
+      
+      let lines = asciiText.trim().split('\n');
+      let charSize = 12;
+      let lineHeight = 18;
+      
+      // Calculate center position
+      let maxWidth = 0;
+      for (let line of lines) {
+        if (line.length > maxWidth) maxWidth = line.length;
+      }
+      
+      let centerX = width / 2;
+      let centerY = height / 2;
+      
+      // Create nodes for each character
+      for (let y = 0; y < lines.length; y++) {
+        let line = lines[y];
+        for (let x = 0; x < line.length; x++) {
+          let char = line[x];
+          if (char !== ' ') {
+            let node = {
+              id: nodes.length,
+              char: char,
+              x: centerX - (maxWidth * charSize) / 2 + x * charSize,
+              y: centerY - (lines.length * lineHeight) / 2 + y * lineHeight,
+              originalX: centerX - (maxWidth * charSize) / 2 + x * charSize,
+              originalY: centerY - (lines.length * lineHeight) / 2 + y * lineHeight,
+              vx: 0,
+              vy: 0,
+              isDragged: false
+            };
+            nodes.push(node);
+          }
+        }
+      }
+      
+      // Create connections between nearby nodes
+      for (let i = 0; i < nodes.length; i++) {
+        for (let j = i + 1; j < nodes.length; j++) {
+          let node1 = nodes[i];
+          let node2 = nodes[j];
+          let distance = dist(node1.x, node1.y, node2.x, node2.y);
+          
+          // Connect nodes that are close to each other (within reasonable distance)
+          if (distance < 30) {
+            connections.push({
+              from: i,
+              to: j,
+              restLength: distance
+            });
+          }
+        }
+      }
+      
+      // Also connect adjacent characters (neighbors in ASCII grid)
+      connectAdjacentNodes(lines, charSize, lineHeight, centerX, centerY);
+      
+      updateStats();
+      console.log("Created", nodes.length, "nodes and", connections.length, "connections");
+    }
+    
+    function connectAdjacentNodes(lines, charSize, lineHeight, centerX, centerY) {
+      // Create a map of position to node
+      let nodeMap = new Map();
+      
+      for (let y = 0; y < lines.length; y++) {
+        let line = lines[y];
+        for (let x = 0; x < line.length; x++) {
+          let char = line[x];
+          if (char !== ' ') {
+            let nodeId = y * lines[0].length + x;
+            // Find the actual node
+            for (let node of nodes) {
+              let expectedX = centerX - (Math.max(...lines.map(l => l.length)) * charSize) / 2 + x * charSize;
+              let expectedY = centerY - (lines.length * lineHeight) / 2 + y * lineHeight;
+              if (abs(node.x - expectedX) < 1 && abs(node.y - expectedY) < 1) {
+                nodeMap.set(`${x},${y}`, node);
+                break;
+              }
+            }
+          }
+        }
+      }
+      
+      // Connect horizontally and vertically adjacent characters
+      for (let y = 0; y < lines.length; y++) {
+        let line = lines[y];
+        for (let x = 0; x < line.length; x++) {
+          let node1 = nodeMap.get(`${x},${y}`);
+          if (node1) {
+            // Right neighbor
+            if (x < line.length - 1 && line[x + 1] !== ' ') {
+              let node2 = nodeMap.get(`${x + 1},${y}`);
+              if (node2) addConnection(node1, node2);
+            }
+            // Bottom neighbor
+            if (y < lines.length - 1 && x < lines[y + 1].length && lines[y + 1][x] !== ' ') {
+              let node2 = nodeMap.get(`${x},${y + 1}`);
+              if (node2) addConnection(node1, node2);
+            }
+            // Diagonal connections (optional, makes it more connected)
+            if (y < lines.length - 1 && x < lines[y + 1].length - 1 && lines[y + 1][x + 1] !== ' ') {
+              let node2 = nodeMap.get(`${x + 1},${y + 1}`);
+              if (node2) addConnection(node1, node2);
+            }
+            if (y < lines.length - 1 && x > 0 && lines[y + 1][x - 1] !== ' ') {
+              let node2 = nodeMap.get(`${x - 1},${y + 1}`);
+              if (node2) addConnection(node1, node2);
+            }
+          }
+        }
+      }
+    }
+    
+    function addConnection(node1, node2) {
+      // Check if connection already exists
+      let exists = connections.some(conn => 
+        (conn.from === node1.id && conn.to === node2.id) ||
+        (conn.from === node2.id && conn.to === node1.id)
+      );
+      if (!exists) {
+        let distance = dist(node1.x, node1.y, node2.x, node2.y);
+        connections.push({
+          from: node1.id,
+          to: node2.id,
+          restLength: distance
+        });
+      }
+    }
+    
+    function updatePhysics() {
+      let damping = 0.95;
+      let springStrength = 0.1;
+      
+      // Apply spring forces between connected nodes
+      for (let conn of connections) {
+        let node1 = nodes[conn.from];
+        let node2 = nodes[conn.to];
+        
+        if (!node1 || !node2) continue;
+        
+        let dx = node2.x - node1.x;
+        let dy = node2.y - node1.y;
+        let distance = sqrt(dx * dx + dy * dy);
+        
+        if (distance > 0) {
+          let force = (distance - conn.restLength) * springStrength;
+          let fx = (dx / distance) * force;
+          let fy = (dy / distance) * force;
+          
+          if (!node1.isDragged && !lockedNodes.has(node1.id)) {
+            node1.vx += fx;
+            node1.vy += fy;
+          }
+          if (!node2.isDragged && !lockedNodes.has(node2.id)) {
+            node2.vx -= fx;
+            node2.vy -= fy;
+          }
+        }
+      }
+      
+      // Apply breathing animation (return to original position)
+      for (let node of nodes) {
+        if (!node.isDragged && !lockedNodes.has(node.id)) {
+          // Gentle breathing motion
+          let breathX = sin(time + node.id * 0.1) * 2;
+          let breathY = cos(time + node.id * 0.1) * 1;
+          
+          node.vx += (node.originalX + breathX - node.x) * 0.02;
+          node.vy += (node.originalY + breathY - node.y) * 0.02;
+        }
+      }
+      
+      // Update positions
+      for (let node of nodes) {
+        if (!node.isDragged && !lockedNodes.has(node.id)) {
+          node.vx *= damping;
+          node.vy *= damping;
+          node.x += node.vx;
+          node.y += node.vy;
+        }
+      }
+    }
+    
+    function drawConnections() {
+      stroke(100, 100, 100, 150);
+      strokeWeight(0.8);
+      for (let conn of connections) {
+        let node1 = nodes[conn.from];
+        let node2 = nodes[conn.to];
+        
+        if (node1 && node2) {
+          line(node1.x, node1.y, node2.x, node2.y);
+        }
+      }
+    }
+    
+    function drawNodes() {
+      for (let node of nodes) {
+        push();
+        translate(node.x, node.y);
+        
+        // Highlight if dragged or locked
+        if (node.isDragged) {
+          fill(255, 255, 0, 100);
+          noStroke();
+          circle(0, 0, 20);
+        } else if (lockedNodes.has(node.id)) {
+          fill(255, 0, 0, 100);
+          noStroke();
+          circle(0, 0, 18);
+        }
+        
+        // Draw the actual ASCII character
+        fill(255);
+        textAlign(CENTER, CENTER);
+        textSize(12);
+        textStyle(BOLD);
+        text(node.char, 0, 0);
+        pop();
+      }
+    }
+    
+    function mousePressed() {
+      if (mouseButton === LEFT) {
+        // Find closest node
+        let closestNode = null;
+        let closestDistance = Infinity;
+        
+        for (let node of nodes) {
+          let distance = dist(mouseX, mouseY, node.x, node.y);
+          if (distance < 20 && distance < closestDistance) {
+            closestDistance = distance;
+            closestNode = node;
+          }
+        }
+        
+        if (closestNode) {
+          draggedNode = closestNode;
+          closestNode.isDragged = true;
+          isDragging = true;
+        }
+      }
+    }
+    
+    function mouseDragged() {
+      if (isDragging && draggedNode) {
+        // Move the dragged node
+        draggedNode.x = mouseX;
+        draggedNode.y = mouseY;
+        draggedNode.vx = 0;
+        draggedNode.vy = 0;
+      }
+    }
+    
+    function mouseReleased() {
+      if (draggedNode) {
+        draggedNode.isDragged = false;
+      }
+      isDragging = false;
+      draggedNode = null;
+    }
+    
+    function keyPressed() {
+      if (key === 'r' || key === 'R') {
+        if (currentASCII) {
+          parseASCII(currentASCII);
+        }
+      }
+      
+      if (key === 'l' || key === 'L') {
+        // Toggle lock on closest node to mouse
+        let closestNode = null;
+        let closestDistance = Infinity;
+        
+        for (let node of nodes) {
+          let distance = dist(mouseX, mouseY, node.x, node.y);
+          if (distance < 50 && distance < closestDistance) {
+            closestDistance = distance;
+            closestNode = node;
+          }
+        }
+        
+        if (closestNode) {
+          if (lockedNodes.has(closestNode.id)) {
+            lockedNodes.delete(closestNode.id);
+          } else {
+            lockedNodes.add(closestNode.id);
+          }
+        }
+      }
+    }
+    
+    function windowResized() {
+      const networkView = document.querySelector('.network-view');
+      resizeCanvas(networkView.clientWidth, networkView.clientHeight);
+    }
+    
+    // Update statistics
+    function updateStats() {
+      document.getElementById('node-count').textContent = nodes.length;
+      document.getElementById('connection-count').textContent = connections.length;
+    }
+    
+    // Image to ASCII conversion
+    let uploadedImage = null;
+    let imageData = null;
+    
+    // ASCII character set from dark to light
+    const asciiChars = " .:-=+*#%@";
+    // Extended set for better detail
+    const asciiCharsExtended = " .'`^\",:;Il!i><~+_-?][}{1)(|\\/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$";
+    
+    document.getElementById('upload-button').addEventListener('click', () => {
+      document.getElementById('image-upload').click();
+    });
+    
+    document.getElementById('image-upload').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          const img = new Image();
+          img.onload = () => {
+            uploadedImage = img;
+            imageData = null; // Will be generated on convert
+            document.getElementById('preview-img').src = event.target.result;
+            document.getElementById('image-preview').style.display = 'block';
+            document.getElementById('convert-button').disabled = false;
+          };
+          img.src = event.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+    
+    // Update width value display
+    document.getElementById('ascii-width').addEventListener('input', (e) => {
+      document.getElementById('width-value').textContent = e.target.value;
+    });
+    
+    // Update contrast value display
+    document.getElementById('ascii-contrast').addEventListener('input', (e) => {
+      document.getElementById('contrast-value').textContent = parseFloat(e.target.value).toFixed(1);
+    });
+    
+    // Convert image to ASCII
+    document.getElementById('convert-button').addEventListener('click', () => {
+      if (!uploadedImage) return;
+      
+      const width = parseInt(document.getElementById('ascii-width').value);
+      const contrast = parseFloat(document.getElementById('ascii-contrast').value);
+      
+      // Calculate height maintaining aspect ratio
+      const aspectRatio = uploadedImage.height / uploadedImage.width;
+      const height = Math.floor(width * aspectRatio * 0.5); // 0.5 because ASCII chars are taller
+      
+      // Create canvas to sample image
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = width;
+      canvas.height = height;
+      
+      // Draw and scale image
+      ctx.drawImage(uploadedImage, 0, 0, width, height);
+      imageData = ctx.getImageData(0, 0, width, height);
+      
+      // Convert to ASCII
+      let asciiArt = '';
+      
+      for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+          const index = (y * width + x) * 4;
+          const r = imageData.data[index];
+          const g = imageData.data[index + 1];
+          const b = imageData.data[index + 2];
+          
+          // Calculate brightness (luminance)
+          const brightness = (r * 0.299 + g * 0.587 + b * 0.114) / 255;
+          
+          // Apply contrast
+          let adjustedBrightness = brightness;
+          if (contrast !== 1) {
+            adjustedBrightness = Math.pow(brightness, 1 / contrast);
+            adjustedBrightness = Math.max(0, Math.min(1, adjustedBrightness));
+          }
+          
+          // Map to ASCII character
+          const charIndex = Math.floor(adjustedBrightness * (asciiCharsExtended.length - 1));
+          asciiArt += asciiCharsExtended[charIndex];
+        }
+        asciiArt += '\n';
+      }
+      
+      // Store ASCII art (hidden textarea for sending)
+      document.getElementById('converted-ascii').value = asciiArt;
+      
+      // Replace image preview with ASCII display
+      document.getElementById('image-preview').style.display = 'none';
+      document.getElementById('ascii-preview').style.display = 'block';
+      document.getElementById('ascii-display').textContent = asciiArt;
+      document.getElementById('send-to-canvas').style.display = 'block';
+    });
+    
+    // Tab switching
+    document.querySelectorAll('.tab-button').forEach(button => {
+      button.addEventListener('click', () => {
+        const tabName = button.getAttribute('data-tab');
+        
+        // Update active tab button
+        document.querySelectorAll('.tab-button').forEach(btn => {
+          btn.classList.remove('active');
+        });
+        button.classList.add('active');
+        
+        // Update active tab content
+        document.querySelectorAll('.tab-content').forEach(content => {
+          content.classList.remove('active');
+        });
+        document.getElementById(`${tabName}-tab`).classList.add('active');
+      });
+    });
+    
+    // Send converted ASCII to canvas
+    document.getElementById('send-to-canvas').addEventListener('click', () => {
+      const convertedASCII = document.getElementById('converted-ascii').value.trim();
+      if (!convertedASCII) {
+        alert('Please convert an image to ASCII first!');
+        return;
+      }
+      
+      // Switch to manual tab and put ASCII there
+      document.querySelectorAll('.tab-button').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      document.querySelector('[data-tab="manual"]').classList.add('active');
+      
+      document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.remove('active');
+      });
+      document.getElementById('manual-tab').classList.add('active');
+      
+      // Put ASCII in manual input
+      document.getElementById('ascii-input').value = convertedASCII;
+      
+      // Auto-add to canvas
+      currentASCII = convertedASCII;
+      parseASCII(convertedASCII);
+      
+      // Clear converter
+      document.getElementById('converted-ascii').value = '';
+      document.getElementById('ascii-display').textContent = '';
+      document.getElementById('image-preview').style.display = 'none';
+      document.getElementById('ascii-preview').style.display = 'none';
+      document.getElementById('send-to-canvas').style.display = 'none';
+      document.getElementById('convert-button').disabled = true;
+      uploadedImage = null;
+    });
+    
+    // Clear converter
+    document.getElementById('clear-converter').addEventListener('click', () => {
+      document.getElementById('converted-ascii').value = '';
+      document.getElementById('ascii-display').textContent = '';
+      document.getElementById('image-preview').style.display = 'none';
+      document.getElementById('ascii-preview').style.display = 'none';
+      document.getElementById('convert-button').disabled = true;
+      document.getElementById('send-to-canvas').style.display = 'none';
+      document.getElementById('image-upload').value = '';
+      uploadedImage = null;
+      imageData = null;
+    });
+    
+    // Event listeners for UI
+    document.getElementById('add-to-network').addEventListener('click', () => {
+      const asciiText = document.getElementById('ascii-input').value.trim();
+      if (!asciiText) {
+        alert('Please enter some ASCII art first!');
+        return;
+      }
+      
+      currentASCII = asciiText;
+      parseASCII(asciiText);
+      document.getElementById('ascii-input').value = '';
+    });
+    
+    document.getElementById('clear-all').addEventListener('click', () => {
+      // Clear canvas
+      nodes = [];
+      connections = [];
+      lockedNodes.clear();
+      currentASCII = "";
+      
+      // Clear manual input
+      document.getElementById('ascii-input').value = '';
+      
+      // Clear converter tab
+      uploadedImage = null;
+      imageData = null;
+      document.getElementById('converted-ascii').value = '';
+      document.getElementById('ascii-display').textContent = '';
+      document.getElementById('image-preview').style.display = 'none';
+      document.getElementById('ascii-preview').style.display = 'none';
+      document.getElementById('send-to-canvas').style.display = 'none';
+      document.getElementById('convert-button').disabled = true;
+      document.getElementById('image-upload').value = '';
+      
+      // Update stats
+      updateStats();
+    });
+  </script>
+</body>
+</html>

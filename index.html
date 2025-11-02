@@ -164,10 +164,18 @@
 
       @media (max-width: 480px) {
         #curation-link {
+          left: clamp(10px, 3vw, 30px);
+          top: clamp(120px, 15vh, 180px);
           font-size: clamp(7px, 2vw, 14px);
-          right: clamp(3px, 1vw, 8px);
-          top: clamp(10px, 2vh, 17px);
-          max-width: 30vw;
+          max-width: 80vw;
+        }
+        
+        #curation-link .name {
+          font-size: clamp(10pt, 3vw, 16pt);
+        }
+        
+        #curation-link .title {
+          font-size: clamp(8pt, 2.5vw, 14pt);
         }
 
         .left-logo {
@@ -176,13 +184,17 @@
         }
         
         .right-logos {
-          bottom: clamp(10px, 2.5vh, 15px);
-          right: clamp(10px, 2.5vw, 15px);
-          gap: clamp(4px, 1vw, 8px);
+          position: fixed;
+          right: 8px;
+          bottom: 8px;
+          display: flex;
+          align-items: center;
         }
         
         .right-logos .logo {
-          height: clamp(40px, 8vw, 60px);
+          height: 35px;
+          width: auto;
+          border: 2px solid red;
         }
 
         .popup {
@@ -228,13 +240,13 @@
       }
 
       #title {
-        height: clamp(80px, 15vh, 180px);
+        height: clamp(60px, 12vh, 180px);
         width: auto;
-        max-width: clamp(400px, 75vw, 900px);
+        max-width: clamp(300px, 60vw, 900px);
         object-fit: contain;
         position: fixed;
-        top: 76px;
-        left: 32px;
+        top: clamp(50px, 7vh, 100px);
+        left: clamp(20px, 1.7vw, 50px);
         z-index: 101;
       }
 
@@ -255,16 +267,20 @@
           left: clamp(8px, 1.5vw, 12px);
         }
         #copyright {
-          top: 50%;
-          left: 0px;
-          font-size: clamp(8px, 2vw, 10px);
-          writing-mode: vertical-rl;
-          text-orientation: mixed;
-          transform: translateY(-50%);
-          white-space: nowrap;
           position: fixed;
-          z-index: 1001;
+          right: 3px;
+          bottom: 50px;
+          transform: rotate(90deg);
+          transform-origin: right bottom;
           color: #ffffff;
+          font-size: 9px;
+          font-family: "SourceCodePro", monospace;
+          z-index: 1001;
+          opacity: 1;
+          line-height: 1.4;
+          white-space: nowrap;
+          background: rgba(255, 0, 0, 0.3);
+          padding: 2px;
         }
       }
 
@@ -588,8 +604,8 @@
         font-family: "OCR A Std", monospace;
         text-align: left;
         position: fixed;
-        left: 200px;
-        top: 280px;
+        left: clamp(80px, 7.1vw, 200px);
+        top: clamp(150px, 20.4vh, 280px);
         z-index: 101;
         cursor: pointer;
         text-decoration: none;
@@ -598,12 +614,12 @@
       }
       
       #curation-link .name {
-        font-size: 18pt;
+        font-size: clamp(14pt, 1.8vw, 22pt);
         display: block;
       }
       
       #curation-link .title {
-        font-size: 16pt;
+        font-size: clamp(12pt, 1.6vw, 20pt);
         display: block;
       }
 
@@ -614,22 +630,35 @@
       /* Left side logo */
       .left-logo {
         position: fixed;
-        left: 36px;
-        top: 989px;
+        left: clamp(20px, 1.9vw, 60px);
+        top: clamp(850px, 91.6vh, 1020px);
         display: flex;
         align-items: center;
         z-index: 101;
       }
       
-      .logos .logo:first-child {
+      .left-logo .logo {
+        height: clamp(50px, 10vh, 80px);
+        width: auto;
+        filter: brightness(0) invert(1); /* Make it white */
+      }
+      
+      /* Right side logos */
+      .right-logos {
         position: fixed;
-        left: 1800px;
-        top: 968px;
+        left: clamp(1600px, 93.75vw, 1850px);
+        top: clamp(800px, 89.6vh, 1000px);
         display: flex;
         flex-direction: column;
         gap: clamp(8px, 2vh, 15px);
         align-items: flex-end;
         z-index: 101;
+      }
+      
+      .right-logos .logo {
+        height: clamp(60px, 12vw, 100px);
+        width: auto;
+        transition: opacity 0.3s ease;
       }
 
       .logo {
@@ -768,18 +797,71 @@
 
         #copyright {
           position: fixed;
-          left: 1880.12px;
-          top: 490.54px;
+          left: clamp(1600px, 97.9vw, 1900px);
+          top: clamp(350px, 45.4vh, 600px);
           transform: rotate(90deg);
           transform-origin: left top;
           color: #ffffff;
-          font-size: 11px;
+          font-size: clamp(9px, 1.1vw, 14px);
           font-family: "SourceCodePro", monospace;
           z-index: 1000;
           opacity: 0.8;
           line-height: 1.4;
           white-space: nowrap;
         }
+
+      /* Force mobile styles */
+      @media (max-width: 768px) {
+        #copyright {
+          position: fixed !important;
+          right: 25px !important;
+          bottom: 80px !important;
+          left: auto !important;
+          top: auto !important;
+          transform: rotate(90deg) !important;
+          transform-origin: right bottom !important;
+          color: #ffffff !important;
+          font-size: 10px !important;
+          font-family: "SourceCodePro", monospace !important;
+          z-index: 1001 !important;
+          opacity: 0.8 !important;
+          line-height: 1.4 !important;
+          white-space: nowrap !important;
+          writing-mode: initial !important;
+          text-orientation: initial !important;
+        }
+        
+        #curation-link {
+          left: clamp(10px, 3vw, 30px) !important;
+          top: clamp(80px, 12vh, 120px) !important;
+          font-size: clamp(7px, 2vw, 14px) !important;
+          max-width: 80vw !important;
+        }
+        
+        #curation-link .name {
+          font-size: clamp(10pt, 3vw, 16pt) !important;
+        }
+        
+        #curation-link .title {
+          font-size: clamp(8pt, 2.5vw, 14pt) !important;
+        }
+        
+        .right-logos {
+          position: fixed !important;
+          right: 15px !important;
+          bottom: 15px !important;
+          left: auto !important;
+          top: auto !important;
+          display: flex !important;
+          align-items: center !important;
+        }
+        
+        .right-logos .logo {
+          height: 35px !important;
+          width: auto !important;
+          opacity: 0.9 !important;
+        }
+      }
 
       @keyframes floatAcross {
         0% {
@@ -819,9 +901,9 @@
       <span class="name">ADI KARELITZ:</span>
       <span class="title">CURATOR</span>
     </div>
-    <div class="logos">
-      <img src="assets/logos/HIT_VITRINA_LOGO.png" alt="HIT Vitrina Logo" class="logo" />
-      <img src="assets/artists/LOGO-WHITE.001.png" alt="Logo" class="logo" />
+    <!-- Left side logo -->
+    <div class="left-logo">
+      <img src="assets/LOGO2.001.png" alt="TheWrong Biennale" class="logo" />
     </div>
     
     <!-- Right side logo -->
