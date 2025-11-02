@@ -23,10 +23,6 @@
         font-family: "IBMPlexMono";
         src: url("assets/IBMPlexMono-Light.ttf") format("truetype");
       }
-      @font-face {
-        font-family: "OCR";
-        src: url("assets/OCR-a___.ttf") format("truetype");
-      }
       body {
         margin: 0;
         padding: 0;
@@ -55,13 +51,13 @@
         position: relative;
         cursor: none; /* Hide default cursor */
       }
-
+      
       /* Custom green cursor */
       .custom-cursor {
         position: fixed;
         pointer-events: none;
         z-index: 2147483647;
-        font-family: "Courier New", monospace;
+        font-family: 'Courier New', monospace;
         font-size: 50px;
         font-weight: bold;
         color: #00ff41;
@@ -71,119 +67,64 @@
         display: block !important;
         opacity: 1 !important;
       }
-
-      /* Hide cursor completely on mobile devices */
-      @media (max-width: 768px), (pointer: coarse) {
-        .custom-cursor {
-          display: none !important;
-        }
-      }
-
+      
       /* Ensure cursor stays custom in popups */
-      .popup,
-      .popup * {
+      .popup, .popup * {
         cursor: none !important;
       }
-
+      
       /* Make sure cursor appears above all popups */
       .popup {
         z-index: 1000;
       }
-
+      
       .popup .popup-content {
         z-index: 1001;
       }
-
+      
       .popup-overlay {
         z-index: 1000;
       }
-
+      
       /* Allow default cursor on video elements */
-      iframe,
-      video,
-      embed,
-      object {
+      iframe, video, embed, object {
         cursor: auto;
       }
 
-      /* Desktop scrollbar styling: neon green thumb on black track */
-      @media (hover: hover) and (pointer: fine) {
-        /* Firefox */
-        * {
-          scrollbar-color: #39ff14 #000000; /* thumb track */
-          scrollbar-width: thin;
-        }
-
-        /* WebKit (Chrome, Edge, Safari) */
-        *::-webkit-scrollbar {
-          width: 12px;
-          height: 12px;
-        }
-
-        *::-webkit-scrollbar-track {
-          background: #000000;
-        }
-
-        *::-webkit-scrollbar-thumb {
-          background-color: #39ff14;
-          border-radius: 8px;
-          border: 2px solid #000000;
-          box-shadow: 0 0 8px 2px #39ff14;
-        }
-
-        *::-webkit-scrollbar-corner {
-          background: #000000;
-        }
-      }
-
       /* Responsive Design */
-      @media (max-width: 1024px) {
-        #title {
-          margin-bottom: 0px;
-        }
-      }
-
       @media (max-width: 768px) {
         body {
           overflow-x: hidden;
         }
 
-        #title {
-          margin-bottom: -2px;
+        #curation-link {
+          font-size: clamp(8px, 2.5vw, 16px);
+          right: clamp(5px, 1.5vw, 10px);
+          top: clamp(12px, 2.5vh, 22px);
+          max-width: 35vw;
         }
 
         .left-logo {
           bottom: clamp(8px, 2vh, 20px);
           left: clamp(8px, 2vw, 20px);
         }
-
-        .bottom-left-logo {
-          bottom: clamp(8px, 1.5vh, 15px);
-          left: clamp(15px, 3vw, 30px);
-        }
-
-        .bottom-right-logo {
-          bottom: clamp(8px, 1.5vh, 15px);
-          right: clamp(15px, 3vw, 30px);
-        }
-
+        
         .right-logos {
           bottom: clamp(12px, 3vh, 22px);
           right: clamp(12px, 3vw, 22px);
           gap: clamp(6px, 1.5vw, 15px);
         }
-
+        
         .right-logos .logo {
           height: clamp(50px, 10vw, 80px);
         }
-
+        
         #copyright {
           top: clamp(100px, 15vh, 130px);
           right: clamp(8px, 2vw, 15px);
-          font-size: clamp(14px, 3.2vw, 18px);
+          font-size: clamp(10px, 2.4vw, 13px);
           transform: rotate(90deg);
           transform-origin: right top;
-          opacity: 1;
         }
 
         .popup {
@@ -204,18 +145,11 @@
         }
 
         .popup-close {
-          top: 0px !important;
-          right: 4px !important;
-          width: 52px;
-          height: 52px;
-          font-size: 32px;
-        }
-
-        .popup-close-overlay {
-          top: 0px !important;
-          right: 0px !important;
-          width: 64px;
-          height: 64px;
+          top: 10px;
+          right: 15px;
+          width: 35px;
+          height: 35px;
+          font-size: 20px;
         }
 
         /* Tablet carousel responsive styles */
@@ -240,40 +174,27 @@
           font-size: clamp(10pt, 3vw, 16pt);
         }
         
-        #curation-link .assistant {
-          font-size: clamp(7pt, 2.2vw, 13pt);
-        }
-        
         #curation-link .title {
           font-size: clamp(8pt, 2.5vw, 14pt);
         }
-        
-        #curation-link .gallery-curator {
-          font-size: clamp(6pt, 2.2vw, 12pt);
-        }
+
         .left-logo {
           bottom: clamp(6px, 1.5vh, 12px);
           left: clamp(6px, 1.5vw, 12px);
         }
-
-        .bottom-left-logo {
-          bottom: clamp(5px, 1vh, 10px);
-          left: clamp(10px, 2vw, 20px);
-        }
-
-        .bottom-right-logo {
-          bottom: clamp(5px, 1vh, 10px);
-          right: clamp(10px, 2vw, 20px);
-        }
-
+        
         .right-logos {
-          bottom: clamp(10px, 2.5vh, 15px);
-          right: clamp(10px, 2.5vw, 15px);
-          gap: clamp(4px, 1vw, 8px);
+          position: fixed;
+          right: 8px;
+          bottom: 8px;
+          display: flex;
+          align-items: center;
         }
-
+        
         .right-logos .logo {
-          height: clamp(40px, 8vw, 60px);
+          height: 35px;
+          width: auto;
+          border: 2px solid red;
         }
 
         .popup {
@@ -290,49 +211,11 @@
           font-size: 13px;
         }
 
-        .popup-close {
-          top: 0px !important;
-          right: 4px !important;
-          width: 44px;
-          height: 44px;
-          font-size: 26px;
-        }
-
-        .popup-close-overlay {
-          top: 0px !important;
-          right: 0px !important;
-          width: 56px;
-          height: 56px;
-        }
-
         /* Mobile carousel responsive styles */
         #carousel-container {
           height: min(50vh, 300px) !important;
           margin-bottom: 40px !important;
           padding-bottom: 20px !important;
-        }
-
-        #top-left-container {
-          top: clamp(12px, 3vh, 18px);
-          left: clamp(8px, 1.5vw, 12px);
-        }
-
-        #title {
-          height: clamp(60px, 12vh, 110px);
-          max-width: clamp(280px, 60vw, 500px);
-          margin-bottom: -3px;
-        }
-
-        #copyright {
-          top: 50%;
-          left: 5px;
-          font-size: clamp(8px, 2vw, 10px);
-          transform: translateY(-50%) rotate(-90deg);
-          white-space: nowrap;
-          position: fixed;
-          z-index: 1001;
-          color: #ffffff;
-          opacity: 1;
         }
 
         /* Carousel scaling handled by JavaScript */
@@ -343,10 +226,6 @@
           max-width: 1200px;
           max-height: 800px;
         }
-
-        #curation-link {
-          margin-left: 10px;
-        }
       }
       canvas {
         display: block;
@@ -354,50 +233,54 @@
         transition: opacity 2s ease-in;
         position: relative;
         z-index: 10;
-        will-change: opacity;
       }
 
       canvas.fade-in {
         opacity: 1;
       }
 
-      #top-left-container {
-        position: fixed;
-        top: 76px;
-        left: 32px;
-        z-index: 101;
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-      }
-
       #title {
-        height: clamp(80px, 15vh, 180px);
+        height: clamp(60px, 12vh, 180px);
         width: auto;
-        max-width: clamp(400px, 75vw, 900px);
+        max-width: clamp(300px, 60vw, 900px);
         object-fit: contain;
-        position: relative;
-        margin-bottom: 10px;
+        position: fixed;
+        top: clamp(50px, 7vh, 100px);
+        left: clamp(20px, 1.7vw, 50px);
+        z-index: 101;
       }
 
       @media (max-width: 768px) {
-        #top-left-container {
+        #title {
+          height: clamp(60px, 12vh, 120px);
+          max-width: clamp(300px, 65vw, 600px);
           top: clamp(18px, 4vh, 25px);
           left: clamp(10px, 2vw, 15px);
         }
+      }
 
+      @media (max-width: 480px) {
         #title {
-          height: clamp(80px, 16vh, 150px);
-          max-width: clamp(350px, 70vw, 700px);
-          margin-bottom: -2px;
+          height: clamp(45px, 9vh, 90px);
+          max-width: clamp(220px, 55vw, 450px);
+          top: clamp(12px, 3vh, 18px);
+          left: clamp(8px, 1.5vw, 12px);
         }
-
-        .desktop-image {
-          display: none !important;
-        }
-
-        .mobile-image {
-          display: block !important;
+        #copyright {
+          position: fixed;
+          right: 3px;
+          bottom: 50px;
+          transform: rotate(90deg);
+          transform-origin: right bottom;
+          color: #ffffff;
+          font-size: 9px;
+          font-family: "SourceCodePro", monospace;
+          z-index: 1001;
+          opacity: 1;
+          line-height: 1.4;
+          white-space: nowrap;
+          background: rgba(255, 0, 0, 0.3);
+          padding: 2px;
         }
       }
 
@@ -405,8 +288,6 @@
       .ascii-element {
         animation: cray 6s infinite steps(50);
         display: inline-block;
-        will-change: transform;
-        transform: translateZ(0); /* GPU acceleration */
       }
 
       @keyframes cray {
@@ -720,63 +601,64 @@
 
       #curation-link {
         color: rgb(255, 255, 255);
-        font-family: "OCR", monospace;
+        font-family: "OCR A Std", monospace;
         text-align: left;
-        position: relative;
+        position: fixed;
+        left: clamp(80px, 7.1vw, 200px);
+        top: clamp(150px, 20.4vh, 280px);
         z-index: 101;
+        cursor: pointer;
         text-decoration: none;
         transition: opacity 0.3s ease;
         line-height: 1.1;
-        align-self: center;
-      }
-
-      #curation-link .name {
-        font-size: clamp(12pt, 3vw, 18pt);
-        display: block;
       }
       
-      #curation-link .assistant {
-        font-size: clamp(11pt, 1.5vw, 18pt);
+      #curation-link .name {
+        font-size: clamp(14pt, 1.8vw, 22pt);
         display: block;
-        margin-bottom: 2px;
       }
       
       #curation-link .title {
-        font-size: clamp(10pt, 2.5vw, 16pt);
-        display: block;
-        margin-bottom: 15px;
-      }
-      
-      #curation-link .gallery-curator {
-        font-size: clamp(10pt, 1.4vw, 18pt);
+        font-size: clamp(12pt, 1.6vw, 20pt);
         display: block;
       }
 
       #curation-link:hover {
-        color: #00ff00;
-        text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00, 0 0 30px #00ff00;
+        opacity: 0.7;
       }
 
       /* Left side logo */
       .left-logo {
         position: fixed;
         left: clamp(20px, 1.9vw, 60px);
-        bottom: clamp(11px, 1vh, 20px);
+        top: clamp(850px, 91.6vh, 1020px);
         display: flex;
         align-items: center;
         z-index: 101;
       }
-
-      /* Bottom left logo */
-      .bottom-left-logo {
+      
+      .left-logo .logo {
+        height: clamp(50px, 10vh, 80px);
+        width: auto;
+        filter: brightness(0) invert(1); /* Make it white */
+      }
+      
+      /* Right side logos */
+      .right-logos {
         position: fixed;
         left: clamp(1600px, 93.75vw, 1850px);
-        bottom: clamp(-5px, 1vh, 2px);
+        top: clamp(800px, 89.6vh, 1000px);
         display: flex;
         flex-direction: column;
         gap: clamp(8px, 2vh, 15px);
         align-items: flex-end;
         z-index: 101;
+      }
+      
+      .right-logos .logo {
+        height: clamp(60px, 12vw, 100px);
+        width: auto;
+        transition: opacity 0.3s ease;
       }
 
       .logo {
@@ -784,7 +666,7 @@
         width: auto;
         opacity: 0.9;
       }
-
+      
       .right-logos .logo {
         height: clamp(60px, 12vw, 100px);
         width: auto;
@@ -883,12 +765,12 @@
         right: 25px;
         background: transparent;
         border: none;
-        font-size: 28px;
+        font-size: 18px;
         cursor: pointer;
         color: #00ff00;
         z-index: 999999;
-        width: 48px;
-        height: 48px;
+        width: 40px;
+        height: 40px;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -915,48 +797,20 @@
 
         #copyright {
           position: fixed;
-          right: clamp(20px, 2vw, 50px);
-          top: 50%;
-          transform: rotate(90deg) translateY(-50%);
-          transform-origin: right center;
+          left: clamp(1600px, 97.9vw, 1900px);
+          top: clamp(350px, 45.4vh, 600px);
+          transform: rotate(90deg);
+          transform-origin: left top;
           color: #ffffff;
           font-size: clamp(9px, 1.1vw, 14px);
-        font-family: "SourceCodePro", monospace;
+          font-family: "SourceCodePro", monospace;
           z-index: 1000;
           opacity: 0.8;
           line-height: 1.4;
           white-space: nowrap;
         }
 
-      @media (max-width: 768px), (pointer: coarse) {
-        .popup-close-overlay {
-          display: block;
-        }
-      }
-
-      #copyright {
-        position: fixed;
-        right: 15px;
-        top: 80%;
-        transform: rotate(90deg);
-        transform-origin: right top;
-        color: #ffffff;
-        font-size: 16px;
-        font-family: "SourceCodePro", monospace;
-        z-index: 1000;
-        opacity: 0.8;
-        line-height: 1.4;
-        white-space: nowrap;
-        text-decoration: none;
-        cursor: pointer;
-      }
-
-      #copyright:hover {
-        color: #00ff00;
-        text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00, 0 0 30px #00ff00;
-      }
-
-      /* Mobile copyright font size */
+      /* Force mobile styles */
       @media (max-width: 768px) {
         #copyright {
           position: fixed !important;
@@ -988,16 +842,8 @@
           font-size: clamp(10pt, 3vw, 16pt) !important;
         }
         
-        #curation-link .assistant {
-          font-size: clamp(8pt, 2.5vw, 14pt) !important;
-        }
-        
         #curation-link .title {
           font-size: clamp(8pt, 2.5vw, 14pt) !important;
-        }
-        
-        #curation-link .gallery-curator {
-          font-size: clamp(6pt, 2.2vw, 12pt) !important;
         }
         
         .right-logos {
@@ -1054,36 +900,21 @@
     <div id="curation-link" onclick="showCurationPopup()">
       <span class="name">ADI KARELITZ:</span>
       <span class="title">CURATOR</span>
-      <span class="assistant">TAMAR LEV-ON:</span>
-      <span class="gallery-curator">GALLERY CURATOR</span>
     </div>
-
-    <!-- Bottom left logo -->
-    <div class="bottom-left-logo">
-      <img src="assets/Artists/LOGO-WHITE.001.png" alt="Logo" class="logo" />
+    <!-- Left side logo -->
+    <div class="left-logo">
+      <img src="assets/LOGO2.001.png" alt="TheWrong Biennale" class="logo" />
     </div>
-
-    <!-- Bottom right logo -->
-    <div class="bottom-right-logo">
-      <img
-        src="assets/logos/HIT_fullLogo.png"
-        alt="HIT Full Logo"
-        class="logo"
-      />
-    </div>
-
+    
     <!-- Right side logo -->
-    <div class="right-logos"></div>
-
+    <div class="right-logos">
+      <img src="assets/logos/HIT_fullLogo.png" alt="HIT Full Logo" class="logo" />
+    </div>
+    
     <!-- Copyright moved to right side -->
-    <a
-      id="copyright"
-      href="https://amitco-daph.vercel.app/"
-      target="_blank"
-      rel="noopener noreferrer"
-    >
+    <div id="copyright">
       © 2025 Designed & Built by Daphne Perlman & Amit Cohen
-    </a>
+    </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
@@ -1125,219 +956,74 @@
       renderer.setClearColor(0x000000, 0); // Transparent background
       document.body.appendChild(renderer.domElement);
 
-      // Desktop: single-click opens popup, drag rotates via OrbitControls
-      let isPointerDownDesktop = false;
-      let controlsChangedDuringDrag = false;
-      let pointerStartX = 0;
-      let pointerStartY = 0;
-      const CLICK_THRESHOLD = 10; // pixels - maximum movement to consider a click
+      // Add double-click handler to Three.js canvas (desktop)
       if (!isMobile) {
-        renderer.domElement.addEventListener("pointerdown", (event) => {
-          isPointerDownDesktop = true;
-          controlsChangedDuringDrag = false;
-          pointerStartX = event.clientX;
-          pointerStartY = event.clientY;
-        });
-        renderer.domElement.addEventListener("pointerup", (event) => {
-          const wasPointerDown = isPointerDownDesktop;
-          isPointerDownDesktop = false;
-          if (!wasPointerDown) return;
-
-          // Calculate distance moved during this interaction
-          const deltaX = event.clientX - pointerStartX;
-          const deltaY = event.clientY - pointerStartY;
-          const distanceMoved = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-
-          // Only treat as click if movement was below threshold
-          // This allows clicks even if OrbitControls slightly moved the camera
-          if (distanceMoved < CLICK_THRESHOLD) {
-            onImageClick(event);
-          }
-        });
+        renderer.domElement.addEventListener("dblclick", onImageClick);
       } else {
-        // Custom mobile touch handling for swipe rotation and tap popup
+        // Add double-tap support for mobile devices
+        let lastTapTime = 0;
+        let lastTapX = 0;
+        let lastTapY = 0;
         let touchStartTime = 0;
         let touchStartX = 0;
         let touchStartY = 0;
-        let touchCurrentX = 0;
-        let touchCurrentY = 0;
-        let touchPreviousX = 0;
-        let touchPreviousY = 0;
-        let isSwipeGesture = false;
-        let lastTapTime = 0;
-
-        // Pinch zoom variables
-        let initialPinchDistance = 0;
-        let initialCameraDistance = 0;
-        let isPinchGesture = false;
-
-        const tapThreshold = 15; // Maximum movement for a tap (pixels)
-        const tapTimeThreshold = 250; // Maximum time for a tap (ms)
-        const swipeThreshold = 25; // Minimum movement to start a swipe (pixels)
-        const doubleTapDelay = 300; // Prevent accidental double-tap (ms)
-
-        // Helper function to calculate distance between two touch points
-        function getTouchDistance(touch1, touch2) {
-          const dx = touch1.clientX - touch2.clientX;
-          const dy = touch1.clientY - touch2.clientY;
-          return Math.sqrt(dx * dx + dy * dy);
-        }
-
-        // Helper function to get camera distance from origin
-        function getCameraDistance() {
-          return Math.sqrt(
-            camera.position.x * camera.position.x +
-              camera.position.y * camera.position.y +
-              camera.position.z * camera.position.z
-          );
-        }
+        const doubleTapDelay = 400; // Maximum time between taps (ms)
+        const tapMovementThreshold = 30; // Maximum movement for a valid tap (pixels)
 
         renderer.domElement.addEventListener("touchstart", (event) => {
-          event.preventDefault();
           touchStartTime = Date.now();
           touchStartX = event.touches[0].clientX;
           touchStartY = event.touches[0].clientY;
-          touchCurrentX = touchStartX;
-          touchCurrentY = touchStartY;
-          touchPreviousX = touchStartX;
-          touchPreviousY = touchStartY;
-          isSwipeGesture = false;
-          isPinchGesture = false;
-
-          // Handle pinch gesture (two fingers)
-          if (event.touches.length === 2) {
-            isPinchGesture = true;
-            initialPinchDistance = getTouchDistance(
-              event.touches[0],
-              event.touches[1]
-            );
-            initialCameraDistance = getCameraDistance();
-          }
-        });
-
-        renderer.domElement.addEventListener("touchmove", (event) => {
-          event.preventDefault();
-          touchCurrentX = event.touches[0].clientX;
-          touchCurrentY = event.touches[0].clientY;
-
-          // Handle pinch zoom (two fingers)
-          if (event.touches.length === 2 && isPinchGesture) {
-            const currentPinchDistance = getTouchDistance(
-              event.touches[0],
-              event.touches[1]
-            );
-            const pinchRatio = currentPinchDistance / initialPinchDistance;
-
-            // Calculate new camera distance based on pinch ratio
-            const newCameraDistance = initialCameraDistance / pinchRatio;
-
-            // Limit zoom range (prevent getting too close or too far)
-            const minDistance = 5;
-            const maxDistance = 100;
-            const clampedDistance = Math.max(
-              minDistance,
-              Math.min(maxDistance, newCameraDistance)
-            );
-
-            // Scale camera position to maintain same direction but new distance
-            const currentDistance = getCameraDistance();
-            const scaleFactor = clampedDistance / currentDistance;
-
-            camera.position.x *= scaleFactor;
-            camera.position.y *= scaleFactor;
-            camera.position.z *= scaleFactor;
-
-            // Update camera lookAt to maintain focus on center
-            camera.lookAt(0, 0, 0);
-          }
-          // Handle swipe rotation (single finger)
-          else if (event.touches.length === 1) {
-            const deltaX = touchCurrentX - touchStartX;
-            const deltaY = touchCurrentY - touchStartY;
-            const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-
-            // If movement exceeds threshold, this is a swipe gesture
-            if (distance > swipeThreshold) {
-              isSwipeGesture = true;
-
-              // Calculate incremental movement from previous frame for smooth rotation
-              const incrementalX = touchCurrentX - touchPreviousX;
-              const incrementalY = touchCurrentY - touchPreviousY;
-
-              // Apply smooth incremental camera rotation
-              const rotationSpeed = 0.008;
-
-              // Rotate camera around Y axis (horizontal swipe) - smooth incremental
-              const horizontalRotation = incrementalX * rotationSpeed;
-              const cosH = Math.cos(horizontalRotation);
-              const sinH = Math.sin(horizontalRotation);
-              const newX = camera.position.x * cosH - camera.position.z * sinH;
-              const newZ = camera.position.x * sinH + camera.position.z * cosH;
-              camera.position.x = newX;
-              camera.position.z = newZ;
-
-              // Rotate camera around X axis (vertical swipe) - smooth incremental with limits
-              const verticalRotation = incrementalY * rotationSpeed;
-              const currentVerticalAngle = Math.atan2(
-                camera.position.y,
-                Math.sqrt(
-                  camera.position.x * camera.position.x +
-                    camera.position.z * camera.position.z
-                )
-              );
-              const newVerticalAngle = Math.max(
-                -Math.PI / 3,
-                Math.min(Math.PI / 3, currentVerticalAngle + verticalRotation)
-              );
-
-              const horizontalDistance = Math.sqrt(
-                camera.position.x * camera.position.x +
-                  camera.position.z * camera.position.z
-              );
-              camera.position.y =
-                horizontalDistance * Math.tan(newVerticalAngle);
-
-              // Update camera lookAt to maintain focus on center
-              camera.lookAt(0, 0, 0);
-
-              // Update previous position for next frame
-              touchPreviousX = touchCurrentX;
-              touchPreviousY = touchCurrentY;
-            }
-          }
         });
 
         renderer.domElement.addEventListener("touchend", (event) => {
-          event.preventDefault();
           const touchEndTime = Date.now();
           const touchDuration = touchEndTime - touchStartTime;
           const touchEndX = event.changedTouches[0].clientX;
           const touchEndY = event.changedTouches[0].clientY;
+          const touchDistance = Math.sqrt(
+            Math.pow(touchEndX - touchStartX, 2) +
+              Math.pow(touchEndY - touchStartY, 2)
+          );
 
-          const deltaX = touchEndX - touchStartX;
-          const deltaY = touchEndY - touchStartY;
-          const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+          // Check if this was a quick tap (not a drag)
+          if (touchDuration < 300 && touchDistance < tapMovementThreshold) {
+            const currentTime = touchEndTime;
+            const timeSinceLastTap = currentTime - lastTapTime;
 
-          // Touch ended - reset gesture states
-          isPinchGesture = false;
+            // Check if this is close to the last tap position
+            const distanceFromLastTap = Math.sqrt(
+              Math.pow(touchEndX - lastTapX, 2) +
+                Math.pow(touchEndY - lastTapY, 2)
+            );
 
-          // If this wasn't a swipe and meets tap criteria, trigger popup
-          if (
-            !isSwipeGesture &&
-            !isPinchGesture &&
-            distance < tapThreshold &&
-            touchDuration < tapTimeThreshold &&
-            Date.now() - lastTapTime > doubleTapDelay
-          ) {
-            lastTapTime = Date.now();
+            // If double-tap detected (within time window and position threshold)
+            if (
+              timeSinceLastTap < doubleTapDelay &&
+              timeSinceLastTap > 0 &&
+              distanceFromLastTap < tapMovementThreshold
+            ) {
+              console.log("Double-tap detected!");
+              event.preventDefault();
+              event.stopPropagation();
 
-            // Create a synthetic click event for popup
-            const syntheticEvent = {
-              clientX: touchEndX,
-              clientY: touchEndY,
-              type: "tap",
-            };
-            onImageClick(syntheticEvent);
+              // Create a synthetic event with proper coordinates
+              const syntheticEvent = {
+                clientX: touchEndX,
+                clientY: touchEndY,
+                type: "doubletap",
+              };
+              onImageClick(syntheticEvent);
+
+              // Reset to prevent triple-tap triggering
+              lastTapTime = 0;
+            } else {
+              // First tap or too far from last tap
+              console.log("First tap detected, waiting for second tap...");
+              lastTapTime = currentTime;
+              lastTapX = touchEndX;
+              lastTapY = touchEndY;
+            }
           }
         });
       }
@@ -1646,7 +1332,6 @@
 
         popup.innerHTML += `
           <button class="popup-close">&times;</button>
-          <div class="popup-close-overlay"></div>
           <div style="position: relative; z-index: 999999;">
             <h2 style="font-size: 28px; font-weight: bold; color: #e6e6e6; margin-bottom: 35px; font-family: 'Source Code Variable', monospace;">${
               artist.name
@@ -1853,38 +1538,22 @@
 
         // Attach close button listener IMMEDIATELY after DOM insertion
         const closeButton = popup.querySelector(".popup-close");
-        const closeOverlay = popup.querySelector(".popup-close-overlay");
         console.log("Immediately looking for close button:", closeButton);
-        console.log("Immediately looking for close overlay:", closeOverlay);
-
-        // Function to close popup
-        const closePopup = (e) => {
-          console.log("Close button/overlay activated - immediate listener");
-          e.preventDefault();
-          e.stopPropagation();
-          // Clear animation interval
-          if (overlay.dataset.animationInterval) {
-            clearInterval(overlay.dataset.animationInterval);
-          }
-          overlay.remove();
-          document.removeEventListener("keydown", handleEscKey);
-        };
-
         if (closeButton) {
           console.log("Found close button immediately, attaching listener");
-          closeButton.addEventListener("click", closePopup);
+          closeButton.addEventListener("click", (e) => {
+            console.log("Close button clicked - immediate listener");
+            e.preventDefault();
+            e.stopPropagation();
+            // Clear animation interval
+            if (overlay.dataset.animationInterval) {
+              clearInterval(overlay.dataset.animationInterval);
+            }
+            overlay.remove();
+            document.removeEventListener("keydown", handleEscKey);
+          });
         } else {
           console.error("Close button not found immediately!");
-        }
-
-        if (closeOverlay) {
-          console.log(
-            "Found close overlay immediately, attaching touch listeners"
-          );
-          closeOverlay.addEventListener("touchstart", closePopup);
-          closeOverlay.addEventListener("click", closePopup);
-        } else {
-          console.error("Close overlay not found immediately!");
         }
 
         // Add ESC key listener immediately
@@ -1997,9 +1666,6 @@
           let isAnimating = false;
           let animationId = null;
           let lastAnimationTime = 0;
-          let carouselStartX = 0;
-          let carouselStartY = 0;
-          const CAROUSEL_CLICK_THRESHOLD = 15; // pixels - maximum movement to consider a click
 
           // Get responsive scale factor based on screen size
           const getScaleFactor = () => {
@@ -2042,8 +1708,6 @@
             isDragging = true;
             startX = e.clientX;
             startY = e.clientY;
-            carouselStartX = e.clientX;
-            carouselStartY = e.clientY;
             startRotation = currentRotation;
             carousel.style.cursor = "grabbing";
             e.preventDefault();
@@ -2062,14 +1726,8 @@
             currentRotation = newRotation;
           });
 
-          document.addEventListener("mouseup", (e) => {
+          document.addEventListener("mouseup", () => {
             if (!isDragging) return;
-
-            // Calculate distance moved during this interaction
-            const deltaX = e.clientX - carouselStartX;
-            const deltaY = e.clientY - carouselStartY;
-            const distanceMoved = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-
             isDragging = false;
             carousel.style.cursor = "grab";
             lastAnimationTime = Date.now(); // Reset animation timing
@@ -2107,17 +1765,7 @@
           // Add click handlers to each face for navigation
           faces.forEach((face, index) => {
             face.addEventListener("click", (e) => {
-              // Calculate how far the mouse moved during this interaction
-              const deltaX = e.clientX - carouselStartX;
-              const deltaY = e.clientY - carouselStartY;
-              const distanceMoved = Math.sqrt(
-                deltaX * deltaX + deltaY * deltaY
-              );
-
-              // Only treat as click if movement was below threshold (no significant drag)
-              if (distanceMoved >= CAROUSEL_CLICK_THRESHOLD) {
-                return;
-              }
+              if (isDragging) return; // Prevent click if we were dragging
 
               isAnimating = true;
               carousel.style.animation = "none";
@@ -2229,7 +1877,6 @@
 
         popup.innerHTML += `
           <button class="popup-close">&times;</button>
-          <div class="popup-close-overlay"></div>
           <div style="position: relative; z-index: 2;">
             <h2 style="font-size: 36px; font-weight: 900; color: #e6e6e6; margin-bottom: 25px; font-family: 'IBMPlexMono', monospace;">Adi Karelitz's Curation</h2>
             <div style="color: #e6e6e6; font-family: 'SourceCodePro', monospace; font-size: 16px; line-height: 1.8; margin-bottom: 40px; position: relative; text-align: justify;">
@@ -2255,9 +1902,9 @@
                 In his 2017 book, <em>Glitch Art in Theory and Practice: Critical Failures and Post-Digital Aesthetics</em>, Michael Betancourt proposed a theoretical framework that sees the glitch not as a mere technical phenomenon but as a critical aesthetic related to capitalism. Betancourt argued that the glitch serves as a model for a general theory of critical media, exposing the breaking points in modern technological systems. It functions as a moment of revelation, i.e., a moment where the technological system exposes its own vulnerability and inherent imperfection.
               </p>
               <p style="margin-bottom: 0;">
-                The Wrong Biennale is an independent international art biennial; a multicultural and decentralized platform that embraces an open approach, allowing creatives to sidestep the elitist infrastructure of art fairs and present digital art to a global audience. Founded in 2013 by the Spanish artist and curator David Quiles Guilló, The Wrong Biennale is held both online in the digital sphere and in physical locations.<br><br>⁠Tamar Lev-On: Cutaror of Vitrina Gallery
+                The Wrong Biennale is an independent international art biennial; a multicultural and decentralized platform that embraces an open approach, allowing creatives to sidestep the elitist infrastructure of art fairs and present digital art to a global audience. Founded in 2013 by the Spanish artist and curator David Quiles Guilló, The Wrong Biennale is held both online in the digital sphere and in physical locations.
               </p>
-              <br>
+              
               <!-- Clear float to prevent layout issues -->
               <div style="clear: both;"></div>
             </div>
@@ -2304,48 +1951,27 @@
 
         // Attach close button listener IMMEDIATELY after DOM insertion
         const closeButton = popup.querySelector(".popup-close");
-        const closeOverlay = popup.querySelector(".popup-close-overlay");
         console.log(
           "Immediately looking for curation close button:",
           closeButton
         );
-        console.log(
-          "Immediately looking for curation close overlay:",
-          closeOverlay
-        );
-
-        // Function to close popup
-        const closePopup = (e) => {
-          console.log(
-            "Curation close button/overlay activated - immediate listener"
-          );
-          e.preventDefault();
-          e.stopPropagation();
-          // Clear animation interval
-          if (overlay.dataset.animationInterval) {
-            clearInterval(overlay.dataset.animationInterval);
-          }
-          overlay.remove();
-          document.removeEventListener("keydown", handleEscKey);
-        };
-
         if (closeButton) {
           console.log(
             "Found curation close button immediately, attaching listener"
           );
-          closeButton.addEventListener("click", closePopup);
+          closeButton.addEventListener("click", (e) => {
+            console.log("Curation close button clicked - immediate listener");
+            e.preventDefault();
+            e.stopPropagation();
+            // Clear animation interval
+            if (overlay.dataset.animationInterval) {
+              clearInterval(overlay.dataset.animationInterval);
+            }
+            overlay.remove();
+            document.removeEventListener("keydown", handleEscKey);
+          });
         } else {
           console.error("Curation close button not found immediately!");
-        }
-
-        if (closeOverlay) {
-          console.log(
-            "Found curation close overlay immediately, attaching touch listeners"
-          );
-          closeOverlay.addEventListener("touchstart", closePopup);
-          closeOverlay.addEventListener("click", closePopup);
-        } else {
-          console.error("Curation close overlay not found immediately!");
         }
 
         // Add ESC key listener immediately
@@ -2639,37 +2265,6 @@
         }
       }
 
-      // Hover outline on images in the network (desktop only)
-      let lastHoveredPlane = null;
-      function onCanvasMouseMove(event) {
-        if (isMobile) return;
-        const rect = renderer.domElement.getBoundingClientRect();
-        mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-        mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-
-        raycaster.setFromCamera(mouse, camera);
-        const intersects = raycaster.intersectObjects(imagePlanes);
-
-        const hovered = intersects.length > 0 ? intersects[0].object : null;
-
-        if (hovered !== lastHoveredPlane) {
-          if (
-            lastHoveredPlane &&
-            lastHoveredPlane.userData &&
-            lastHoveredPlane.userData.hoverOutline
-          ) {
-            lastHoveredPlane.userData.hoverOutline.visible = false;
-          }
-          if (hovered && hovered.userData && hovered.userData.hoverOutline) {
-            hovered.userData.hoverOutline.visible = true;
-          }
-          lastHoveredPlane = hovered;
-        }
-      }
-
-      // Bind hover handler to renderer canvas
-      renderer.domElement.addEventListener("mousemove", onCanvasMouseMove);
-
       // Preload all images in parallel for faster loading
       function preloadImages() {
         const loadPromises = artistImages.map((artist) => {
@@ -2702,10 +2297,6 @@
       function createASCIIFrameTexture(imageTexture, artistName) {
         const canvas = document.createElement("canvas");
         const ctx = canvas.getContext("2d");
-
-        // Enable image smoothing for better quality with less artifacts
-        ctx.imageSmoothingEnabled = true;
-        ctx.imageSmoothingQuality = "high";
 
         // Set canvas size with padding for ASCII frame
         const padding = 20; // Space for frame
@@ -2771,7 +2362,7 @@
 
             const material = new THREE.MeshBasicMaterial({
               map: framedTexture,
-              transparent: true,
+        transparent: true,
               opacity: 0.95,
               side: THREE.DoubleSide,
               alphaTest: 0.1, // Optimize transparency rendering
@@ -2797,57 +2388,6 @@
               artist: artist,
               isClickable: isClickableImage(artist.path),
             };
-
-            // Desktop-only: add a dashed outline overlay that matches the image area inside the frame
-            if (!isMobile) {
-              const outlineCanvas = document.createElement("canvas");
-              outlineCanvas.width = framedCanvas.width;
-              outlineCanvas.height = framedCanvas.height;
-              const octx = outlineCanvas.getContext("2d");
-
-              // Disable image smoothing for outline (performance)
-              octx.imageSmoothingEnabled = false;
-
-              // Recompute the image frame rect as used in createASCIIFrameTexture
-              const padding = 20;
-              const textHeight = 25;
-              const frameX = padding;
-              const frameY = textHeight;
-              const frameWidth = outlineCanvas.width - padding * 2;
-              const frameHeight =
-                outlineCanvas.height - padding * 2 - textHeight;
-
-              // Draw dashed rectangle around the image itself
-              octx.strokeStyle = "#00ff00";
-              octx.lineWidth = 3;
-              octx.setLineDash([8, 6]);
-              octx.strokeRect(
-                frameX + 1.5,
-                frameY + 1.5,
-                frameWidth - 3,
-                frameHeight - 3
-              );
-
-              const outlineTexture = new THREE.CanvasTexture(outlineCanvas);
-              outlineTexture.generateMipmaps = false;
-              outlineTexture.minFilter = THREE.LinearFilter;
-              outlineTexture.magFilter = THREE.LinearFilter;
-
-              const outlineMaterial = new THREE.MeshBasicMaterial({
-                map: outlineTexture,
-                transparent: true,
-                depthTest: false,
-              });
-
-              const outlineMesh = new THREE.Mesh(
-                geometry.clone(),
-                outlineMaterial
-              );
-              outlineMesh.renderOrder = 2;
-              outlineMesh.visible = false;
-              plane.add(outlineMesh);
-              plane.userData.hoverOutline = outlineMesh;
-            }
             imagePlanes.push(plane);
             scene.add(plane);
           });
@@ -2870,10 +2410,10 @@
 
       // Function to create connections between images (optimized)
       function createConnections() {
-        // Ensure every image has at least one connection - reduced for performance
+        // Ensure every image has at least one connection
         const maxConnections = isMobile
-          ? Math.min(imagePlanes.length * 0.3, 8)
-          : Math.min(imagePlanes.length * 0.5, 20); // Reduced from 0.8/30 to 0.5/20 for better performance
+          ? Math.min(imagePlanes.length * 0.5, 15)
+          : Math.min(imagePlanes.length * 0.8, 30); // Increase connections for better coverage
         let connectionCount = 0;
         const connectedImages = new Set(); // Track which images have connections
 
@@ -3050,7 +2590,6 @@
       donutCanvas.style.pointerEvents = "none";
       donutCanvas.style.opacity = "0.8"; // More visible
       donutCanvas.style.background = "transparent";
-      donutCanvas.style.willChange = "transform"; // Performance optimization
       document.body.appendChild(donutCanvas);
 
       const donutWidth = Math.floor(donutCanvas.width / 8);
@@ -3069,95 +2608,72 @@
         donutCanvas.width = window.innerWidth;
         donutCanvas.height = window.innerHeight;
       });
-
-      // Custom cursor functionality - only on desktop
-      if (!isMobile) {
-        const customCursor = document.getElementById("custom-cursor");
-        let mouseX = 0;
-        let mouseY = 0;
-
-        // Function to update cursor position
-        function updateCursorPosition(clientX, clientY) {
-          mouseX = clientX;
-          mouseY = clientY;
-          customCursor.style.left = mouseX + "px";
-          customCursor.style.top = mouseY + "px";
-
-          // Check if mouse is over any iframe or video - more comprehensive check
-          const elementBelow = document.elementFromPoint(clientX, clientY);
-          const isOverVideo =
-            elementBelow &&
-            (elementBelow.tagName === "IFRAME" ||
-              elementBelow.tagName === "VIDEO" ||
-              elementBelow.closest("iframe") ||
-              elementBelow.closest("video") ||
-              (elementBelow.src &&
-                (elementBelow.src.includes("youtube") ||
-                  elementBelow.src.includes("vimeo"))) ||
-              elementBelow.classList.contains("vimeo") ||
-              elementBelow.classList.contains("youtube"));
-
-          // Also check for popup videos with buffer zone
-          const popupVideos = document.querySelectorAll(
-            ".popup iframe, .popup video"
-          );
-          let isNearPopupVideo = false;
-
-          popupVideos.forEach((video) => {
-            const rect = video.getBoundingClientRect();
-            const buffer = 30; // 30px buffer zone around popup videos
-
-            if (
-              mouseX >= rect.left - buffer &&
-              mouseX <= rect.right + buffer &&
-              mouseY >= rect.top - buffer &&
-              mouseY <= rect.bottom + buffer
-            ) {
-              isNearPopupVideo = true;
-            }
-          });
-
-          if (isOverVideo || isNearPopupVideo) {
-            customCursor.style.display = "none";
-            customCursor.style.opacity = "0";
-          } else {
-            customCursor.style.display = "block";
-            customCursor.style.opacity = "1";
-          }
-        }
-
-        // Track mouse movement
-        document.addEventListener("mousemove", (e) => {
-          updateCursorPosition(e.clientX, e.clientY);
-        });
-
-        // Track pointer movement (handles both mouse and drag events)
-        // Use capture phase to ensure we get the events even during dragging
-        document.addEventListener(
-          "pointermove",
-          (e) => {
-            updateCursorPosition(e.clientX, e.clientY);
-          },
-          { capture: true }
+      
+      // Custom cursor functionality
+      const customCursor = document.getElementById('custom-cursor');
+      let mouseX = 0;
+      let mouseY = 0;
+      
+      // Track mouse movement
+      document.addEventListener('mousemove', (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+        customCursor.style.left = mouseX + 'px';
+        customCursor.style.top = mouseY + 'px';
+        
+        // Check if mouse is over any iframe or video - more comprehensive check
+        const elementBelow = document.elementFromPoint(e.clientX, e.clientY);
+        const isOverVideo = elementBelow && (
+          elementBelow.tagName === 'IFRAME' || 
+          elementBelow.tagName === 'VIDEO' ||
+          elementBelow.closest('iframe') ||
+          elementBelow.closest('video') ||
+          (elementBelow.src && (elementBelow.src.includes('youtube') || elementBelow.src.includes('vimeo'))) ||
+          elementBelow.classList.contains('vimeo') ||
+          elementBelow.classList.contains('youtube')
         );
-
-        // Hide cursor when mouse leaves window
-        document.addEventListener("mouseleave", () => {
-          customCursor.style.opacity = "0";
+        
+        // Also check for popup videos with buffer zone
+        const popupVideos = document.querySelectorAll('.popup iframe, .popup video');
+        let isNearPopupVideo = false;
+        
+        popupVideos.forEach(video => {
+          const rect = video.getBoundingClientRect();
+          const buffer = 30; // 30px buffer zone around popup videos
+          
+          if (mouseX >= rect.left - buffer && 
+              mouseX <= rect.right + buffer && 
+              mouseY >= rect.top - buffer && 
+              mouseY <= rect.bottom + buffer) {
+            isNearPopupVideo = true;
+          }
         });
-
-        // Show cursor when mouse enters window
-        document.addEventListener("mouseenter", () => {
-          customCursor.style.opacity = "1";
-          customCursor.style.display = "block";
-        });
-
-        // Ensure cursor is always visible and on top
-        customCursor.style.display = "block";
-        customCursor.style.opacity = "1";
-        customCursor.style.zIndex = "2147483647";
-      }
-
+        
+        if (isOverVideo || isNearPopupVideo) {
+          customCursor.style.display = 'none';
+          customCursor.style.opacity = '0';
+        } else {
+          customCursor.style.display = 'block';
+          customCursor.style.opacity = '1';
+        }
+      });
+      
+      // Hide cursor when mouse leaves window
+      document.addEventListener('mouseleave', () => {
+        customCursor.style.opacity = '0';
+      });
+      
+      // Show cursor when mouse enters window
+      document.addEventListener('mouseenter', () => {
+        customCursor.style.opacity = '1';
+        customCursor.style.display = 'block';
+      });
+      
+      // Ensure cursor is always visible and on top
+      customCursor.style.display = 'block';
+      customCursor.style.opacity = '1';
+      customCursor.style.zIndex = '2147483647';
+      
       // Simple cursor management - no aggressive overrides
 
       // Camera position - adjust for mobile (further zoom out on mobile)
@@ -3170,17 +2686,13 @@
       controls.enableZoom = true;
       controls.enablePan = !isMobile; // Disable pan on mobile for better touch experience
       controls.enableRotate = true;
-      // Mark a drag only when controls actually change during a pointer interaction
-      controls.addEventListener("change", () => {
-        if (isPointerDownDesktop) {
-          controlsChangedDuringDrag = true;
-        }
-      });
 
       // Adjust controls for mobile
       if (isMobile) {
-        // Disable OrbitControls completely on mobile - we use custom touch controls
-        controls.enabled = false;
+        controls.touches = {
+          ONE: THREE.TOUCH.ROTATE,
+          TWO: THREE.TOUCH.DOLLY_PAN,
+        };
         controls.enableKeys = false; // Disable keyboard controls on mobile
       }
 
@@ -3977,90 +3489,82 @@
           scene.rotation.y += rotationSpeed;
         }
 
-        // ASCII Donut animation - very slow background animation with frame skip
+        // ASCII Donut animation - very slow background animation
         donutAngle += 0.01; // Much slower than the ASCII experiments version
         donutAngle2 += 0.005;
 
-        // Skip frames to reduce CPU usage (redraw every 2nd frame)
-        const shouldDrawDonut = Math.floor(Date.now() / 33) % 2 === 0;
+        // Clear donut canvas with transparent background
+        donutCtx.clearRect(0, 0, donutCanvas.width, donutCanvas.height);
 
-        if (shouldDrawDonut) {
-          // Clear donut canvas with transparent background
-          donutCtx.clearRect(0, 0, donutCanvas.width, donutCanvas.height);
+        const cosA = Math.cos(donutAngle);
+        const sinA = Math.sin(donutAngle);
+        const cosA2 = Math.cos(donutAngle2);
+        const sinA2 = Math.sin(donutAngle2);
 
-          const cosA = Math.cos(donutAngle);
-          const sinA = Math.sin(donutAngle);
-          const cosA2 = Math.cos(donutAngle2);
-          const sinA2 = Math.sin(donutAngle2);
+        // Clear buffers
+        for (let i = 0; i < donutWidth * donutHeight; i++) {
+          donutBuffer[i] = " ";
+          donutZBuffer[i] = 0;
+        }
 
-          // Clear buffers
-          for (let i = 0; i < donutWidth * donutHeight; i++) {
-            donutBuffer[i] = " ";
-            donutZBuffer[i] = 0;
-          }
+        // Scale factor for full screen - make donut larger
+        const scale = Math.min(donutWidth, donutHeight) / 10; // Even larger scale to fill entire screen
 
-          // Scale factor for full screen - make donut larger
-          const scale = Math.min(donutWidth, donutHeight) / 10; // Even larger scale to fill entire screen
+        // Generate donut
+        for (let j = 0; j < 6.28; j += 0.1) {
+          const cosJ = Math.cos(j);
+          const sinJ = Math.sin(j);
 
-          // Generate donut with reduced iterations for performance
-          const stepJ = 0.15; // Increased from 0.1
-          const stepI = 0.08; // Increased from 0.05
-          for (let j = 0; j < 6.28; j += stepJ) {
-            const cosJ = Math.cos(j);
-            const sinJ = Math.sin(j);
+          for (let i = 0; i < 6.28; i += 0.05) {
+            const cosI = Math.cos(i);
+            const sinI = Math.sin(i);
 
-            for (let i = 0; i < 6.28; i += stepI) {
-              const cosI = Math.cos(i);
-              const sinI = Math.sin(i);
+            const x = cosI + 2;
+            const y = sinI;
+            const z = j;
 
-              const x = cosI + 2;
-              const y = sinI;
-              const z = j;
+            // 3D rotation
+            const nx = x * cosA - y * sinA;
+            const ny = x * sinA + y * cosA;
+            const nz = z;
 
-              // 3D rotation
-              const nx = x * cosA - y * sinA;
-              const ny = x * sinA + y * cosA;
-              const nz = z;
+            const nz2 = nz * cosA2 - ny * sinA2;
+            const ny2 = nz * sinA2 + ny * cosA2;
+            const nx2 = nx;
 
-              const nz2 = nz * cosA2 - ny * sinA2;
-              const ny2 = nz * sinA2 + ny * cosA2;
-              const nx2 = nx;
+            // Perspective projection with full screen scaling
+            const ooz = 1 / (nz2 + 5);
+            // Offset to ensure full screen coverage - start from left edge
+            const xp = Math.floor(scale * 30 * ooz * nx2); // Start from left edge, no center offset
+            const yp = Math.floor(donutHeight / 2 + scale * 20 * ooz * ny2); // Keep vertical centered
 
-              // Perspective projection with full screen scaling
-              const ooz = 1 / (nz2 + 5);
-              // Offset to ensure full screen coverage - start from left edge
-              const xp = Math.floor(scale * 30 * ooz * nx2); // Start from left edge, no center offset
-              const yp = Math.floor(donutHeight / 2 + scale * 20 * ooz * ny2); // Keep vertical centered
+            // Calculate lighting
+            const l = cosI * cosJ * cosA - sinJ * sinA;
 
-              // Calculate lighting
-              const l = cosI * cosJ * cosA - sinJ * sinA;
-
-              if (xp >= 0 && xp < donutWidth && yp >= 0 && yp < donutHeight) {
-                const idx = yp * donutWidth + xp;
-                if (ooz > donutZBuffer[idx]) {
-                  donutZBuffer[idx] = ooz;
-                  const lum = Math.floor(8 * l);
-                  const char =
-                    lum > 0 ? ".,-~:;=!*#$@"[Math.min(lum, 11)] : " ";
-                  donutBuffer[idx] = char;
-                }
+            if (xp >= 0 && xp < donutWidth && yp >= 0 && yp < donutHeight) {
+              const idx = yp * donutWidth + xp;
+              if (ooz > donutZBuffer[idx]) {
+                donutZBuffer[idx] = ooz;
+                const lum = Math.floor(8 * l);
+                const char = lum > 0 ? ".,-~:;=!*#$@"[Math.min(lum, 11)] : " ";
+                donutBuffer[idx] = char;
               }
             }
           }
+        }
 
-          // Draw donut with larger font for full screen
-          const fontSize = Math.max(16, Math.min(donutWidth, donutHeight) / 15); // Much larger font
-          donutCtx.font = `${fontSize}px Courier New`;
-          donutCtx.fillStyle = "#00ff41"; // Bright green like the network strings
-          donutCtx.textAlign = "left";
-          donutCtx.textBaseline = "top";
+        // Draw donut with larger font for full screen
+        const fontSize = Math.max(16, Math.min(donutWidth, donutHeight) / 15); // Much larger font
+        donutCtx.font = `${fontSize}px Courier New`;
+        donutCtx.fillStyle = "#00ff41"; // Bright green like the network strings
+        donutCtx.textAlign = "left";
+        donutCtx.textBaseline = "top";
 
-          for (let y = 0; y < donutHeight; y++) {
-            for (let x = 0; x < donutWidth; x++) {
-              const char = donutBuffer[y * donutWidth + x];
-              if (char !== " ") {
-                donutCtx.fillText(char, x * fontSize * 0.6, y * fontSize);
-              }
+        for (let y = 0; y < donutHeight; y++) {
+          for (let x = 0; x < donutWidth; x++) {
+            const char = donutBuffer[y * donutWidth + x];
+            if (char !== " ") {
+              donutCtx.fillText(char, x * fontSize * 0.6, y * fontSize);
             }
           }
         }
@@ -4111,18 +3615,9 @@
       // Start animation
       animate();
 
-      // Delicate mouse-tracking gradient effect - disable on mobile for performance with throttling
+      // Delicate mouse-tracking gradient effect - disable on mobile for performance
       if (!isMobile) {
-        let lastMouseMoveTime = 0;
-        const mouseMoveThrottle = 16; // ~60fps
-
         document.addEventListener("mousemove", (event) => {
-          const now = Date.now();
-          if (now - lastMouseMoveTime < mouseMoveThrottle) {
-            return; // Skip if too soon
-          }
-          lastMouseMoveTime = now;
-
           const x = (event.clientX / window.innerWidth) * 100;
           const y = (event.clientY / window.innerHeight) * 100;
 
@@ -4267,7 +3762,7 @@
             transform: translateX(-50%);
             color: #e6e6e6;
             font-family: 'SourceCodePro', monospace;
-            font-size: clamp(4px, 1.5vw, 12px);
+            font-size: 6px;
             background: rgba(0, 0, 0, 0.8);
             padding: 2px 4px;
             border-radius: 2px;
@@ -4290,9 +3785,6 @@
         let animationId = null;
         let lastAnimationTime = Date.now();
         const dragSensitivity = 0.5;
-        let galleryStartX = 0;
-        let galleryStartY = 0;
-        const GALLERY_CLICK_THRESHOLD = 15; // pixels - maximum movement to consider a click
 
         // Auto-rotation
         function animateRotation() {
@@ -4313,8 +3805,6 @@
           if (isAnimating) return;
           isDragging = true;
           startX = e.clientX;
-          galleryStartX = e.clientX;
-          galleryStartY = e.clientY;
           startRotation = currentRotation;
           carousel.style.cursor = "grabbing";
           e.preventDefault();
@@ -4331,42 +3821,10 @@
           currentRotation = newRotation;
         });
 
-        document.addEventListener("mouseup", (e) => {
+        document.addEventListener("mouseup", () => {
           if (!isDragging) return;
-
-          // Calculate distance moved during this interaction
-          const deltaX = e.clientX - galleryStartX;
-          const deltaY = e.clientY - galleryStartY;
-          const distanceMoved = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-
           isDragging = false;
           carousel.style.cursor = "grab";
-          lastAnimationTime = Date.now();
-        });
-
-        // Touch events for mobile
-        carousel.addEventListener("touchstart", (e) => {
-          if (isAnimating) return;
-          isDragging = true;
-          startX = e.touches[0].clientX;
-          startRotation = currentRotation;
-          e.preventDefault();
-        });
-
-        document.addEventListener("touchmove", (e) => {
-          if (!isDragging) return;
-          e.preventDefault();
-          const deltaX = e.touches[0].clientX - startX;
-          const rotationDelta =
-            (deltaX / carousel.offsetWidth) * 360 * dragSensitivity;
-          const newRotation = startRotation + rotationDelta;
-          carousel.style.transform = `rotateY(${newRotation}deg)`;
-          currentRotation = newRotation;
-        });
-
-        document.addEventListener("touchend", () => {
-          if (!isDragging) return;
-          isDragging = false;
           lastAnimationTime = Date.now();
         });
 
@@ -4374,16 +3832,7 @@
         const faces = carousel.querySelectorAll(".gallery-carousel__face");
         faces.forEach((face, index) => {
           face.addEventListener("click", (e) => {
-            // Calculate how far the mouse moved during this interaction
-            const deltaX = e.clientX - galleryStartX;
-            const deltaY = e.clientY - galleryStartY;
-            const distanceMoved = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-
-            // Only treat as click if movement was below threshold (no significant drag)
-            if (distanceMoved >= GALLERY_CLICK_THRESHOLD) {
-              return;
-            }
-
+            if (isDragging) return;
             isAnimating = true;
             const targetRotation = -index * rotationStep;
             const currentRotationNormalized =
@@ -4418,13 +3867,5 @@
       // Change image every 10 seconds
       setInterval(changeFloatingImage, 10000);
     </script>
-    <!-- Desktop-only final override to enlarge bottom-left logo -->
-    <style>
-      @media (min-width: 1025px) {
-        body .bottom-left-logo > img.logo {
-          height: 130px !important;
-        }
-      }
-    </style>
   </body>
 </html>
