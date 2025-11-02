@@ -229,6 +229,8 @@
       }
 
       @media (max-width: 480px) {
+<<<<<<< Updated upstream
+=======
         #curation-link {
           left: clamp(10px, 3vw, 30px);
           top: clamp(120px, 15vh, 180px);
@@ -251,6 +253,8 @@
         #curation-link .gallery-curator {
           font-size: clamp(6pt, 2.2vw, 12pt);
         }
+
+>>>>>>> Stashed changes
         .left-logo {
           bottom: clamp(6px, 1.5vh, 12px);
           left: clamp(6px, 1.5vw, 12px);
@@ -734,6 +738,9 @@
         font-size: clamp(12pt, 3vw, 18pt);
         display: block;
       }
+<<<<<<< Updated upstream
+
+=======
       
       #curation-link .assistant {
         font-size: clamp(11pt, 1.5vw, 18pt);
@@ -741,6 +748,7 @@
         margin-bottom: 2px;
       }
       
+>>>>>>> Stashed changes
       #curation-link .title {
         font-size: clamp(10pt, 2.5vw, 16pt);
         display: block;
@@ -760,8 +768,13 @@
       /* Left side logo */
       .left-logo {
         position: fixed;
+<<<<<<< Updated upstream
+        left: 36px;
+        top: 989px;
+=======
         left: clamp(20px, 1.9vw, 60px);
         bottom: clamp(11px, 1vh, 20px);
+>>>>>>> Stashed changes
         display: flex;
         align-items: center;
         z-index: 101;
@@ -770,8 +783,61 @@
       /* Bottom left logo */
       .bottom-left-logo {
         position: fixed;
+<<<<<<< Updated upstream
+        bottom: clamp(10px, 2vh, 20px);
+        left: clamp(20px, 4vw, 40px);
+        display: flex;
+        align-items: center;
+        z-index: 101;
+        transform: translate(-10px, 10px);
+      }
+
+      /* Bottom right logo */
+      .bottom-right-logo {
+        position: fixed;
+        bottom: clamp(1px, 0vh, 1px);
+        right: clamp(10px, 2vw, 20px);
+        display: flex;
+        align-items: center;
+        z-index: 101;
+        transform: translate(14px, 30px);
+      }
+
+      .bottom-left-logo .logo {
+        height: clamp(60px, 10vw, 100px);
+      }
+
+      .bottom-right-logo .logo {
+        height: clamp(165px, 27vw, 270px);
+      }
+
+      /* Mobile logo size increases */
+      @media (max-width: 768px) {
+        .bottom-left-logo .logo {
+          height: clamp(70px, 12vw, 120px) !important;
+        }
+        .bottom-right-logo .logo {
+          height: clamp(195px, 31vw, 285px) !important;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .bottom-left-logo .logo {
+          height: clamp(80px, 14vw, 130px) !important;
+        }
+        .bottom-right-logo .logo {
+          height: clamp(205px, 33vw, 305px) !important;
+        }
+      }
+
+      .logos .logo:first-child {
+        position: fixed;
+        left: 1800px;
+        top: 968px;
+=======
         left: clamp(1600px, 93.75vw, 1850px);
         bottom: clamp(-5px, 1vh, 2px);
+>>>>>>> Stashed changes
         display: flex;
         flex-direction: column;
         gap: clamp(8px, 2vh, 15px);
@@ -913,6 +979,24 @@
         transform: scale(0.95);
       }
 
+<<<<<<< Updated upstream
+      /* Transparent overlay for mobile touch handling */
+      .popup-close-overlay {
+        position: fixed;
+        top: 20px;
+        right: 25px;
+        width: 60px;
+        height: 60px;
+        background: transparent;
+        border-radius: 50%;
+        z-index: 1000000;
+        cursor: pointer;
+        pointer-events: auto;
+        -webkit-tap-highlight-color: rgba(0, 255, 0, 0.2);
+        /* Only show on mobile devices */
+        display: none;
+      }
+=======
         #copyright {
           position: fixed;
           right: clamp(20px, 2vw, 50px);
@@ -927,6 +1011,7 @@
           line-height: 1.4;
           white-space: nowrap;
         }
+>>>>>>> Stashed changes
 
       @media (max-width: 768px), (pointer: coarse) {
         .popup-close-overlay {
@@ -959,6 +1044,9 @@
       /* Mobile copyright font size */
       @media (max-width: 768px) {
         #copyright {
+<<<<<<< Updated upstream
+          font-size: 11px;
+=======
           position: fixed !important;
           right: 25px !important;
           bottom: 80px !important;
@@ -1014,6 +1102,7 @@
           height: 35px !important;
           width: auto !important;
           opacity: 0.9 !important;
+>>>>>>> Stashed changes
         }
       }
 
@@ -1049,6 +1138,16 @@
   <body>
     <!-- Custom cursor -->
     <div class="custom-cursor" id="custom-cursor">*</div>
+<<<<<<< Updated upstream
+
+    <!-- Top left logo and curator container -->
+    <div id="top-left-container">
+      <img id="title" src="assets/logos/logo02.png" alt="Memory Almost Full" />
+      <div id="curation-link" onclick="showCurationPopup()">
+        <span class="name">ADI KARELITZ:</span>
+        <span class="title">CURATOR</span>
+      </div>
+=======
     
     <img id="title" src="assets/logos/logo02.png" alt="Memory Almost Full" />
     <div id="curation-link" onclick="showCurationPopup()">
@@ -1056,6 +1155,7 @@
       <span class="title">CURATOR</span>
       <span class="assistant">TAMAR LEV-ON:</span>
       <span class="gallery-curator">GALLERY CURATOR</span>
+>>>>>>> Stashed changes
     </div>
 
     <!-- Bottom left logo -->
